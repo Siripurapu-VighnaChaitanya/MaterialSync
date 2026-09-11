@@ -1,0 +1,16 @@
+{
+  "total_materials": 456,
+  "ground_truth_clusters": 141,
+  "ground_truth_positive_pairs": 543,
+  "predicted_positive_pairs": 74,
+  "true_positives": 48,
+  "false_positives": 26,
+  "false_negatives": 495,
+  "precision": 0.6486,
+  "recall": 0.0884,
+  "f1_score": 0.1556,
+  "false_positive_rate": 0.000252,
+  "false_negative_rate": 0.9116,
+  "safety_gate_rejections": 2845,
+  "evaluation_time_seconds": 16.83
+}
