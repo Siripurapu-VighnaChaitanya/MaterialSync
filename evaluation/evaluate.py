@@ -61,8 +61,10 @@ def run_evaluation(
             source_cpse=row["source_cpse"],
             raw_description=row["raw_description"],
             material_type=ext["material_type"],
+            sub_type=ext["sub_type"],
             dimension_value=ext["dimension_value"],
             dimension_unit=ext["dimension_unit"],
+            schedule=ext["schedule"],
             standard=ext["standard"],
             grade=ext["grade"],
             pressure_rating=ext["pressure_rating"],
@@ -109,6 +111,7 @@ def run_evaluation(
     verdicts_data = []
 
     predicted_positives: Set[Tuple[str, str]] = set()
+    predicted_positives_broad: Set[Tuple[str, str]] = set()  # Includes possible_duplicate
 
     for m in all_match_results:
         pair = tuple(sorted([m.code_a, m.code_b]))
@@ -119,10 +122,14 @@ def run_evaluation(
 
         if m.verdict == "likely_duplicate":
             predicted_positives.add(pair)
+            predicted_positives_broad.add(pair)
             if is_gt_positive:
                 tp += 1
             else:
                 fp += 1
+
+        if m.verdict == "possible_duplicate":
+            predicted_positives_broad.add(pair)
 
         verdicts_data.append({
             "match_id": m.match_id,
@@ -143,6 +150,10 @@ def run_evaluation(
     recall = round(tp / total_gt_positives, 4) if total_gt_positives > 0 else 0.0
     f1 = round(2 * (precision * recall) / (precision + recall), 4) if (precision + recall) > 0 else 0.0
 
+    # Recall at possible: how many GT positives are captured as likely OR possible duplicate
+    tp_broad = len(predicted_positives_broad & ground_truth_positives)
+    recall_at_possible = round(tp_broad / total_gt_positives, 4) if total_gt_positives > 0 else 0.0
+
     # Total negative pairs in ground truth
     total_items = len(raw_df)
     total_pairs = total_items * (total_items - 1) // 2
@@ -157,11 +168,14 @@ def run_evaluation(
         "ground_truth_clusters": len(clusters),
         "ground_truth_positive_pairs": total_gt_positives,
         "predicted_positive_pairs": len(predicted_positives),
+        "predicted_positive_pairs_broad": len(predicted_positives_broad),
         "true_positives": tp,
+        "true_positives_broad": tp_broad,
         "false_positives": fp,
         "false_negatives": fn,
         "precision": precision,
         "recall": recall,
+        "recall_at_possible": recall_at_possible,
         "f1_score": f1,
         "false_positive_rate": fpr,
         "false_negative_rate": fnr,
@@ -183,7 +197,8 @@ def run_evaluation(
     print(f"Total Materials:             {metrics['total_materials']}")
     print(f"Ground-Truth Clusters:       {metrics['ground_truth_clusters']}")
     print(f"Precision:                   {round(metrics['precision'] * 100, 2)}%")
-    print(f"Recall:                      {round(metrics['recall'] * 100, 2)}%")
+    print(f"Recall (Likely Only):        {round(metrics['recall'] * 100, 2)}%")
+    print(f"Recall (Likely + Possible):  {round(metrics['recall_at_possible'] * 100, 2)}%")
     print(f"F1 Score:                    {round(metrics['f1_score'] * 100, 2)}%")
     print(f"False Positives (Dangerous): {metrics['false_positives']}")
     print(f"False Positive Rate (FPR):   {metrics['false_positive_rate']}")

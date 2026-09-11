@@ -62,7 +62,7 @@ class MaterialCheckRequest(BaseModel):
     """
     Payload for live single material check.
     """
-    raw_description: str = Field(..., min_length=3, description="Material description entered by procurement officer")
+    raw_description: str = Field(..., min_length=3, max_length=1000, description="Material description entered by procurement officer")
     source_cpse: Optional[str] = Field("GENERIC", description="CPSE submitting the request")
 
 

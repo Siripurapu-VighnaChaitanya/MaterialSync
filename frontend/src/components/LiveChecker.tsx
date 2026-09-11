@@ -27,6 +27,7 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused }) => {
   const [result, setResult] = useState<LiveCheckResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [actionSuccessModal, setActionSuccessModal] = useState<{ title: string; desc: string; type: 'reuse' | 'create' } | null>(null);
+  const [responseTimeMs, setResponseTimeMs] = useState<number | null>(null);
 
   // Pre-configured SIH Demo Scenarios
   const demoScenarios = [
@@ -69,8 +70,12 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused }) => {
 
     setLoading(true);
     setError(null);
+    setResponseTimeMs(null);
     try {
+      const startTime = performance.now();
       const data = await api.checkMaterial(searchText, searchCpse);
+      const elapsed = Math.round(performance.now() - startTime);
+      setResponseTimeMs(elapsed);
       setResult(data);
     } catch (err: any) {
       setError(err.message || 'Error communicating with harmonization engine');
@@ -248,6 +253,12 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused }) => {
                 <Layers size={18} color="#60A5FA" />
                 <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#FFFFFF' }}>Canonical Specifications</h3>
               </div>
+              {responseTimeMs !== null && (
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '3px 10px', borderRadius: '12px', background: 'rgba(16, 185, 129, 0.15)', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
+                  <Zap size={11} color="#10B981" />
+                  <span style={{ fontSize: '11px', fontWeight: 700, color: '#10B981', letterSpacing: '0.03em' }}>{responseTimeMs}ms on local CPU</span>
+                </div>
+              )}
               <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Normalized Units (mm)</span>
             </div>
 

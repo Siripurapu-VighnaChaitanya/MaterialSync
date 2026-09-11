@@ -169,6 +169,7 @@ def reconcile_match(
             matched_score += w_std
             explanation_parts.append(f"Standard matches ({record_a.standard})")
 
+    matched_score = max(0.0, matched_score)  # Prevent negative scores from penalty accumulation
     final_confidence = matched_score / total_weights if total_weights > 0 else 0.0
     final_confidence = max(0.0, min(0.99, round(final_confidence, 4)))
 

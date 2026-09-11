@@ -7,6 +7,7 @@ Coordinates:
 - Reconciled confidence scoring via reconcile_match
 """
 
+import re
 from typing import List, Dict, Any, Tuple, Optional
 import numpy as np
 from backend.app.schemas.canonical import CanonicalMaterial, MatchResult
@@ -41,6 +42,29 @@ def normalize_grade_for_comparison(grade: Optional[str]) -> Optional[str]:
     if g in ["B16", "GR B16"]:
         return "GR B16"
     return g
+
+
+def normalize_pressure_for_comparison(pressure: Optional[str]) -> Optional[str]:
+    """Normalize pressure rating aliases (e.g. 150# -> CLASS 150, PN 16 -> PN16)."""
+    if not pressure:
+        return None
+    p = pressure.upper().strip()
+    # Normalize pound/LBS notation to CLASS
+    m = re.match(r'^(\d+)\s*(?:#|LBS?|POUND)$', p)
+    if m:
+        rating = m.group(1)
+        if rating in ("150", "300", "600", "800", "900", "1500", "2500"):
+            return f"CLASS {rating}"
+        return f"{rating}#"
+    # Normalize CLASS/CL variants
+    m = re.match(r'^(?:CLASS|CL\.?)\s*(\d+)$', p)
+    if m:
+        return f"CLASS {m.group(1)}"
+    # Normalize PN spacing
+    m = re.match(r'^PN\s*(\d+)$', p)
+    if m:
+        return f"PN{m.group(1)}"
+    return p
 
 
 def compare_attributes(
@@ -125,9 +149,9 @@ def compare_attributes(
     else:
         grade_status = "MISSING_A" if not grade_a else "MISSING_B"
 
-    # 6. Pressure Rating Safety Gate
-    press_a = record_a.pressure_rating
-    press_b = record_b.pressure_rating
+    # 6. Pressure Rating Safety Gate (with normalization)
+    press_a = normalize_pressure_for_comparison(record_a.pressure_rating)
+    press_b = normalize_pressure_for_comparison(record_b.pressure_rating)
 
     if press_a and press_b:
         if press_a == press_b:

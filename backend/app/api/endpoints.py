@@ -21,6 +21,9 @@ from backend.app.nlp.extract import extract_attributes
 
 router = APIRouter()
 
+# Module-level cache for review queue CSV (Bug 5 fix: avoid re-reading on every request)
+_review_queue_cache = {"df": None, "loaded": False}
+
 
 class ReviewDecisionRequest(BaseModel):
     decision: str  # APPROVED, REJECTED, CREATE_NEW
@@ -60,6 +63,76 @@ def check_material(payload: MaterialCheckRequest):
     return result
 
 
+@router.post("/materials/bulk-check", tags=["Bulk Operations"])
+async def bulk_check_materials(file: UploadFile = File(...)):
+    """
+    Enterprise bulk deduplication: Upload a CSV with 'raw_description' column.
+    Returns batch results with duplicate candidates for each row.
+    """
+    import pandas as pd
+    import io
+    import time
+
+    if not file.filename or not file.filename.endswith('.csv'):
+        raise HTTPException(status_code=400, detail="Please upload a .csv file.")
+
+    contents = await file.read()
+    try:
+        df = pd.read_csv(io.BytesIO(contents))
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Failed to parse CSV: {str(e)}")
+
+    if "raw_description" not in df.columns:
+        raise HTTPException(
+            status_code=400,
+            detail=f"CSV must contain a 'raw_description' column. Found columns: {list(df.columns)}"
+        )
+
+    start_time = time.time()
+    results = []
+    duplicates_found = 0
+    possible_found = 0
+
+    for idx, row in df.iterrows():
+        desc = str(row["raw_description"]).strip()
+        if len(desc) < 3:
+            results.append({"row": idx, "description": desc, "status": "skipped", "reason": "Too short"})
+            continue
+
+        cpse = str(row.get("source_cpse", "GENERIC"))
+        check = material_service.check_live_material(raw_description=desc, source_cpse=cpse)
+        top = check.candidates[0] if check.candidates else None
+
+        if check.top_verdict == "likely_duplicate":
+            duplicates_found += 1
+        elif check.top_verdict == "possible_duplicate":
+            possible_found += 1
+
+        results.append({
+            "row": idx,
+            "description": desc,
+            "extracted_type": check.extracted_attributes.material_type,
+            "extracted_dimension_mm": check.extracted_attributes.dimension_value,
+            "extracted_grade": check.extracted_attributes.grade,
+            "top_verdict": check.top_verdict,
+            "top_match_code": top.material_code if top else None,
+            "top_match_cpse": top.source_cpse if top else None,
+            "top_confidence": top.confidence_score if top else None,
+            "recommendation": check.recommendation,
+        })
+
+    elapsed_ms = round((time.time() - start_time) * 1000)
+
+    return {
+        "total_rows": len(df),
+        "processed": len(results),
+        "likely_duplicates": duplicates_found,
+        "possible_duplicates": possible_found,
+        "new_materials": len(df) - duplicates_found - possible_found,
+        "processing_time_ms": elapsed_ms,
+        "results": results,
+    }
+
 @router.get("/materials/clusters", tags=["Cluster Explorer"])
 def get_clusters(db: Session = Depends(get_db)):
     """
@@ -80,14 +153,19 @@ def get_review_queue(limit: int = 50):
     """
     Returns pending ambiguous matches (possible_duplicate) requiring human officer verification.
     """
-    # Query final_verdicts.csv for possible_duplicate records
+    global _review_queue_cache
     import os
     import pandas as pd
     verdicts_path = "data/processed/final_verdicts.csv"
-    if not os.path.exists(verdicts_path):
+    if not _review_queue_cache["loaded"]:
+        if os.path.exists(verdicts_path):
+            _review_queue_cache["df"] = pd.read_csv(verdicts_path)
+        _review_queue_cache["loaded"] = True
+
+    df = _review_queue_cache["df"]
+    if df is None:
         return {"total_pending": 0, "items": []}
 
-    df = pd.read_csv(verdicts_path)
     pending = df[df["verdict"] == "possible_duplicate"].head(limit)
     
     items = []
