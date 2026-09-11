@@ -28,6 +28,17 @@ export const api = {
     return res.json();
   },
 
+  async bulkCheckMaterials(file: File): Promise<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await fetch(`${API_BASE}/materials/bulk-check`, {
+      method: 'POST',
+      body: formData,
+    });
+    if (!res.ok) throw new Error('Bulk upload failed');
+    return res.json();
+  },
+
   async getClusters(): Promise<ClustersResponse> {
     const res = await fetch(`${API_BASE}/materials/clusters`);
     if (!res.ok) throw new Error('Failed to load clusters');
