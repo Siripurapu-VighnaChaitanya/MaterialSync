@@ -6,6 +6,9 @@ import {
 } from 'lucide-react';
 import { api } from '../services/api';
 import { LiveCheckResponse, CandidateMatch } from '../types';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Canvas } from '@react-three/fiber';
+import { Hologram3D } from './3d/Hologram3D';
 
 interface LiveCheckerProps {
   onCodeReused: (code: string) => void;
@@ -14,10 +17,26 @@ interface LiveCheckerProps {
 
 /* ─── Radial Confidence Gauge ─── */
 const ConfidenceGauge: React.FC<{ score: number; verdict: string }> = ({ score, verdict }) => {
-  const pct = Math.round(score * 100);
+  const [displayedPct, setDisplayedPct] = useState(0);
+  const targetPct = Math.round(score * 100);
+
+  useEffect(() => {
+    let current = 0;
+    const interval = setInterval(() => {
+      if (current < targetPct) {
+        current += Math.max(1, Math.floor((targetPct - current) / 4));
+        setDisplayedPct(current);
+      } else {
+        setDisplayedPct(targetPct);
+        clearInterval(interval);
+      }
+    }, 30);
+    return () => clearInterval(interval);
+  }, [targetPct]);
+
   const r = 52;
   const circ = 2 * Math.PI * r;
-  const offset = circ - (pct / 100) * circ;
+  const offset = circ - (displayedPct / 100) * circ;
 
   const color =
     verdict === 'likely_duplicate' ? '#00D68F' :
@@ -39,11 +58,11 @@ const ConfidenceGauge: React.FC<{ score: number; verdict: string }> = ({ score, 
             stroke={color}
             strokeDasharray={circ}
             strokeDashoffset={offset}
-            style={{ filter: `drop-shadow(0 0 8px ${color})` }}
+            style={{ filter: `drop-shadow(0 0 8px ${color})`, transition: 'stroke-dashoffset 0.1s ease-out' }}
           />
         </svg>
         <div className="label">
-          <div style={{ fontSize: '26px', fontWeight: 900, color, lineHeight: 1 }}>{pct}%</div>
+          <div style={{ fontSize: '26px', fontWeight: 900, color, lineHeight: 1 }}>{displayedPct}%</div>
           <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 600 }}>MATCH</div>
         </div>
       </div>
@@ -61,84 +80,6 @@ const ConfidenceGauge: React.FC<{ score: number; verdict: string }> = ({ score, 
         }}
       >
         {label}
-      </div>
-    </div>
-  );
-};
-
-/* ─── Magic Morph Diff Card ─── */
-const MorphDiffCard: React.FC<{
-  rawInput: string;
-  attrs: any;
-  matchDesc?: string;
-  matchCode?: string;
-  matchCpse?: string;
-}> = ({ rawInput, attrs, matchDesc, matchCode, matchCpse }) => {
-  const cleanAttrs = Object.entries(attrs).filter(([k, v]) =>
-    v && !['extraction_confidence', 'source_cpse', 'material_code'].includes(k)
-  );
-
-  return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: '12px', alignItems: 'center' }}>
-      {/* LEFT — RAW CHAOS */}
-      <div style={{ background: 'rgba(255,71,87,0.06)', border: '1px solid rgba(255,71,87,0.2)', borderRadius: '14px', padding: '16px' }}>
-        <div style={{ fontSize: '10px', fontWeight: 700, color: '#FF4757', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '8px' }}>
-          ⚠ Raw ERP Input
-        </div>
-        <div style={{ fontSize: '14px', fontWeight: 700, color: '#F0F4FF', fontFamily: 'JetBrains Mono, monospace', lineHeight: 1.5 }}>
-          {rawInput}
-        </div>
-        <div style={{ fontSize: '11px', color: '#FF6B78', marginTop: '8px' }}>Inconsistent · Abbreviated · Messy</div>
-      </div>
-
-      {/* MIDDLE — AI ARROW */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
-        <div
-          style={{
-            width: '40px', height: '40px', borderRadius: '50%',
-            background: 'linear-gradient(135deg, #4F8EF7, #A855F7)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 0 20px rgba(79,142,247,0.5)',
-          }}
-          className="animate-glow"
-        >
-          <Brain size={18} color="white" />
-        </div>
-        <ArrowRightLeft size={14} color="var(--text-muted)" />
-        <div style={{ fontSize: '9px', color: 'var(--text-muted)', fontWeight: 700, textAlign: 'center' }}>
-          AI<br/>SYNC
-        </div>
-      </div>
-
-      {/* RIGHT — CLEAN CANONICAL */}
-      <div style={{ background: 'rgba(0,214,143,0.06)', border: '1px solid rgba(0,214,143,0.2)', borderRadius: '14px', padding: '16px' }}>
-        <div style={{ fontSize: '10px', fontWeight: 700, color: '#00D68F', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '8px' }}>
-          ✦ Canonical Standard
-        </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-          {cleanAttrs.map(([key, val]) => (
-            <span
-              key={key}
-              style={{
-                background: 'rgba(0,214,143,0.1)',
-                border: '1px solid rgba(0,214,143,0.25)',
-                color: '#2FFFA7',
-                padding: '3px 9px',
-                borderRadius: '6px',
-                fontSize: '12px',
-                fontWeight: 700,
-              }}
-            >
-              {String(val)}{key === 'dimension_value' ? ' mm' : ''}
-            </span>
-          ))}
-        </div>
-        {matchCode && (
-          <div style={{ marginTop: '10px', fontSize: '12px', color: 'var(--text-secondary)' }}>
-            <span style={{ color: '#00D68F', fontWeight: 700 }}>{matchCode}</span>
-            {matchCpse && <span className={`badge-cpse badge-${matchCpse.toLowerCase()}`} style={{ marginLeft: '6px' }}>{matchCpse}</span>}
-          </div>
-        )}
       </div>
     </div>
   );
@@ -218,28 +159,34 @@ const LLMSummaryPanel: React.FC<{ result: LiveCheckResponse; visible: boolean }>
   if (!visible) return null;
 
   return (
-    <div
-      className="animate-fadeInUp"
-      style={{
-        background: 'rgba(168,85,247,0.06)',
-        border: '1px solid rgba(168,85,247,0.25)',
-        borderRadius: '14px',
-        padding: '16px 20px',
-        marginTop: '16px',
-      }}
+    <motion.div
+      initial={{ opacity: 0, height: 0 }}
+      animate={{ opacity: 1, height: 'auto' }}
+      exit={{ opacity: 0, height: 0 }}
+      style={{ overflow: 'hidden' }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-        <Sparkles size={16} color="#A855F7" />
-        <span style={{ fontSize: '12px', fontWeight: 700, color: '#C084FC', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-          AI Executive Summary
-        </span>
-        {!done && <span style={{ fontSize: '11px', color: 'var(--text-muted)' }} className="animate-pulse-subtle">generating...</span>}
+      <div
+        style={{
+          background: 'rgba(168,85,247,0.06)',
+          border: '1px solid rgba(168,85,247,0.25)',
+          borderRadius: '14px',
+          padding: '16px 20px',
+          marginTop: '16px',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+          <Sparkles size={16} color="#A855F7" />
+          <span style={{ fontSize: '12px', fontWeight: 700, color: '#C084FC', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+            AI Executive Summary
+          </span>
+          {!done && <span style={{ fontSize: '11px', color: 'var(--text-muted)' }} className="animate-pulse-subtle">generating...</span>}
+        </div>
+        <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
+          {text}
+          {!done && <span style={{ borderRight: '2px solid #A855F7', marginLeft: '2px', animation: 'pulse-subtle 0.8s infinite' }}>&nbsp;</span>}
+        </p>
       </div>
-      <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-        {text}
-        {!done && <span style={{ borderRight: '2px solid #A855F7', marginLeft: '2px', animation: 'pulse-subtle 0.8s infinite' }}>&nbsp;</span>}
-      </p>
-    </div>
+    </motion.div>
   );
 };
 
@@ -252,15 +199,17 @@ const CandidateCard: React.FC<{
   getCpseBadgeClass: (cpse: string) => string;
 }> = ({ cand, idx, onUseExisting, onCreateNew, getCpseBadgeClass }) => {
   const isMatch = cand.verdict === 'likely_duplicate';
-  const isPossible = cand.verdict === 'possible_duplicate';
   const isBlocked = cand.safety_flags.length > 0;
   const pct = Math.round(cand.confidence_score * 100);
-
   const barColor = isBlocked ? '#FF4757' : isMatch ? '#00D68F' : '#F7B731';
 
   return (
-    <div
-      className="glass-card animate-fadeInUp"
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: idx * 0.1, duration: 0.4 }}
+      whileHover={{ scale: 1.01 }}
+      className="glass-card"
       style={{
         padding: '20px',
         border: isMatch && !isBlocked
@@ -273,8 +222,6 @@ const CandidateCard: React.FC<{
           : isBlocked
           ? 'rgba(255,71,87,0.04)'
           : 'rgba(255,255,255,0.02)',
-        animationDelay: `${idx * 0.08}s`,
-        animationFillMode: 'both',
       }}
     >
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '14px' }}>
@@ -305,7 +252,13 @@ const CandidateCard: React.FC<{
 
       {/* Confidence Bar */}
       <div className="progress-bar-track" style={{ marginBottom: '12px' }}>
-        <div className="progress-bar-fill" style={{ width: `${pct}%`, background: barColor, boxShadow: `0 0 8px ${barColor}40` }} />
+        <motion.div
+          initial={{ width: 0 }}
+          animate={{ width: `${pct}%` }}
+          transition={{ duration: 0.8, delay: idx * 0.1 + 0.2, ease: 'easeOut' }}
+          className="progress-bar-fill"
+          style={{ background: barColor, boxShadow: `0 0 8px ${barColor}40` }}
+        />
       </div>
 
       <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '10px', fontStyle: 'italic' }}>
@@ -345,7 +298,7 @@ const CandidateCard: React.FC<{
           </button>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -356,6 +309,7 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
   const [query, setQuery] = useState('');
   const [sourceCpse, setSourceCpse] = useState('IOCL');
   const [loading, setLoading] = useState(false);
+  const [scanStep, setScanStep] = useState(0); // 0: Idle, 1: Extracting, 2: Matching, 3: Verifying
   const [result, setResult] = useState<LiveCheckResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [actionSuccessModal, setActionSuccessModal] = useState<{ title: string; desc: string } | null>(null);
@@ -366,8 +320,8 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
   const demoScenarios = [
     { label: 'Example 1: Standard Pipe', text: 'SS PIPE ASTM A106 GR B 150 MM', cpse: 'IOCL', type: 'normal' },
     { label: 'Example 2: Different Units', text: 'CS PIPE 2 INCH 150# SCH 40', cpse: 'BPCL', type: 'normal' },
-    { label: 'Example 3: Grade Mismatch (Blocked)', text: 'SS PIPE 316 50MM SCH 40S', cpse: 'ONGC', type: 'normal' },
-    { label: 'Example 4: Pressure Mismatch (Blocked)', text: 'GATE VALVE WCB 2 INCH CLASS 600', cpse: 'GAIL', type: 'normal' },
+    { label: 'Example 3: Grade Mismatch', text: 'SS PIPE 316 50MM SCH 40S', cpse: 'ONGC', type: 'normal' },
+    { label: 'Example 4: Pressure Mismatch', text: 'GATE VALVE WCB 2 INCH CLASS 600', cpse: 'GAIL', type: 'normal' },
     { label: 'Example 5: Brand New Item', text: 'SPECIAL TITANIUM TURBINE BLADE 500MM', cpse: 'ONGC', type: 'normal' },
   ];
 
@@ -380,12 +334,20 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
     const searchText = overrideText ?? query;
     const searchCpse = overrideCpse ?? sourceCpse;
     if (!searchText.trim() || searchText.trim().length < 3) return;
+    
     setLoading(true);
+    setScanStep(1);
     setError(null);
     setResult(null);
     setShowLLMSummary(false);
+    
     try {
       const t0 = performance.now();
+      
+      // Simulate scanning animation sequences
+      setTimeout(() => setScanStep(2), 400);
+      setTimeout(() => setScanStep(3), 800);
+      
       const data = await api.checkMaterial(searchText, searchCpse);
       setResponseTimeMs(Math.round(performance.now() - t0));
       setResult(data);
@@ -393,6 +355,7 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
       setError(err.message || 'Engine error — make sure backend is running.');
     } finally {
       setLoading(false);
+      setScanStep(0);
     }
   };
 
@@ -402,31 +365,14 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
     handleSearch(text, cpse);
   };
 
-  const handleUseExisting = (code: string) => {
-    onCodeReused(code);
-    setActionSuccessModal({
-      title: 'DUPLICATE CODE PREVENTED',
-      desc: `Procurement Officer confirmed reuse of material code ${code}. No redundant SKU created. Estimated savings: ₹85,000/year in inventory carrying costs.`,
-    });
-  };
-
-  const handleCreateNew = () => {
-    setActionSuccessModal({
-      title: 'NEW MATERIAL CODE CATALOGUED',
-      desc: `A new standardized material record has been assigned an UNSPSC taxonomy code and indexed in the cross-CPSE master catalog for future matching.`,
-    });
-  };
-
   const topVerdict = result?.top_verdict || '';
-  const verdictBannerClass =
-    topVerdict === 'likely_duplicate' ? 'verdict-banner-safe' :
-    topVerdict === 'possible_duplicate' ? 'verdict-banner-warn' : '';
+  const isMatch = topVerdict === 'likely_duplicate';
+  const holoColor = isMatch ? '#00D68F' : topVerdict === 'possible_duplicate' ? '#F7B731' : '#4F8EF7';
 
   return (
     <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '36px 28px' }}>
-
       {/* ── Page Header ── */}
-      <div style={{ marginBottom: '32px' }}>
+      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: '32px' }}>
         <h1 style={{ fontSize: '36px', fontWeight: 900, color: '#F0F4FF', letterSpacing: '-0.03em', marginBottom: '8px', lineHeight: 1.1 }}>
           Cross-CPSE{' '}
           <span className="shimmer-text">Material Harmonizer</span>
@@ -435,13 +381,33 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
           Paste any messy SAP/ERP material description. The AI pipeline cleans abbreviations,
           extracts physical attributes, and matches across IOCL, ONGC, BPCL and GAIL material masters.
         </p>
-      </div>
+      </motion.div>
 
       {/* ── Search Box ── */}
-      <div className="glass-panel-glow" style={{ padding: '24px', marginBottom: '28px' }}>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="glass-panel-glow"
+        style={{ padding: '24px', marginBottom: '28px', position: 'relative', overflow: 'hidden' }}
+      >
+        {/* Animated Scanning Laser */}
+        {loading && (
+          <motion.div
+            initial={{ top: 0, opacity: 0 }}
+            animate={{ top: ['0%', '100%', '0%'], opacity: 1 }}
+            transition={{ duration: 2, ease: 'linear', repeat: Infinity }}
+            style={{
+              position: 'absolute',
+              left: 0, right: 0, height: '2px',
+              background: '#4F8EF7',
+              boxShadow: '0 0 15px 2px rgba(79,142,247,0.7)',
+              zIndex: 10
+            }}
+          />
+        )}
+
         <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
           <select
-            id="cpse-select"
             value={sourceCpse}
             onChange={(e) => setSourceCpse(e.target.value)}
             style={{
@@ -465,7 +431,6 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
 
           <div style={{ flex: 1, position: 'relative' }}>
             <input
-              id="material-input"
               ref={inputRef}
               type="text"
               value={query}
@@ -479,21 +444,19 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
           </div>
 
           <button
-            id="verify-btn"
             onClick={() => handleSearch()}
             disabled={loading || !query.trim()}
             className="btn-primary"
-            style={{ padding: '0 28px', fontSize: '14px' }}
+            style={{ padding: '0 28px', fontSize: '14px', minWidth: '140px' }}
           >
             {loading ? (
-              <><RefreshCw size={16} className="animate-spin" /> Analyzing...</>
+              <><RefreshCw size={16} className="animate-spin" /> Verifying...</>
             ) : (
               <><ShieldCheck size={16} /> Verify</>
             )}
           </button>
         </div>
 
-        {/* Scenario Chips */}
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
             <Star size={12} color="#F7B731" />
@@ -505,7 +468,6 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
             {demoScenarios.map((sc, idx) => (
               <button
                 key={idx}
-                id={`demo-scenario-${idx + 1}`}
                 onClick={() => selectScenario(sc.text, sc.cpse)}
                 style={{
                   background: 'rgba(255,255,255,0.04)',
@@ -528,207 +490,204 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
             ))}
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Error */}
-      {error && (
-        <div style={{
-          background: 'rgba(255,71,87,0.1)', border: '1px solid rgba(255,71,87,0.3)',
-          borderRadius: '12px', padding: '16px', color: '#FF6B78', marginBottom: '24px',
-          display: 'flex', alignItems: 'center', gap: '12px',
-        }} className="animate-fadeInUp">
-          <AlertTriangle size={20} color="#FF4757" />
-          <span style={{ fontWeight: 600 }}>{error}</span>
-        </div>
-      )}
+      <AnimatePresence>
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            style={{ overflow: 'hidden', marginBottom: '24px' }}
+          >
+            <div style={{
+              background: 'rgba(255,71,87,0.1)', border: '1px solid rgba(255,71,87,0.3)',
+              borderRadius: '12px', padding: '16px', color: '#FF6B78',
+              display: 'flex', alignItems: 'center', gap: '12px',
+            }}>
+              <AlertTriangle size={20} color="#FF4757" />
+              <span style={{ fontWeight: 600 }}>{error}</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* Loading State */}
-      {loading && (
-        <div style={{ textAlign: 'center', padding: '60px 0' }} className="animate-fadeInUp">
-          <div style={{
-            width: '60px', height: '60px', borderRadius: '50%',
-            background: 'linear-gradient(135deg, #4F8EF7, #A855F7)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            margin: '0 auto 20px', boxShadow: '0 0 30px rgba(79,142,247,0.5)',
-            animation: 'spin 1.5s linear infinite',
-          }}>
-            <Layers size={28} color="white" />
-          </div>
-          <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-secondary)' }}>
-            Extracting attributes · Searching {indexedMaterials} SKUs · Checking safety gates...
-          </div>
-        </div>
-      )}
+      {/* Loading State sequence */}
+      <AnimatePresence>
+        {loading && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            style={{ textAlign: 'center', padding: '60px 0' }}
+          >
+            <div style={{
+              width: '60px', height: '60px', borderRadius: '50%',
+              background: 'linear-gradient(135deg, #4F8EF7, #A855F7)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              margin: '0 auto 20px', boxShadow: '0 0 30px rgba(79,142,247,0.5)',
+              animation: 'spin 1.5s linear infinite',
+            }}>
+              <Layers size={28} color="white" />
+            </div>
+            <div style={{ fontSize: '16px', fontWeight: 700, color: '#F0F4FF' }}>
+              {scanStep === 1 && "Extracting & standardizing attributes..."}
+              {scanStep === 2 && "Computing embeddings & fetching clusters..."}
+              {scanStep === 3 && "Applying deterministic safety gates..."}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── RESULTS ── */}
-      {result && !loading && (
-        <div className="animate-fadeInUp">
-
-          {/* Timing Badge */}
-          {responseTimeMs !== null && (
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
-              <div style={{
-                display: 'inline-flex', alignItems: 'center', gap: '6px',
-                background: 'rgba(0,214,143,0.1)', border: '1px solid rgba(0,214,143,0.25)',
-                padding: '5px 14px', borderRadius: '20px',
-              }}>
-                <Zap size={12} color="#00D68F" />
-                <span style={{ fontSize: '12px', fontWeight: 700, color: '#00D68F' }}>
-                  {responseTimeMs}ms · Local CPU Pipeline
-                </span>
-              </div>
-            </div>
-          )}
-
-          {/* Magic Morph Diff */}
-          <div className="glass-panel" style={{ padding: '24px', marginBottom: '20px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-              <ArrowRightLeft size={16} color="#4F8EF7" />
-              <span style={{ fontSize: '13px', fontWeight: 700, color: '#7AAEFF', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                Harmonization Transformation
-              </span>
-            </div>
-            <MorphDiffCard
-              rawInput={result.query}
-              attrs={result.extracted_attributes}
-              matchDesc={result.candidates[0]?.raw_description}
-              matchCode={result.candidates[0]?.material_code}
-              matchCpse={result.candidates[0]?.source_cpse}
-            />
-            {/* LLM Toggle */}
-            <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'flex-end' }}>
-              <button
-                id="llm-summary-toggle"
-                onClick={() => setShowLLMSummary(!showLLMSummary)}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: '7px',
-                  background: showLLMSummary ? 'rgba(168,85,247,0.15)' : 'rgba(255,255,255,0.04)',
-                  border: showLLMSummary ? '1px solid rgba(168,85,247,0.4)' : '1px solid rgba(255,255,255,0.1)',
-                  color: showLLMSummary ? '#C084FC' : 'var(--text-muted)',
-                  padding: '8px 16px',
-                  borderRadius: '10px',
-                  fontSize: '12px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                }}
+      <AnimatePresence>
+        {result && !loading && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, staggerChildren: 0.1 }}
+          >
+            <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '20px', marginBottom: '20px' }}>
+              
+              {/* 3D Hologram Data Core */}
+              <motion.div
+                className={`glass-panel ${topVerdict === 'likely_duplicate' ? 'verdict-banner-safe' : topVerdict === 'possible_duplicate' ? 'verdict-banner-warn' : ''}`}
+                style={{ position: 'relative', overflow: 'hidden', padding: 0, minHeight: '300px', display: 'flex', flexDirection: 'column' }}
+                whileHover={{ rotateX: 2, rotateY: -2 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
               >
-                <Brain size={14} />
-                {showLLMSummary ? 'Hide' : 'Generate'} AI Executive Summary
-              </button>
-            </div>
-            <LLMSummaryPanel result={result} visible={showLLMSummary} />
-          </div>
-
-          {/* Two-column: Gauge + Attributes */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '20px', marginBottom: '20px' }}>
-
-            {/* Confidence Gauge */}
-            <div
-              className={`glass-panel ${verdictBannerClass}`}
-              style={{ padding: '28px 32px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '16px', minWidth: '220px' }}
-            >
-              <ConfidenceGauge
-                score={result.candidates[0]?.confidence_score || 0}
-                verdict={topVerdict}
-              />
-              <p style={{ fontSize: '12px', color: 'var(--text-secondary)', textAlign: 'center', lineHeight: 1.5, maxWidth: '180px' }}>
-                {result.recommendation}
-              </p>
-            </div>
-
-            {/* Attribute Grid */}
-            <div className="glass-panel" style={{ padding: '24px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-                <Layers size={16} color="#4F8EF7" />
-                <span style={{ fontSize: '13px', fontWeight: 700, color: '#7AAEFF', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                  Extracted Physical Attributes
-                </span>
-                <span style={{ marginLeft: 'auto', fontSize: '11px', color: 'var(--text-muted)' }}>Normalized to SI Units</span>
-              </div>
-              <AttrGrid attrs={result.extracted_attributes} />
-              {/* Safety Gate Notice */}
-              <div style={{
-                marginTop: '16px',
-                background: 'rgba(79,142,247,0.06)', border: '1px solid rgba(79,142,247,0.18)',
-                borderRadius: '10px', padding: '12px 14px',
-                display: 'flex', gap: '10px', alignItems: 'flex-start',
-              }}>
-                <ShieldCheck size={16} color="#4F8EF7" style={{ flexShrink: 0, marginTop: '1px' }} />
-                <div style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                  <strong style={{ color: '#7AAEFF' }}>Zero-Guessing Safety Gate:</strong> Missing attributes are never inferred. Dense vector similarity alone cannot merge items if metallurgy or pressure class conflicts.
+                {/* 3D Canvas Background */}
+                <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+                  <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
+                    <Hologram3D color={holoColor} isMatched={isMatch} />
+                  </Canvas>
                 </div>
-              </div>
-            </div>
-          </div>
+                
+                {/* Foreground Stats overlay */}
+                <div style={{ position: 'relative', zIndex: 1, padding: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <div>
+                    <span style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', color: '#F0F4FF', letterSpacing: '0.1em' }}>Canonical Standard</span>
+                    <div style={{ fontSize: '18px', fontWeight: 900, color: holoColor, marginTop: '4px' }}>
+                      {result.extracted_attributes.material_type || 'UNKNOWN ITEM'}
+                    </div>
+                  </div>
+                  <ConfidenceGauge score={result.candidates[0]?.confidence_score || 0} verdict={topVerdict} />
+                </div>
+                
+                <div style={{ position: 'relative', zIndex: 1, marginTop: 'auto', padding: '24px', background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)' }}>
+                  <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0, maxWidth: '280px', lineHeight: 1.5 }}>
+                    {result.recommendation}
+                  </p>
+                </div>
+              </motion.div>
 
-          {/* Candidate Cards */}
-          {result.candidates.length > 0 && (
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-                <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                  Top Candidate Matches
-                </span>
-                <span style={{
-                  background: 'rgba(255,255,255,0.07)', padding: '2px 8px', borderRadius: '20px',
-                  fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 700,
+              {/* Attribute Grid */}
+              <motion.div
+                className="glass-panel" style={{ padding: '24px' }}
+                whileHover={{ rotateX: 2, rotateY: 2 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                  <Layers size={16} color="#4F8EF7" />
+                  <span style={{ fontSize: '13px', fontWeight: 700, color: '#7AAEFF', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    Extracted Physical Attributes
+                  </span>
+                </div>
+                <AttrGrid attrs={result.extracted_attributes} />
+                <div style={{
+                  marginTop: '16px', background: 'rgba(79,142,247,0.06)', border: '1px solid rgba(79,142,247,0.18)',
+                  borderRadius: '10px', padding: '12px 14px', display: 'flex', gap: '10px', alignItems: 'flex-start',
                 }}>
-                  {result.candidates.length} found
-                </span>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                {result.candidates.map((cand, idx) => (
-                  <CandidateCard
-                    key={idx} cand={cand} idx={idx}
-                    onUseExisting={handleUseExisting}
-                    onCreateNew={handleCreateNew}
-                    getCpseBadgeClass={getCpseBadgeClass}
-                  />
-                ))}
-              </div>
+                  <ShieldCheck size={16} color="#4F8EF7" style={{ flexShrink: 0, marginTop: '1px' }} />
+                  <div style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                    <strong style={{ color: '#7AAEFF' }}>Zero-Guessing Safety Gate:</strong> Missing attributes are never inferred. Dense vector similarity alone cannot merge items if metallurgy or pressure class conflicts.
+                  </div>
+                </div>
+                
+                <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'flex-end' }}>
+                  <button
+                    onClick={() => setShowLLMSummary(!showLLMSummary)}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '7px',
+                      background: showLLMSummary ? 'rgba(168,85,247,0.15)' : 'rgba(255,255,255,0.04)',
+                      border: showLLMSummary ? '1px solid rgba(168,85,247,0.4)' : '1px solid rgba(255,255,255,0.1)',
+                      color: showLLMSummary ? '#C084FC' : 'var(--text-muted)',
+                      padding: '8px 16px', borderRadius: '10px', fontSize: '11px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s ease',
+                    }}
+                  >
+                    <Brain size={12} /> {showLLMSummary ? 'Hide' : 'Generate'} AI Summary
+                  </button>
+                </div>
+                <AnimatePresence>
+                  {showLLMSummary && <LLMSummaryPanel result={result} visible={showLLMSummary} />}
+                </AnimatePresence>
+              </motion.div>
             </div>
-          )}
-        </div>
-      )}
+
+            {/* Candidate Cards */}
+            {result.candidates.length > 0 && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                  <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    Top Candidate Matches
+                  </span>
+                  <span style={{ background: 'rgba(255,255,255,0.07)', padding: '2px 8px', borderRadius: '20px', fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 700 }}>
+                    {result.candidates.length} found
+                  </span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                  {result.candidates.map((cand, idx) => (
+                    <CandidateCard
+                      key={idx} cand={cand} idx={idx}
+                      onUseExisting={(code) => setActionSuccessModal({
+                        title: 'DUPLICATE CODE PREVENTED',
+                        desc: `Procurement Officer confirmed reuse of material code ${code}. No redundant SKU created. Estimated savings: ₹85,000/year.`,
+                      })}
+                      onCreateNew={() => setActionSuccessModal({
+                        title: 'NEW MATERIAL CODE CATALOGUED',
+                        desc: `A new standardized material record has been assigned an UNSPSC taxonomy code and indexed.`,
+                      })}
+                      getCpseBadgeClass={getCpseBadgeClass}
+                    />
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Success Modal */}
-      {actionSuccessModal && (
-        <div style={{
-          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)',
-          backdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center',
-          justifyContent: 'center', zIndex: 200, padding: '20px',
-        }}>
-          <div
-            className="glass-panel animate-fadeInUp"
-            style={{ maxWidth: '500px', width: '100%', padding: '32px', border: '1px solid rgba(0,214,143,0.3)' }}
+      <AnimatePresence>
+        {actionSuccessModal && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200, padding: '20px' }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '16px' }}>
-              <div style={{
-                width: '50px', height: '50px', borderRadius: '50%',
-                background: 'rgba(0,214,143,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: '0 0 20px rgba(0,214,143,0.3)',
-              }}>
-                <CheckCircle2 size={28} color="#00D68F" />
-              </div>
-              <h3 style={{ fontSize: '18px', fontWeight: 900, color: '#F0F4FF' }}>{actionSuccessModal.title}</h3>
-            </div>
-            <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: '24px' }}>
-              {actionSuccessModal.desc}
-            </p>
-            <button
-              id="modal-close-btn"
-              onClick={() => setActionSuccessModal(null)}
-              className="btn-success"
-              style={{ width: '100%', justifyContent: 'center', padding: '14px' }}
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }}
+              className="glass-panel" style={{ maxWidth: '500px', width: '100%', padding: '32px', border: '1px solid rgba(0,214,143,0.3)' }}
             >
-              Done
-            </button>
-          </div>
-        </div>
-      )}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '16px' }}>
+                <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: 'rgba(0,214,143,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 20px rgba(0,214,143,0.3)' }}>
+                  <CheckCircle2 size={28} color="#00D68F" />
+                </div>
+                <h3 style={{ fontSize: '18px', fontWeight: 900, color: '#F0F4FF' }}>{actionSuccessModal.title}</h3>
+              </div>
+              <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: '24px' }}>
+                {actionSuccessModal.desc}
+              </p>
+              <button
+                onClick={() => setActionSuccessModal(null)}
+                className="btn-success" style={{ width: '100%', justifyContent: 'center', padding: '14px' }}
+              >
+                Done
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
-
-// Stub used in loading state
-const indexedMaterials = 456;

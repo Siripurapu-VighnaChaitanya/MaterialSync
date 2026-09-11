@@ -10,6 +10,7 @@ import { UNSPSCView } from './components/UNSPSCView';
 import { DemoGuideModal } from './components/DemoGuideModal';
 import { CanvasBackground } from './components/3d/CanvasBackground';
 import { api } from './services/api';
+import { AnimatePresence, motion } from 'framer-motion';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState('checker');
@@ -70,19 +71,30 @@ export const App: React.FC = () => {
         />
 
         {/* Main Content Sections */}
-        <main style={{ flex: 1, paddingBottom: '40px' }}>
-          {activeTab === 'checker' && (
-            <LiveChecker
-              onCodeReused={(code) => console.log(`Reused material code: ${code}`)}
-              activeRole={activeRole}
-            />
-          )}
-          
-          {activeTab === 'bulk' && <BulkUploadView />}
-          {activeTab === 'clusters' && <ClusterExplorer />}
-          {activeTab === 'review' && <ReviewQueue />}
-          {activeTab === 'analytics' && <AnalyticsView />}
-          {activeTab === 'unspsc' && <UNSPSCView />}
+        <main style={{ flex: 1, paddingBottom: '40px', position: 'relative' }}>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+              style={{ width: '100%', height: '100%' }}
+            >
+              {activeTab === 'checker' && (
+                <LiveChecker
+                  onCodeReused={(code) => console.log(`Reused material code: ${code}`)}
+                  activeRole={activeRole}
+                />
+              )}
+              
+              {activeTab === 'bulk' && <BulkUploadView />}
+              {activeTab === 'clusters' && <ClusterExplorer />}
+              {activeTab === 'review' && <ReviewQueue />}
+              {activeTab === 'analytics' && <AnalyticsView />}
+              {activeTab === 'unspsc' && <UNSPSCView />}
+            </motion.div>
+          </AnimatePresence>
         </main>
 
         {/* Demo Guide Modal */}
