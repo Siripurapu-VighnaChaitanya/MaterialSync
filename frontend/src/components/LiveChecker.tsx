@@ -541,85 +541,85 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
         )}
       </AnimatePresence>
 
-      {/* ── PRO AI LOADING ANIMATION ── */}
+      {/* ── SONAR SWEEP LOADING ANIMATION ── */}
       <AnimatePresence>
         {loading && (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.05, filter: 'blur(10px)' }}
-            transition={{ duration: 0.5, ease: 'easeInOut' }}
+            exit={{ opacity: 0, scale: 0.95, filter: 'blur(5px)' }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
             style={{ marginBottom: '24px' }}
           >
             <div className="glass-panel" style={{ 
-              padding: '40px', 
+              padding: '60px 40px', 
               position: 'relative', 
               overflow: 'hidden',
-              background: 'radial-gradient(circle at 50% 50%, rgba(15,23,42,0.9) 0%, rgba(10,15,29,1) 100%)',
-              border: '1px solid rgba(79, 142, 247, 0.4)',
-              boxShadow: '0 0 50px rgba(79, 142, 247, 0.1) inset'
+              background: '#0B1121',
+              border: '1px solid rgba(0, 214, 143, 0.3)',
+              boxShadow: '0 0 50px rgba(0, 214, 143, 0.1) inset',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center'
             }}>
               
-              {/* Animated Background Grid */}
-              <div style={{ position: 'absolute', inset: 0, opacity: 0.05, backgroundImage: 'linear-gradient(rgba(79,142,247,1) 1px, transparent 1px), linear-gradient(90deg, rgba(79,142,247,1) 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
-
-              {/* Scanning Laser Line */}
-              <motion.div
-                animate={{ top: ['-10%', '110%', '-10%'] }}
-                transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
-                style={{ position: 'absolute', left: 0, right: 0, height: '3px', background: '#4F8EF7', boxShadow: '0 0 30px 10px rgba(79,142,247,0.6)', zIndex: 1 }}
-              />
-
-              <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              {/* Radar Container */}
+              <div style={{ position: 'relative', width: '280px', height: '280px', marginBottom: '32px' }}>
                 
-                {/* Spinning Core */}
-                <div style={{ position: 'relative', width: '60px', height: '60px', marginBottom: '24px', display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center' }}>
-                  <motion.div animate={{ rotate: 360 }} transition={{ duration: 3, repeat: Infinity, ease: 'linear' }} style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '2px dashed #4F8EF7', opacity: 0.5 }} />
-                  <Cpu size={28} color="#4F8EF7" style={{ filter: 'drop-shadow(0 0 10px #4F8EF7)' }} />
+                {/* Concentric Rings */}
+                <div style={{ position: 'absolute', inset: '0', borderRadius: '50%', border: '1px solid rgba(0,214,143,0.1)' }} />
+                <div style={{ position: 'absolute', inset: '15%', borderRadius: '50%', border: '1px solid rgba(0,214,143,0.2)' }} />
+                <div style={{ position: 'absolute', inset: '30%', borderRadius: '50%', border: '1px dashed rgba(0,214,143,0.3)' }} />
+                <div style={{ position: 'absolute', inset: '45%', borderRadius: '50%', border: '1px solid rgba(0,214,143,0.5)' }} />
+                
+                {/* Crosshairs */}
+                <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: '1px', background: 'rgba(0,214,143,0.2)', transform: 'translateX(-50%)' }} />
+                <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '1px', background: 'rgba(0,214,143,0.2)', transform: 'translateY(-50%)' }} />
+
+                {/* The Sweep */}
+                <div className="radar-sweep" style={{ position: 'absolute', inset: 0, borderRadius: '50%' }} />
+                
+                {/* Center Pulse */}
+                <div style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', width: '40px', height: '40px', background: '#00D68F', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 30px #00D68F', zIndex: 10 }}>
+                  <Search size={20} color="#0B1121" />
                 </div>
                 
-                <h3 style={{ fontSize: '20px', fontWeight: 900, color: '#F0F4FF', letterSpacing: '0.15em', marginBottom: '12px', textTransform: 'uppercase' }}>
-                  {loadingSteps[scanStep]?.text || "Processing Data..."}
-                </h3>
-                
-                <div style={{ width: '300px', height: '4px', background: 'rgba(255,255,255,0.1)', borderRadius: '2px', overflow: 'hidden', marginBottom: '32px' }}>
-                  <motion.div
-                    animate={{ width: `${((scanStep + 1) / loadingSteps.length) * 100}%` }}
-                    transition={{ duration: 0.5 }}
-                    style={{ height: '100%', background: '#00D68F', boxShadow: '0 0 10px #00D68F' }}
-                  />
-                </div>
-
-                {/* Simulated Real-time Token Stream */}
-                <div style={{ width: '100%', maxWidth: '600px', background: 'rgba(0,0,0,0.6)', border: '1px solid rgba(79,142,247,0.2)', borderRadius: '12px', padding: '24px', fontFamily: 'JetBrains Mono, monospace', fontSize: '13px', color: '#7AAEFF', backdropFilter: 'blur(10px)' }}>
-                  <div style={{ marginBottom: '12px', color: 'var(--text-muted)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>&gt; Deep Scanning Raw String:</div>
-                  <div style={{ fontSize: '18px', color: '#FFFFFF', fontWeight: 700, marginBottom: '24px', textShadow: '0 0 10px rgba(255,255,255,0.3)', position: 'relative' }}>
-                    "{query}"
-                    <motion.span animate={{ opacity: [0, 1, 0] }} transition={{ duration: 0.8, repeat: Infinity }} style={{ display: 'inline-block', width: '10px', height: '18px', background: '#00D68F', marginLeft: '8px', verticalAlign: 'middle' }} />
-                  </div>
-                  
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                    <AnimatePresence>
-                      {scanStep >= 1 && (
-                        <motion.span initial={{ opacity: 0, scale: 0.5, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} style={{ background: 'rgba(0,214,143,0.15)', border: '1px solid #00D68F', color: '#00D68F', padding: '6px 10px', borderRadius: '6px', fontWeight: 700 }}>[NER: MATERIAL_TYPE_FOUND]</motion.span>
-                      )}
-                      {scanStep >= 2 && (
-                        <motion.span initial={{ opacity: 0, scale: 0.5, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} style={{ background: 'rgba(168,85,247,0.15)', border: '1px solid #C084FC', color: '#C084FC', padding: '6px 10px', borderRadius: '6px', fontWeight: 700 }}>[VEC: 384_DIM_DENSE_EMBEDDING]</motion.span>
-                      )}
-                      {scanStep >= 3 && (
-                        <motion.span initial={{ opacity: 0, scale: 0.5, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} style={{ background: 'rgba(247,183,49,0.15)', border: '1px solid #F7B731', color: '#F7B731', padding: '6px 10px', borderRadius: '6px', fontWeight: 700 }}>[FAISS: 140K_INDEX_SEARCH]</motion.span>
-                      )}
-                      {scanStep >= 4 && (
-                        <motion.span initial={{ opacity: 0, scale: 0.5, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} style={{ background: 'rgba(79,142,247,0.15)', border: '1px solid #4F8EF7', color: '#7AAEFF', padding: '6px 10px', borderRadius: '6px', fontWeight: 700 }}>[SIM: COSINE_MATCH_&gt;0.85]</motion.span>
-                      )}
-                      {scanStep >= 5 && (
-                        <motion.span initial={{ opacity: 0, scale: 0.5, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} style={{ background: 'rgba(255,71,87,0.15)', border: '1px solid #FF4757', color: '#FF6B78', padding: '6px 10px', borderRadius: '6px', fontWeight: 700 }}>[GATE: DIMENSION_VALIDATED]</motion.span>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                </div>
-
+                {/* Blips (Appear based on scanStep) */}
+                {scanStep >= 1 && (
+                  <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: [0, 1.5, 1], opacity: [1, 1, 0.8] }} transition={{ duration: 0.5 }} style={{ position: 'absolute', top: '25%', left: '30%', width: '12px', height: '12px', background: '#00D68F', borderRadius: '50%', boxShadow: '0 0 10px #00D68F', zIndex: 5 }}>
+                    <span style={{ position: 'absolute', left: '16px', top: '-4px', fontSize: '10px', color: '#00D68F', fontWeight: 700 }}>IOCL</span>
+                  </motion.div>
+                )}
+                {scanStep >= 2 && (
+                  <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: [0, 1.5, 1], opacity: [1, 1, 0.8] }} transition={{ duration: 0.5, delay: 0.2 }} style={{ position: 'absolute', bottom: '35%', right: '20%', width: '12px', height: '12px', background: '#F7B731', borderRadius: '50%', boxShadow: '0 0 10px #F7B731', zIndex: 5 }}>
+                    <span style={{ position: 'absolute', left: '16px', top: '-4px', fontSize: '10px', color: '#F7B731', fontWeight: 700 }}>ONGC</span>
+                  </motion.div>
+                )}
+                {scanStep >= 3 && (
+                  <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: [0, 1.5, 1], opacity: [1, 1, 0.8] }} transition={{ duration: 0.5, delay: 0.1 }} style={{ position: 'absolute', top: '15%', right: '40%', width: '12px', height: '12px', background: '#C084FC', borderRadius: '50%', boxShadow: '0 0 10px #C084FC', zIndex: 5 }}>
+                    <span style={{ position: 'absolute', left: '16px', top: '-4px', fontSize: '10px', color: '#C084FC', fontWeight: 700 }}>GAIL</span>
+                  </motion.div>
+                )}
+                {scanStep >= 4 && (
+                  <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: [0, 1.5, 1], opacity: [1, 1, 0.8] }} transition={{ duration: 0.5, delay: 0.3 }} style={{ position: 'absolute', bottom: '20%', left: '45%', width: '12px', height: '12px', background: '#4F8EF7', borderRadius: '50%', boxShadow: '0 0 10px #4F8EF7', zIndex: 5 }}>
+                    <span style={{ position: 'absolute', left: '16px', top: '-4px', fontSize: '10px', color: '#4F8EF7', fontWeight: 700 }}>BPCL</span>
+                  </motion.div>
+                )}
               </div>
+
+              {/* Status Text */}
+              <div style={{ textAlign: 'center', zIndex: 10 }}>
+                <h3 style={{ fontSize: '18px', fontWeight: 900, color: '#00D68F', letterSpacing: '0.15em', marginBottom: '8px', textTransform: 'uppercase' }}>
+                  {scanStep === 1 ? 'Pinging IOCL Database...' : 
+                   scanStep === 2 ? 'Cross-checking ONGC...' : 
+                   scanStep === 3 ? 'Searching GAIL Networks...' :
+                   scanStep >= 4 ? 'Triangulating Matches...' : 'Initiating Global Radar...'}
+                </h3>
+                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', fontFamily: 'JetBrains Mono, monospace' }}>
+                  Query: <span style={{ color: '#F0F4FF' }}>"{query}"</span>
+                </p>
+              </div>
+
             </div>
           </motion.div>
         )}

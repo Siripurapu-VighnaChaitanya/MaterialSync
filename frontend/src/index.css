@@ -392,6 +392,10 @@ code, pre, .font-mono {
   border: 1px solid rgba(0,214,143,0.3);
   border-radius: 16px;
 }
+.radar-sweep {
+  background: conic-gradient(from 0deg, transparent 70%, rgba(0, 214, 143, 0.1) 90%, rgba(0, 214, 143, 0.8) 100%);
+  animation: radar-spin 2s linear infinite;
+}
 .verdict-banner-warn {
   background: linear-gradient(135deg, rgba(247,183,49,0.12) 0%, rgba(245,158,11,0.08) 100%);
   border: 1px solid rgba(247,183,49,0.3);
