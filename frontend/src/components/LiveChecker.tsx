@@ -205,9 +205,9 @@ const CandidateCard: React.FC<{
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: idx * 0.1, duration: 0.4 }}
+      initial={{ opacity: 0, x: 30, scale: 0.95 }}
+      animate={{ opacity: 1, x: 0, scale: 1 }}
+      transition={{ delay: 1.0 + (idx * 0.4), duration: 0.5, type: 'spring' }}
       whileHover={{ scale: 1.01 }}
       className="glass-card"
       style={{
@@ -309,7 +309,7 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
   const [query, setQuery] = useState('');
   const [sourceCpse, setSourceCpse] = useState('IOCL');
   const [loading, setLoading] = useState(false);
-  const [scanStep, setScanStep] = useState(0); // 0: Idle, 1: Extracting, 2: Matching, 3: Verifying
+  const [scanStep, setScanStep] = useState(0); 
   const [result, setResult] = useState<LiveCheckResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [actionSuccessModal, setActionSuccessModal] = useState<{ title: string; desc: string } | null>(null);
@@ -330,6 +330,15 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
     return map[cpse?.toUpperCase()] || 'badge-generic';
   };
 
+  const loadingSteps = [
+    { text: "Initializing MiniLM-L12 Engine...", icon: <RefreshCw size={14} className="animate-spin" /> },
+    { text: "Extracting Canonical Attributes...", icon: <Cpu size={14} /> },
+    { text: "Generating Dense Vector Embeddings...", icon: <Network size={14} /> },
+    { text: "Querying FAISS Index (140,000+ Items)...", icon: <Database size={14} /> },
+    { text: "Evaluating Structural Similarity...", icon: <Layers size={14} /> },
+    { text: "Applying Deterministic Safety Gates...", icon: <ShieldCheck size={14} /> }
+  ];
+
   const handleSearch = async (overrideText?: string, overrideCpse?: string) => {
     const searchText = overrideText ?? query;
     const searchCpse = overrideCpse ?? sourceCpse;
@@ -344,16 +353,35 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
     try {
       const t0 = performance.now();
       
-      // Simulate scanning animation sequences
-      setTimeout(() => setScanStep(2), 400);
-      setTimeout(() => setScanStep(3), 800);
+      // Start step-by-step animation
+      let currentStep = 0;
+      const interval = setInterval(() => {
+        currentStep++;
+        if (currentStep < loadingSteps.length) {
+          setScanStep(currentStep);
+        }
+      }, 700);
       
+      // Fetch data in background
       const data = await api.checkMaterial(searchText, searchCpse);
-      setResponseTimeMs(Math.round(performance.now() - t0));
-      setResult(data);
+      
+      // Wait for at least 3.5 seconds to show the cool animation
+      const elapsed = performance.now() - t0;
+      const remainingWait = Math.max(0, 3500 - elapsed);
+      
+      setTimeout(() => {
+        clearInterval(interval);
+        setScanStep(loadingSteps.length - 1);
+        setTimeout(() => {
+          setResponseTimeMs(Math.round(performance.now() - t0));
+          setResult(data);
+          setLoading(false);
+          setScanStep(0);
+        }, 500);
+      }, remainingWait);
+      
     } catch (err: any) {
       setError(err.message || 'Engine error — make sure backend is running.');
-    } finally {
       setLoading(false);
       setScanStep(0);
     }
@@ -513,32 +541,68 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
         )}
       </AnimatePresence>
 
-      {/* Loading State sequence */}
+      {/* ── Elaborate Loading Animation ── */}
       <AnimatePresence>
         {loading && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            style={{ textAlign: 'center', padding: '60px 0' }}
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            style={{ overflow: 'hidden', marginBottom: '24px' }}
           >
-            <div style={{
-              width: '60px', height: '60px', borderRadius: '50%',
-              background: 'linear-gradient(135deg, #4F8EF7, #A855F7)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              margin: '0 auto 20px', boxShadow: '0 0 30px rgba(79,142,247,0.5)',
-              animation: 'spin 1.5s linear infinite',
-            }}>
-              <Layers size={28} color="white" />
-            </div>
-            <div style={{ fontSize: '16px', fontWeight: 700, color: '#F0F4FF' }}>
-              {scanStep === 1 && "Extracting & standardizing attributes..."}
-              {scanStep === 2 && "Computing embeddings & fetching clusters..."}
-              {scanStep === 3 && "Applying deterministic safety gates..."}
+            <div className="glass-panel" style={{ padding: '32px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
+              
+              {/* Central Glowing Orb */}
+              <div style={{ position: 'relative', width: '80px', height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
+                  style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '2px dashed rgba(79, 142, 247, 0.5)' }}
+                />
+                <motion.div
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+                  style={{ position: 'absolute', inset: '10px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(79,142,247,0.4) 0%, transparent 70%)' }}
+                />
+                <Cpu size={32} color="#4F8EF7" />
+              </div>
+
+              {/* Step Sequence */}
+              <div style={{ width: '100%', maxWidth: '400px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {loadingSteps.map((step, idx) => {
+                  const isActive = idx === scanStep;
+                  const isPast = idx < scanStep;
+                  
+                  if (idx > scanStep) return null; // Don't show future steps yet
+                  
+                  return (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: '12px',
+                        padding: '12px 16px',
+                        background: isActive ? 'rgba(79, 142, 247, 0.1)' : 'rgba(255, 255, 255, 0.02)',
+                        border: isActive ? '1px solid rgba(79, 142, 247, 0.3)' : '1px solid rgba(255, 255, 255, 0.05)',
+                        borderRadius: '8px',
+                        color: isActive ? '#7AAEFF' : 'var(--text-muted)'
+                      }}
+                    >
+                      {isPast ? <CheckCircle2 size={16} color="#00D68F" /> : step.icon}
+                      <span style={{ fontSize: '13px', fontWeight: isActive ? 700 : 500, fontFamily: 'JetBrains Mono, monospace' }}>
+                        {step.text}
+                      </span>
+                    </motion.div>
+                  );
+                })}
+              </div>
+
             </div>
           </motion.div>
         )}
       </AnimatePresence>
+
 
       {/* ── RESULTS ── */}
       <AnimatePresence>
