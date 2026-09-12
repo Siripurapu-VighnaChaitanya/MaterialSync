@@ -497,7 +497,15 @@ code, pre, .font-mono {
   .responsive-grid {
     grid-template-columns: 1fr !important;
   }
+  .responsive-navbar-container {
+    height: auto !important;
+    flex-wrap: wrap;
+    padding-top: 12px !important;
+    padding-bottom: 12px !important;
+  }
   .responsive-nav-tabs {
+    min-width: 100%;
+    order: 3;
     overflow-x: auto;
     justify-content: flex-start !important;
     padding-bottom: 5px;
