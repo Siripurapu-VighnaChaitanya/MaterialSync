@@ -88,10 +88,7 @@ export const ClusterExplorer: React.FC = () => {
       </div>
 
       {/* Floating UI Panel (Left) */}
-      <div className="responsive-cluster-panel" style={{ 
-        position: 'absolute', top: '24px', left: '24px', zIndex: 10,
-        width: '320px', pointerEvents: 'auto'
-      }}>
+      <div className="cluster-panel-left">
         <div className="glass-panel-glow" style={{ padding: '24px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
             <div style={{ background: 'rgba(79,142,247,0.15)', padding: '8px', borderRadius: '10px' }}>
@@ -118,13 +115,7 @@ export const ClusterExplorer: React.FC = () => {
 
       {/* Node Detail Inspector (Right) */}
       {selectedNode && (
-        <div 
-          className="animate-slide-right responsive-cluster-inspector"
-          style={{ 
-            position: 'absolute', top: '24px', right: '24px', zIndex: 10,
-            width: '340px', pointerEvents: 'auto'
-          }}
-        >
+        <div className="animate-slide-right cluster-panel-right">
           <div className="glass-panel" style={{ padding: '24px', border: '1px solid rgba(79,142,247,0.4)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

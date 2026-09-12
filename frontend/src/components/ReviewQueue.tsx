@@ -91,9 +91,9 @@ export const ReviewQueue: React.FC = () => {
           </p>
         </div>
       ) : (
-        <div className="responsive-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '24px' }}>
+        <div className="review-queue-grid">
           {/* List of Pending Items */}
-          <div className="glass-panel" style={{ padding: '16px', maxHeight: '680px', overflowY: 'auto' }}>
+          <div className="glass-panel review-queue-list">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', padding: '0 8px' }}>
               <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
                 Pending Ambiguous Pairs ({items.length})

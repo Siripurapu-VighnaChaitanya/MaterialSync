@@ -489,6 +489,35 @@ code, pre, .font-mono {
 .role-pill:hover:not(.active) {
   color: var(--text-secondary);
 }
+/* Cluster Panel Base Styles */
+.cluster-panel-left {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  z-index: 10;
+  width: 320px;
+  pointer-events: auto;
+}
+.cluster-panel-right {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 10;
+  width: 340px;
+  pointer-events: auto;
+}
+
+/* Review Queue Base Styles */
+.review-queue-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 24px;
+}
+.review-queue-list {
+  padding: 16px;
+  max-height: 680px;
+  overflow-y: auto;
+}
 
 /* ═══════════════════════════════════════════
    RESPONSIVE UTILITIES
@@ -524,22 +553,29 @@ code, pre, .font-mono {
     width: 32px !important;
     height: 32px !important;
   }
-  .responsive-cluster-panel {
-    width: calc(100% - 20px) !important;
-    left: 10px !important;
-    right: 10px !important;
+  .cluster-panel-left {
     top: 10px !important;
-  }
-  .responsive-cluster-inspector {
-    width: calc(100% - 20px) !important;
     left: 10px !important;
     right: 10px !important;
-    top: 180px !important;
+    width: auto !important;
+  }
+  .cluster-panel-right {
+    top: auto !important;
+    bottom: 50px !important;
+    left: 10px !important;
+    right: 10px !important;
+    width: auto !important;
   }
   .responsive-cluster-hint {
     bottom: 10px !important;
     width: 90% !important;
     text-align: center;
+  }
+  .review-queue-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .review-queue-list {
+    max-height: 300px !important;
   }
 }
 
