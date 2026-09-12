@@ -543,85 +543,37 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
         )}
       </AnimatePresence>
 
-      {/* ── SONAR SWEEP LOADING ANIMATION ── */}
+      {/* ── ELEGANT SKELETON LOADING ── */}
       <AnimatePresence>
         {loading && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95, filter: 'blur(5px)' }}
-            transition={{ duration: 0.4, ease: 'easeOut' }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, scale: 0.98, filter: 'blur(4px)' }}
+            transition={{ duration: 0.4 }}
             style={{ marginBottom: '24px' }}
           >
-            <div className="glass-panel" style={{ 
-              padding: '60px 40px', 
-              position: 'relative', 
-              overflow: 'hidden',
-              background: '#0B1121',
-              border: '1px solid rgba(0, 214, 143, 0.3)',
-              boxShadow: '0 0 50px rgba(0, 214, 143, 0.1) inset',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center'
-            }}>
-              
-              {/* Radar Container */}
-              <div style={{ position: 'relative', width: '280px', height: '280px', marginBottom: '32px' }}>
-                
-                {/* Concentric Rings */}
-                <div style={{ position: 'absolute', inset: '0', borderRadius: '50%', border: '1px solid rgba(0,214,143,0.1)' }} />
-                <div style={{ position: 'absolute', inset: '15%', borderRadius: '50%', border: '1px solid rgba(0,214,143,0.2)' }} />
-                <div style={{ position: 'absolute', inset: '30%', borderRadius: '50%', border: '1px dashed rgba(0,214,143,0.3)' }} />
-                <div style={{ position: 'absolute', inset: '45%', borderRadius: '50%', border: '1px solid rgba(0,214,143,0.5)' }} />
-                
-                {/* Crosshairs */}
-                <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: '1px', background: 'rgba(0,214,143,0.2)', transform: 'translateX(-50%)' }} />
-                <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '1px', background: 'rgba(0,214,143,0.2)', transform: 'translateY(-50%)' }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+              <div className="skeleton-shimmer" style={{ width: '24px', height: '24px', borderRadius: '50%' }} />
+              <div className="skeleton-shimmer" style={{ width: '200px', height: '20px', borderRadius: '4px' }} />
+            </div>
 
-                {/* The Sweep */}
-                <div className="radar-sweep" style={{ position: 'absolute', inset: 0, borderRadius: '50%' }} />
-                
-                {/* Center Pulse */}
-                <div style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', width: '40px', height: '40px', background: '#00D68F', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 30px #00D68F', zIndex: 10 }}>
-                  <Search size={20} color="#0B1121" />
-                </div>
-                
-                {/* Blips (Appear based on scanStep) */}
-                {scanStep >= 1 && (
-                  <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: [0, 1.5, 1], opacity: [1, 1, 0.8] }} transition={{ duration: 0.5 }} style={{ position: 'absolute', top: '25%', left: '30%', width: '12px', height: '12px', background: '#00D68F', borderRadius: '50%', boxShadow: '0 0 10px #00D68F', zIndex: 5 }}>
-                    <span style={{ position: 'absolute', left: '16px', top: '-4px', fontSize: '10px', color: '#00D68F', fontWeight: 700 }}>IOCL</span>
-                  </motion.div>
-                )}
-                {scanStep >= 2 && (
-                  <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: [0, 1.5, 1], opacity: [1, 1, 0.8] }} transition={{ duration: 0.5, delay: 0.2 }} style={{ position: 'absolute', bottom: '35%', right: '20%', width: '12px', height: '12px', background: '#F7B731', borderRadius: '50%', boxShadow: '0 0 10px #F7B731', zIndex: 5 }}>
-                    <span style={{ position: 'absolute', left: '16px', top: '-4px', fontSize: '10px', color: '#F7B731', fontWeight: 700 }}>ONGC</span>
-                  </motion.div>
-                )}
-                {scanStep >= 3 && (
-                  <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: [0, 1.5, 1], opacity: [1, 1, 0.8] }} transition={{ duration: 0.5, delay: 0.1 }} style={{ position: 'absolute', top: '15%', right: '40%', width: '12px', height: '12px', background: '#C084FC', borderRadius: '50%', boxShadow: '0 0 10px #C084FC', zIndex: 5 }}>
-                    <span style={{ position: 'absolute', left: '16px', top: '-4px', fontSize: '10px', color: '#C084FC', fontWeight: 700 }}>GAIL</span>
-                  </motion.div>
-                )}
-                {scanStep >= 4 && (
-                  <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: [0, 1.5, 1], opacity: [1, 1, 0.8] }} transition={{ duration: 0.5, delay: 0.3 }} style={{ position: 'absolute', bottom: '20%', left: '45%', width: '12px', height: '12px', background: '#4F8EF7', borderRadius: '50%', boxShadow: '0 0 10px #4F8EF7', zIndex: 5 }}>
-                    <span style={{ position: 'absolute', left: '16px', top: '-4px', fontSize: '10px', color: '#4F8EF7', fontWeight: 700 }}>BPCL</span>
-                  </motion.div>
-                )}
-              </div>
+            {/* Top Grid Skeleton */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '20px', marginBottom: '20px' }}>
+              <div className="skeleton-shimmer" style={{ height: '300px', borderRadius: '16px' }} />
+              <div className="skeleton-shimmer" style={{ height: '300px', borderRadius: '16px' }} />
+            </div>
 
-              {/* Status Text */}
-              <div style={{ textAlign: 'center', zIndex: 10 }}>
-                <h3 style={{ fontSize: '18px', fontWeight: 900, color: '#00D68F', letterSpacing: '0.15em', marginBottom: '8px', textTransform: 'uppercase' }}>
-                  {scanStep === 1 ? 'Pinging IOCL Database...' : 
-                   scanStep === 2 ? 'Cross-checking ONGC...' : 
-                   scanStep === 3 ? 'Searching GAIL Networks...' :
-                   scanStep >= 4 ? 'Triangulating Matches...' : 'Initiating Global Radar...'}
-                </h3>
-                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', fontFamily: 'JetBrains Mono, monospace' }}>
-                  Query: <span style={{ color: '#F0F4FF' }}>"{query}"</span>
-                </p>
-              </div>
-
+            {/* Bottom Cards Skeleton */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+              <div className="skeleton-shimmer" style={{ width: '180px', height: '16px', borderRadius: '4px' }} />
+              <div className="skeleton-shimmer" style={{ width: '60px', height: '24px', borderRadius: '20px' }} />
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              {[1, 2, 3].map(i => (
+                <div key={i} className="skeleton-shimmer" style={{ height: '140px', borderRadius: '16px', opacity: 1 - (i * 0.15) }} />
+              ))}
             </div>
           </motion.div>
         )}
