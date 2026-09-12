@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   Search, CheckCircle2, AlertTriangle, XCircle, ArrowRight,
   ShieldCheck, Zap, Layers, Sparkles, RefreshCw, ArrowRightLeft,
-  ChevronRight, Brain, Star
+  ChevronRight, Brain, Star, Cpu, Network, Database
 } from 'lucide-react';
 import { api } from '../services/api';
 import { LiveCheckResponse, CandidateMatch } from '../types';
