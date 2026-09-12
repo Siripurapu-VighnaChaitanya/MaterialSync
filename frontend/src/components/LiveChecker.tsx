@@ -722,7 +722,8 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
                 {/* STAGGERED CONTAINER */}
                 <motion.div 
                   initial="hidden"
-                  animate="visible"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.1 }}
                   variants={{
                     hidden: { opacity: 0 },
                     visible: {
