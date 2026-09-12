@@ -206,7 +206,7 @@ const CandidateCard: React.FC<{
   return (
     <motion.div
       variants={{
-        hidden: { opacity: 0, x: 50, scale: 0.95 },
+        hidden: { opacity: 0, x: -50, scale: 0.95 },
         visible: { opacity: 1, x: 0, scale: 1, transition: { type: 'spring', stiffness: 300, damping: 24 } }
       }}
       whileHover={{ scale: 1.02 }}
@@ -622,8 +622,8 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
         {result && !loading && (
           <motion.div
             key="results-block"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -40 }}
+            animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, staggerChildren: 0.1, ease: 'easeOut' }}
           >
             <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '20px', marginBottom: '20px' }}>
