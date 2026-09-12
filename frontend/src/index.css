@@ -489,3 +489,32 @@ code, pre, .font-mono {
 .role-pill:hover:not(.active) {
   color: var(--text-secondary);
 }
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE UTILITIES
+═══════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .responsive-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .responsive-nav-tabs {
+    overflow-x: auto;
+    justify-content: flex-start !important;
+    padding-bottom: 5px;
+  }
+  .responsive-search-box {
+    flex-direction: column !important;
+  }
+  .responsive-timeline-container {
+    margin: 0 10px !important;
+  }
+  .responsive-timeline-text {
+    font-size: 9px !important;
+    top: 55px !important;
+  }
+  .responsive-timeline-node {
+    width: 32px !important;
+    height: 32px !important;
+  }
+}
+

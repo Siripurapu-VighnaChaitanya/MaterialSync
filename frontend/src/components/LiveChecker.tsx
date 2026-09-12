@@ -436,7 +436,7 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
           />
         )}
 
-        <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+        <div className="responsive-search-box" style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
           <select
             value={sourceCpse}
             onChange={(e) => setSourceCpse(e.target.value)}
@@ -561,7 +561,7 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
                 </h3>
               </div>
 
-              <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0 50px' }}>
+              <div className="responsive-timeline-container" style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0 50px' }}>
                 {/* Background Line */}
                 <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '6px', background: 'rgba(255,255,255,0.05)', transform: 'translateY(-50%)', borderRadius: '3px', zIndex: 0 }} />
                 
@@ -591,6 +591,7 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
                           boxShadow: isCurrent ? `0 0 30px ${nodeColor}80` : isActive ? `0 0 10px ${nodeColor}40` : 'none'
                         }}
                         transition={{ type: 'spring', stiffness: 200, damping: 15 }}
+                        className="responsive-timeline-node"
                         style={{
                           width: '46px', height: '46px', borderRadius: '50%',
                           border: '3px solid',
@@ -604,6 +605,7 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
                       <motion.div 
                         initial={{ opacity: 0, y: 15 }}
                         animate={{ opacity: isActive ? 1 : 0.2, y: isActive ? 0 : 5, color: isCurrent ? '#F0F4FF' : isActive ? nodeColor : 'var(--text-muted)' }}
+                        className="responsive-timeline-text"
                         style={{ position: 'absolute', top: '65px', whiteSpace: 'nowrap', fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', textShadow: isCurrent ? `0 0 10px ${nodeColor}60` : 'none' }}
                       >
                         Step {idx + 1}
@@ -626,7 +628,7 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, staggerChildren: 0.1, ease: 'easeOut' }}
           >
-            <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '20px', marginBottom: '20px' }}>
+            <div className="responsive-grid" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '20px', marginBottom: '20px' }}>
               
               {/* 3D Hologram Data Core */}
               <motion.div

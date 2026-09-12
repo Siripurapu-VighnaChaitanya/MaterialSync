@@ -88,7 +88,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
 
         {/* ── Nav Tabs ── */}
-        <nav style={{ display: 'flex', gap: '2px', flex: 1, justifyContent: 'center' }}>
+        <nav className="responsive-nav-tabs" style={{ display: 'flex', gap: '2px', flex: 1, justifyContent: 'center' }}>
           {visibleTabs.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
