@@ -88,7 +88,7 @@ export const ClusterExplorer: React.FC = () => {
       </div>
 
       {/* Floating UI Panel (Left) */}
-      <div style={{ 
+      <div className="responsive-cluster-panel" style={{ 
         position: 'absolute', top: '24px', left: '24px', zIndex: 10,
         width: '320px', pointerEvents: 'auto'
       }}>
@@ -119,7 +119,7 @@ export const ClusterExplorer: React.FC = () => {
       {/* Node Detail Inspector (Right) */}
       {selectedNode && (
         <div 
-          className="animate-slide-right"
+          className="animate-slide-right responsive-cluster-inspector"
           style={{ 
             position: 'absolute', top: '24px', right: '24px', zIndex: 10,
             width: '340px', pointerEvents: 'auto'
@@ -158,7 +158,7 @@ export const ClusterExplorer: React.FC = () => {
       )}
 
       {/* 3D Controls Hint */}
-      <div style={{ position: 'absolute', bottom: '24px', left: '50%', transform: 'translateX(-50%)', zIndex: 10, pointerEvents: 'none' }}>
+      <div className="responsive-cluster-hint" style={{ position: 'absolute', bottom: '24px', left: '50%', transform: 'translateX(-50%)', zIndex: 10, pointerEvents: 'none' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(10px)', padding: '8px 16px', borderRadius: '30px', border: '1px solid rgba(255,255,255,0.1)' }}>
           <ZoomIn size={14} color="var(--text-muted)" />
           <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Scroll to Zoom · Click & Drag to Rotate · Click Node to Inspect</span>
