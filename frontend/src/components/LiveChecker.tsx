@@ -543,37 +543,74 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
         )}
       </AnimatePresence>
 
-      {/* ── ELEGANT SKELETON LOADING ── */}
+      {/* ── TIMELINE STEPPER LOADING ── */}
       <AnimatePresence>
         {loading && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.98, filter: 'blur(4px)' }}
             transition={{ duration: 0.4 }}
-            style={{ marginBottom: '24px' }}
+            style={{ marginBottom: '32px' }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
-              <div className="skeleton-shimmer" style={{ width: '24px', height: '24px', borderRadius: '50%' }} />
-              <div className="skeleton-shimmer" style={{ width: '200px', height: '20px', borderRadius: '4px' }} />
-            </div>
+            <div className="glass-panel" style={{ padding: '50px 40px', background: 'rgba(15,23,42,0.6)' }}>
+              <div style={{ textAlign: 'center', marginBottom: '50px' }}>
+                <h3 style={{ fontSize: '20px', fontWeight: 900, color: '#F0F4FF', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                  {loadingSteps[scanStep]?.text || "Processing Data..."}
+                </h3>
+              </div>
 
-            {/* Top Grid Skeleton */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '20px', marginBottom: '20px' }}>
-              <div className="skeleton-shimmer" style={{ height: '300px', borderRadius: '16px' }} />
-              <div className="skeleton-shimmer" style={{ height: '300px', borderRadius: '16px' }} />
-            </div>
+              <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0 40px' }}>
+                {/* Background Line */}
+                <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '4px', background: 'rgba(255,255,255,0.1)', transform: 'translateY(-50%)', borderRadius: '2px', zIndex: 0 }} />
+                
+                {/* Progress Line */}
+                <motion.div 
+                  initial={{ width: '0%' }}
+                  animate={{ width: `${(scanStep / (loadingSteps.length - 1)) * 100}%` }}
+                  transition={{ duration: 0.5, ease: 'easeInOut' }}
+                  style={{ position: 'absolute', top: '50%', left: 0, height: '4px', background: '#A855F7', transform: 'translateY(-50%)', borderRadius: '2px', zIndex: 1, boxShadow: '0 0 10px #A855F7' }} 
+                />
 
-            {/* Bottom Cards Skeleton */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-              <div className="skeleton-shimmer" style={{ width: '180px', height: '16px', borderRadius: '4px' }} />
-              <div className="skeleton-shimmer" style={{ width: '60px', height: '24px', borderRadius: '20px' }} />
-            </div>
-            
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              {[1, 2, 3].map(i => (
-                <div key={i} className="skeleton-shimmer" style={{ height: '140px', borderRadius: '16px', opacity: 1 - (i * 0.15) }} />
-              ))}
+                {/* Nodes */}
+                {loadingSteps.map((step, idx) => {
+                  const isActive = scanStep >= idx;
+                  const isCurrent = scanStep === idx;
+                  
+                  return (
+                    <div key={idx} style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                      <motion.div
+                        initial={{ scale: 0.8, backgroundColor: '#1E293B', borderColor: 'rgba(255,255,255,0.2)' }}
+                        animate={{ 
+                          scale: isCurrent ? 1.3 : isActive ? 1.1 : 0.8,
+                          backgroundColor: isActive ? '#0B1121' : '#1E293B',
+                          borderColor: isActive ? '#A855F7' : 'rgba(255,255,255,0.2)',
+                          boxShadow: isCurrent ? '0 0 20px rgba(168,85,247,0.6)' : 'none'
+                        }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                        style={{
+                          width: '40px', height: '40px', borderRadius: '50%',
+                          border: '2px solid',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          color: isActive ? '#A855F7' : 'var(--text-muted)'
+                        }}
+                      >
+                        {step.icon}
+                      </motion.div>
+                      {/* Node Label */}
+                      <motion.div 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: isActive ? 1 : 0.3, y: isActive ? 0 : 5, color: isCurrent ? '#F0F4FF' : isActive ? '#C084FC' : 'var(--text-muted)' }}
+                        style={{ position: 'absolute', top: '60px', whiteSpace: 'nowrap', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}
+                      >
+                        Step {idx + 1}
+                      </motion.div>
+                    </div>
+                  );
+                })}
+              </div>
+              
+              <div style={{ height: '50px' }} /> {/* Spacer for labels */}
             </div>
           </motion.div>
         )}
