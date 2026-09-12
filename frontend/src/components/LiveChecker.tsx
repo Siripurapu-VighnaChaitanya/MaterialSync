@@ -205,10 +205,10 @@ const CandidateCard: React.FC<{
 
   return (
     <motion.div
-      variants={{
-        hidden: { opacity: 0, x: -50, scale: 0.95 },
-        visible: { opacity: 1, x: 0, scale: 1, transition: { type: 'spring', stiffness: 300, damping: 24 } }
-      }}
+      initial={{ opacity: 0, x: -60, scale: 0.95 }}
+      whileInView={{ opacity: 1, x: 0, scale: 1 }}
+      viewport={{ once: true, amount: 0.1 }}
+      transition={{ delay: idx * 0.4, type: 'spring', stiffness: 300, damping: 24 }}
       whileHover={{ scale: 1.02 }}
       className="glass-card"
       style={{
@@ -719,23 +719,7 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
                   </span>
                 </div>
                 
-                {/* STAGGERED CONTAINER */}
-                <motion.div 
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, amount: 0.1 }}
-                  variants={{
-                    hidden: { opacity: 0 },
-                    visible: {
-                      opacity: 1,
-                      transition: {
-                        staggerChildren: 0.6, // Wait 600ms between each card appearing
-                        delayChildren: 0.3    // Initial delay before the first card
-                      }
-                    }
-                  }}
-                  style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}
-                >
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                   {result.candidates.map((cand, idx) => (
                     <CandidateCard
                       key={idx} cand={cand} idx={idx}
@@ -750,7 +734,7 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
                       getCpseBadgeClass={getCpseBadgeClass}
                     />
                   ))}
-                </motion.div>
+                </div>
               </motion.div>
             )}
           </motion.div>
