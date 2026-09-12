@@ -205,10 +205,11 @@ const CandidateCard: React.FC<{
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: 30, scale: 0.95 }}
-      animate={{ opacity: 1, x: 0, scale: 1 }}
-      transition={{ delay: 1.0 + (idx * 0.4), duration: 0.5, type: 'spring' }}
-      whileHover={{ scale: 1.01 }}
+      variants={{
+        hidden: { opacity: 0, x: 50, scale: 0.95 },
+        visible: { opacity: 1, x: 0, scale: 1, transition: { type: 'spring', stiffness: 300, damping: 24 } }
+      }}
+      whileHover={{ scale: 1.02 }}
       className="glass-card"
       style={{
         padding: '20px',
@@ -253,9 +254,10 @@ const CandidateCard: React.FC<{
       {/* Confidence Bar */}
       <div className="progress-bar-track" style={{ marginBottom: '12px' }}>
         <motion.div
-          initial={{ width: 0 }}
-          animate={{ width: `${pct}%` }}
-          transition={{ duration: 0.8, delay: idx * 0.1 + 0.2, ease: 'easeOut' }}
+          variants={{
+            hidden: { width: 0 },
+            visible: { width: `${pct}%`, transition: { duration: 1.2, ease: 'easeOut', delay: 0.3 } }
+          }}
           className="progress-bar-fill"
           style={{ background: barColor, boxShadow: `0 0 8px ${barColor}40` }}
         />
@@ -713,7 +715,11 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
 
             {/* Candidate Cards */}
             {result.candidates.length > 0 && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
+              <motion.div 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                transition={{ delay: 0.2 }}
+              >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
                   <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                     Top Candidate Matches
@@ -722,7 +728,23 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
                     {result.candidates.length} found
                   </span>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                
+                {/* STAGGERED CONTAINER */}
+                <motion.div 
+                  initial="hidden"
+                  animate="visible"
+                  variants={{
+                    hidden: { opacity: 0 },
+                    visible: {
+                      opacity: 1,
+                      transition: {
+                        staggerChildren: 0.6, // Wait 600ms between each card appearing
+                        delayChildren: 0.3    // Initial delay before the first card
+                      }
+                    }
+                  }}
+                  style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}
+                >
                   {result.candidates.map((cand, idx) => (
                     <CandidateCard
                       key={idx} cand={cand} idx={idx}
@@ -737,7 +759,7 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
                       getCpseBadgeClass={getCpseBadgeClass}
                     />
                   ))}
-                </div>
+                </motion.div>
               </motion.div>
             )}
           </motion.div>
