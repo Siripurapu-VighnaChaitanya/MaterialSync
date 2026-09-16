@@ -1,7 +1,11 @@
 from backend.app.models.db import (
-    Material,
+    MaterialText,
+    MaterialEmbedding,
+    NationalMaterial,
+    CPSECodeLink,
     MaterialMatch,
     AuditLog,
+    ScoringAdjustment,
     UNSPSCEntity,
     init_db,
     get_db,
@@ -9,9 +13,13 @@ from backend.app.models.db import (
 )
 
 __all__ = [
-    "Material",
+    "MaterialText",
+    "MaterialEmbedding",
+    "NationalMaterial",
+    "CPSECodeLink",
     "MaterialMatch",
     "AuditLog",
+    "ScoringAdjustment",
     "UNSPSCEntity",
     "init_db",
     "get_db",

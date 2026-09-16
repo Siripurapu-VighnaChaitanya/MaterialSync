@@ -140,10 +140,10 @@ export const AnalyticsView: React.FC = () => {
             </span>
           </div>
           <div style={{ fontSize: '32px', fontWeight: 900, color: '#10B981', marginTop: '8px', letterSpacing: '-0.02em' }}>
-            ₹54.20 Cr
+            {stats?.estimated_annual_savings_inr ? `₹${(stats.estimated_annual_savings_inr / 100000).toFixed(2)} Lakhs` : '₹0.00'}
           </div>
           <span style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '4px', display: 'block' }}>
-            ₹26.78 Cr immediate verified savings across pilot dataset
+            Estimated annual carrying cost savings from duplicate reduction
           </span>
         </div>
 

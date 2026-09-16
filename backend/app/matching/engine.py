@@ -214,13 +214,29 @@ class MatchingEngine:
         self.records: List[CanonicalMaterial] = []
         self.code_to_record: Dict[str, CanonicalMaterial] = {}
         self.embeddings_matrix: Optional[np.ndarray] = None
+        
+        # FEATURE 2: Blocking Layer Index
+        self.blocking_index: Dict[str, List[int]] = {}
+
+    def get_blocking_key(self, record: CanonicalMaterial) -> Optional[str]:
+        if getattr(record, "unspsc_code", None):
+            return record.unspsc_code
+        if record.material_type:
+            return record.material_type
+        return None
 
     def build_index(self, records: List[CanonicalMaterial]):
-        """Index canonical material records and precompute dense embeddings."""
+        """Index canonical material records and precompute dense embeddings with Blocking Layer."""
         self.records = records
         self.code_to_record = {r.material_code: r for r in records}
         texts = [r.raw_description for r in records]
         self.embeddings_matrix = self.embedding_engine.encode(texts)
+        
+        self.blocking_index = {}
+        for i, rec in enumerate(self.records):
+            bkey = self.get_blocking_key(rec)
+            if bkey:
+                self.blocking_index.setdefault(bkey, []).append(i)
 
     def find_candidates_for_record(
         self,
@@ -229,19 +245,35 @@ class MatchingEngine:
     ) -> List[MatchResult]:
         """
         Find top-k duplicate candidates for a single query material.
-        Combines fast vector search with technical safety gates.
+        Combines fast vector search with technical safety gates, using category blocking if available.
         """
         if self.embeddings_matrix is None or len(self.records) == 0:
             return []
 
         query_vec = self.embedding_engine.encode([query.raw_description])[0]
-        # Retrieve a healthy candidate pool (top 50) for attribute filtering
-        search_k = min(len(self.records), max(50, top_k * 10))
-        top_hits = self.embedding_engine.search_top_k(
-            query_vec,
-            self.embeddings_matrix,
-            top_k=search_k
-        )
+        
+        bkey = self.get_blocking_key(query)
+        # Fallback to full index if blocking key missing or not in index
+        if bkey and bkey in self.blocking_index and len(self.blocking_index[bkey]) > 0:
+            subset_indices = self.blocking_index[bkey]
+            subset_matrix = self.embeddings_matrix[subset_indices]
+            search_k = min(len(subset_indices), max(50, top_k * 10))
+            
+            # search within subset
+            top_subset_hits = self.embedding_engine.search_top_k(
+                query_vec,
+                subset_matrix,
+                top_k=search_k
+            )
+            # map subset indices back to global indices
+            top_hits = [(subset_indices[sub_idx], sim) for sub_idx, sim in top_subset_hits]
+        else:
+            search_k = min(len(self.records), max(50, top_k * 10))
+            top_hits = self.embedding_engine.search_top_k(
+                query_vec,
+                self.embeddings_matrix,
+                top_k=search_k
+            )
 
         results = []
         for idx, sim in top_hits:
@@ -261,7 +293,7 @@ class MatchingEngine:
         candidate_k: int = 30
     ) -> List[MatchResult]:
         """
-        Run batch pairwise matching across all indexed records.
+        Run batch pairwise matching across all indexed records, accelerated by blocking layer.
         """
         if self.embeddings_matrix is None or len(self.records) == 0:
             return []
@@ -269,25 +301,57 @@ class MatchingEngine:
         all_matches = []
         seen_pairs = set()
 
-        for i, rec_a in enumerate(self.records):
-            vec_a = self.embeddings_matrix[i]
+        # Phase 1: Blocked Search
+        for bkey, subset_indices in self.blocking_index.items():
+            if len(subset_indices) < 2:
+                continue
+            
+            subset_matrix = self.embeddings_matrix[subset_indices]
+            for local_idx, global_idx in enumerate(subset_indices):
+                rec_a = self.records[global_idx]
+                vec_a = subset_matrix[local_idx]
+                
+                search_k = min(len(subset_indices), candidate_k)
+                top_subset_hits = self.embedding_engine.search_top_k(
+                    vec_a,
+                    subset_matrix,
+                    top_k=search_k
+                )
+                
+                for hit_local_idx, sim in top_subset_hits:
+                    if local_idx >= hit_local_idx:
+                        continue
+                    
+                    hit_global_idx = subset_indices[hit_local_idx]
+                    pair_key = tuple(sorted([rec_a.material_code, self.records[hit_global_idx].material_code]))
+                    if pair_key in seen_pairs:
+                        continue
+                    seen_pairs.add(pair_key)
+                    
+                    match_res = match_pair(rec_a, self.records[hit_global_idx], embedding_similarity=sim)
+                    all_matches.append(match_res)
+
+        # Phase 2: Fallback for records with no blocking key
+        unblocked_indices = [i for i, r in enumerate(self.records) if not self.get_blocking_key(r)]
+        for global_idx in unblocked_indices:
+            rec_a = self.records[global_idx]
+            vec_a = self.embeddings_matrix[global_idx]
+            
             top_hits = self.embedding_engine.search_top_k(
                 vec_a,
                 self.embeddings_matrix,
                 top_k=candidate_k
             )
-
-            for j, sim in top_hits:
-                if i >= j:
+            for hit_global_idx, sim in top_hits:
+                if global_idx == hit_global_idx:
                     continue
-
-                pair_key = tuple(sorted([rec_a.material_code, self.records[j].material_code]))
+                
+                pair_key = tuple(sorted([rec_a.material_code, self.records[hit_global_idx].material_code]))
                 if pair_key in seen_pairs:
                     continue
                 seen_pairs.add(pair_key)
-
-                rec_b = self.records[j]
-                match_res = match_pair(rec_a, rec_b, embedding_similarity=sim)
+                
+                match_res = match_pair(rec_a, self.records[hit_global_idx], embedding_similarity=sim)
                 all_matches.append(match_res)
 
         return all_matches

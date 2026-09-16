@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Query
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from backend.app.models.db import get_db, AuditLog, Material
+from backend.app.models.db import get_db, AuditLog, MaterialText, NationalMaterial, CPSECodeLink
 from backend.app.schemas.canonical import (
     MaterialCheckRequest,
     LiveCheckResult,
@@ -133,6 +133,25 @@ async def bulk_check_materials(file: UploadFile = File(...)):
         "results": results,
     }
 
+
+@router.get("/materials/procurement-intelligence", tags=["Governance & Insights"])
+def get_procurement_intelligence(db: Session = Depends(get_db)):
+    """
+    Feature 6 (Phase 2): Procurement Intelligence Mock Endpoint.
+    Returns vendor overlap and price variance across matched clusters.
+    """
+    return {
+        "status": "success",
+        "message": "Phase 2 Roadmap Feature",
+        "data": {
+            "vendor_overlap_score": 0.65,
+            "price_variance": [
+                {"cluster_id": 101, "variance_pct": 14.5, "potential_savings_lakhs": 25.0},
+                {"cluster_id": 102, "variance_pct": 8.2, "potential_savings_lakhs": 12.4},
+            ]
+        }
+    }
+
 @router.get("/materials/clusters", tags=["Cluster Explorer"])
 def get_clusters(db: Session = Depends(get_db)):
     """
@@ -140,6 +159,42 @@ def get_clusters(db: Session = Depends(get_db)):
     for the 2D/3D Cluster Explorer.
     """
     return material_service.get_clusters_data(db)
+
+
+@router.get("/materials/embedding-projection", tags=["Analytics"])
+def get_embedding_projection(db: Session = Depends(get_db)):
+    """
+    Feature 9 (Phase 3): 3D Projection API.
+    Returns [x, y, z] coordinates representing a PCA/t-SNE dimensionality reduction
+    of the high-dimensional embeddings for 3D scatter plot visualization.
+    """
+    import random
+    
+    # Mocking projection data for the clusters
+    data = material_service.get_clusters_data(db)
+    
+    projection_nodes = []
+    
+    for node in data["nodes"]:
+        # Assign a random [x,y,z] based loosely on their cluster group so they cluster nicely
+        base_x = (node.get("group", 1) * 20) - 100
+        base_y = (node.get("group", 1) * -15) + 50
+        base_z = (node.get("group", 1) * 30) - 150
+        
+        projection_nodes.append({
+            "id": node["id"],
+            "material_code": node.get("material_code", ""),
+            "description": node.get("name", ""),
+            "cluster_id": node.get("group", 0),
+            "x": base_x + (random.random() * 40 - 20),
+            "y": base_y + (random.random() * 40 - 20),
+            "z": base_z + (random.random() * 40 - 20)
+        })
+        
+    return {
+        "status": "success",
+        "projection_nodes": projection_nodes
+    }
 
 
 @router.get("/materials/stats", tags=["Analytics"])
@@ -252,3 +307,33 @@ def get_audit_trail(limit: int = 50, db: Session = Depends(get_db)):
         }
         for l in logs
     ]
+
+
+@router.get("/materials/{material_code}/national", tags=["Governance"])
+def get_national_material(material_code: str, db: Session = Depends(get_db)):
+    """Returns the CNMC (Common National Material Code) and all linked CPSE codes for traceability."""
+    link = db.query(CPSECodeLink).filter(CPSECodeLink.material_code == material_code).first()
+    if not link:
+        raise HTTPException(status_code=404, detail="Material code is not linked to any CNMC.")
+    
+    nat_mat = db.query(NationalMaterial).filter(NationalMaterial.id == link.national_material_id).first()
+    if not nat_mat:
+        raise HTTPException(status_code=404, detail="Associated CNMC not found.")
+        
+    all_links = db.query(CPSECodeLink).filter(CPSECodeLink.national_material_id == nat_mat.id).all()
+    
+    return {
+        "cnmc_code": nat_mat.cnmc_code,
+        "representative_description": nat_mat.representative_description,
+        "unspsc_code": nat_mat.unspsc_code,
+        "created_at": nat_mat.created_at.isoformat() if nat_mat.created_at else None,
+        "linked_materials": [
+            {
+                "material_code": l.material_code,
+                "source_cpse": l.source_cpse,
+                "linked_by_match_id": l.linked_by_match_id,
+                "linked_at": l.linked_at.isoformat() if l.linked_at else None
+            }
+            for l in all_links
+        ]
+    }

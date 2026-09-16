@@ -20,6 +20,7 @@ class CanonicalMaterial(BaseModel):
     standard: Optional[str] = Field(None, description="Governing standard specification (e.g. ASTM A106, ASME B16.5, IS 1239)")
     grade: Optional[str] = Field(None, description="Material grade or metallurgy (e.g. GR B, 304, 316, B7, WPB)")
     pressure_rating: Optional[str] = Field(None, description="Standardized pressure rating/class (e.g. CLASS 150, CLASS 300, PN16, 3000#)")
+    unspsc_code: Optional[str] = Field(None, description="UNSPSC standard code, if mapped")
     
     # Extraction metadata & traceability
     extraction_confidence: Dict[str, str] = Field(

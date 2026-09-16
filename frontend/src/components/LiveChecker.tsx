@@ -674,7 +674,35 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
                     Extracted Physical Attributes
                   </span>
                 </div>
-                <AttrGrid attrs={result.extracted_attributes} />
+                
+                {result.candidates && result.candidates.length > 0 ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', paddingBottom: '8px', borderBottom: '1px solid rgba(255,255,255,0.1)', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      <div>Attribute</div>
+                      <div>Input (Extracted)</div>
+                      <div>Top Match (Database)</div>
+                    </div>
+                    {['material_type', 'sub_type', 'dimension_value', 'dimension_unit', 'schedule', 'standard', 'grade', 'pressure_rating'].map((key) => {
+                      const extAttrStr = String(result.extracted_attributes[key as keyof typeof result.extracted_attributes] || '—');
+                      const matchAttrStr = String(result.candidates[0].canonical_attributes[key] || '—');
+                      
+                      const isMismatch = (extAttrStr !== '—' && matchAttrStr !== '—' && extAttrStr !== matchAttrStr);
+                      const isMatch = (extAttrStr !== '—' && extAttrStr === matchAttrStr);
+                      
+                      return (
+                        <div key={key} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', padding: '6px 0', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
+                          <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{key.replace('_', ' ').toUpperCase()}</div>
+                          <div style={{ fontSize: '13px', fontWeight: 600, color: '#F0F4FF' }}>{extAttrStr}</div>
+                          <div style={{ fontSize: '13px', fontWeight: 600, color: isMismatch ? '#EF4444' : isMatch ? '#10B981' : '#F0F4FF' }}>
+                            {matchAttrStr}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <AttrGrid attrs={result.extracted_attributes} />
+                )}
                 <div style={{
                   marginTop: '16px', background: 'rgba(79,142,247,0.06)', border: '1px solid rgba(79,142,247,0.18)',
                   borderRadius: '10px', padding: '12px 14px', display: 'flex', gap: '10px', alignItems: 'flex-start',

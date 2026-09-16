@@ -38,8 +38,8 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 
-class Material(Base):
-    __tablename__ = "materials"
+class MaterialText(Base):
+    __tablename__ = "materials_text"
 
     id = Column(Integer, primary_key=True, index=True)
     material_code = Column(String(64), unique=True, index=True, nullable=False)
@@ -58,6 +58,15 @@ class Material(Base):
     
     cluster_id = Column(Integer, index=True, nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+
+class MaterialEmbedding(Base):
+    __tablename__ = "materials_embeddings"
+
+    id = Column(Integer, primary_key=True, index=True)
+    material_code = Column(String(64), unique=True, index=True, nullable=False)
+    embedding_vector = Column(Text, nullable=False) # JSON or byte string
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 
 class MaterialMatch(Base):
@@ -92,6 +101,18 @@ class AuditLog(Base):
     officer_id = Column(String(64), default="PROCUREMENT_OFFICER_1")
 
 
+class ScoringAdjustment(Base):
+    __tablename__ = "scoring_adjustments"
+
+    id = Column(Integer, primary_key=True, index=True)
+    timestamp = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    old_high_threshold = Column(Float, nullable=False)
+    new_high_threshold = Column(Float, nullable=False)
+    old_medium_threshold = Column(Float, nullable=False)
+    new_medium_threshold = Column(Float, nullable=False)
+    rationale = Column(Text, nullable=False)
+
+
 class UNSPSCEntity(Base):
     __tablename__ = "unspsc_mappings"
 
@@ -103,6 +124,27 @@ class UNSPSCEntity(Base):
     confidence = Column(Float, nullable=False)
     human_review_required = Column(Boolean, default=False)
     mapping_rationale = Column(Text, nullable=True)
+
+
+class NationalMaterial(Base):
+    __tablename__ = "national_materials"
+
+    id = Column(Integer, primary_key=True, index=True)
+    cnmc_code = Column(String(32), unique=True, index=True, nullable=False) # e.g. CNMC-0000001
+    representative_description = Column(Text, nullable=False)
+    unspsc_code = Column(String(32), nullable=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+
+class CPSECodeLink(Base):
+    __tablename__ = "cpse_code_links"
+
+    id = Column(Integer, primary_key=True, index=True)
+    national_material_id = Column(Integer, ForeignKey("national_materials.id"), index=True, nullable=False)
+    material_code = Column(String(64), ForeignKey("materials_text.material_code"), index=True, nullable=False)
+    source_cpse = Column(String(32), nullable=False)
+    linked_by_match_id = Column(String(128), nullable=True) # The match_id that triggered this link
+    linked_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
 
 def init_db():

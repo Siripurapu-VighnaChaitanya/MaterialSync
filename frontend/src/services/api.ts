@@ -45,6 +45,12 @@ export const api = {
     return res.json();
   },
 
+  async getEmbeddingProjection(): Promise<any> {
+    const res = await fetch(`${API_BASE}/materials/embedding-projection`);
+    if (!res.ok) throw new Error('Failed to load embedding projection');
+    return res.json();
+  },
+
   async getStats(): Promise<KPIStats> {
     const res = await fetch(`${API_BASE}/materials/stats`);
     if (!res.ok) throw new Error('Failed to load stats');

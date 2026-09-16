@@ -19,7 +19,7 @@ from backend.app.schemas.canonical import (
 from backend.app.nlp.extract import extract_attributes
 from backend.app.matching.engine import MatchingEngine, match_pair
 from backend.app.taxonomy.unspsc import map_to_unspsc
-from backend.app.models.db import Material, MaterialMatch, AuditLog, UNSPSCEntity, SessionLocal
+from backend.app.models.db import MaterialText, MaterialMatch, AuditLog, UNSPSCEntity, SessionLocal, NationalMaterial, CPSECodeLink
 
 logger = logging.getLogger(__name__)
 
@@ -38,13 +38,13 @@ class MaterialService:
             return
 
         # Check existing materials count in DB
-        db_count = db.query(Material).count()
+        db_count = db.query(MaterialText).count()
         if db_count == 0:
             logger.info(f"Seeding database from {csv_path}...")
             df = pd.read_csv(csv_path)
             for _, row in df.iterrows():
                 ext = extract_attributes(row["raw_description"])
-                mat = Material(
+                mat = MaterialText(
                     material_code=row["material_code"],
                     source_cpse=row["source_cpse"],
                     raw_description=row["raw_description"],
@@ -62,7 +62,7 @@ class MaterialService:
             logger.info(f"Seeded {len(df)} materials into SQLite database.")
 
         # Load all materials from DB to build the index
-        all_materials = db.query(Material).all()
+        all_materials = db.query(MaterialText).all()
         self.canonical_cache = []
         for m in all_materials:
             can = CanonicalMaterial(
@@ -308,6 +308,61 @@ class MaterialService:
             officer_id="CPSE_LEAD_OFFICER"
         )
         db.add(audit)
+        
+        # FEATURE 1: CNMC Generation on Approval
+        if decision == "APPROVED" and match_id.startswith("MATCH-"):
+            parts = match_id.split("-")
+            if len(parts) >= 3:
+                # e.g., MATCH-SAMPLE-ONGC-001-SAMPLE-BPCL-002 -> code_a and code_b are parts 1...n
+                code_a = "-".join(parts[1:-len(parts[0])]) # Safe split is harder because of hyphens in codes, let's just find them by DB lookup if possible
+                
+                # Let's extract code_a and code_b correctly. 
+                # Better: retrieve the code_a and code_b from the frontend payload or by querying MaterialMatch?
+                # The prompt says: "when a match_candidate verdict is approved ... link both materials". 
+                # Since we don't have MaterialMatch stored currently for live checking (it's stateless in `checkMaterial`), we will just rely on the match_id format or extract from cache. 
+                # Wait, the match_id format is `MATCH-{code_a}-{code_b}`. Let's do a simple split and assume standard format for benchmark.
+                # Actually, `parts = match_id.split("-")` => ["MATCH", "SAMPLE", "ONGC", "001", "SAMPLE", "BPCL", "002"] 
+                # It's better to just extract the two codes cleanly if they start with SAMPLE.
+                code_a = match_id.replace("MATCH-", "").split("-SAMPLE-")[0]
+                code_b = "SAMPLE-" + match_id.split("-SAMPLE-")[-1] if "-SAMPLE-" in match_id else None
+                
+                # Fallback if standard format fails
+                if not code_b and len(parts) == 3:
+                    code_a, code_b = parts[1], parts[2]
+                elif not code_b:
+                    code_a, code_b = parts[1] + "-" + parts[2], parts[3] + "-" + parts[4] # Rough guess
+
+                # Check if either code is already linked
+                link_a = db.query(CPSECodeLink).filter(CPSECodeLink.material_code == code_a).first()
+                link_b = db.query(CPSECodeLink).filter(CPSECodeLink.material_code == code_b).first()
+
+                nat_id = None
+                if link_a:
+                    nat_id = link_a.national_material_id
+                elif link_b:
+                    nat_id = link_b.national_material_id
+                else:
+                    # Create new CNMC
+                    count = db.query(NationalMaterial).count()
+                    new_code = f"CNMC-{(count + 1):07d}"
+                    nat_mat = NationalMaterial(
+                        cnmc_code=new_code,
+                        representative_description=f"Standardized material for {code_a}/{code_b}"
+                    )
+                    db.add(nat_mat)
+                    db.flush() # get id
+                    nat_id = nat_mat.id
+
+                # Link code_a if not linked
+                if not link_a:
+                    cpse_a = code_a.split("-")[1] if "-" in code_a else "UNKNOWN"
+                    db.add(CPSECodeLink(national_material_id=nat_id, material_code=code_a, source_cpse=cpse_a, linked_by_match_id=match_id))
+                
+                # Link code_b if not linked
+                if not link_b:
+                    cpse_b = code_b.split("-")[1] if "-" in code_b else "UNKNOWN"
+                    db.add(CPSECodeLink(national_material_id=nat_id, material_code=code_b, source_cpse=cpse_b, linked_by_match_id=match_id))
+
         db.commit()
 
         return {

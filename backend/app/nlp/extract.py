@@ -16,6 +16,9 @@ Follows NON-NEGOTIABLE rules:
 2. Missing values are explicitly None.
 3. Every attribute receives a confidence rating: high, medium, low.
 4. Ambiguous descriptions are marked low confidence or None.
+
+NOTE (Feature 3): Standards dictionary is dynamically seeded at runtime 
+with abbreviations from `seed_standards.py` to solve cold-start issues.
 """
 
 import re
@@ -86,6 +89,9 @@ KNOWN_STANDARDS = {
     "1239": "IS 1239", "1367": "IS 1367", "210": "IS 210",
     "1873": "BS 1873", "7531": "BS 7531",
 }
+
+from backend.app.nlp.seed_standards import merge_standards
+KNOWN_STANDARDS = merge_standards(KNOWN_STANDARDS)
 
 # Standard Inch Nominal to MM mapping for piping & valves
 INCH_FRACTIONS = {

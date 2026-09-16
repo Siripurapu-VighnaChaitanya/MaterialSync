@@ -2,13 +2,14 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ForceGraph3D from 'react-force-graph-3d';
 import { api } from '../services/api';
 import { ClustersResponse } from '../types';
-import { Activity, GitMerge, AlertTriangle, Layers, Maximize, ZoomIn } from 'lucide-react';
+import { Activity, GitMerge, AlertTriangle, Layers, Maximize, ZoomIn, Box } from 'lucide-react';
 import * as THREE from 'three';
 
 export const ClusterExplorer: React.FC = () => {
   const [data, setData] = useState<ClustersResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedNode, setSelectedNode] = useState<any | null>(null);
+  const [isEmbeddingMode, setIsEmbeddingMode] = useState(false);
   const graphRef = useRef<any>(null);
 
   useEffect(() => {
@@ -23,6 +24,34 @@ export const ClusterExplorer: React.FC = () => {
       console.error(e);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const toggleEmbeddingMode = async () => {
+    if (!isEmbeddingMode) {
+      setLoading(true);
+      try {
+        const res = await api.getEmbeddingProjection();
+        if (data && res.projection_nodes) {
+          const newNodes = data.graph.nodes.map((n: any) => {
+            const p = res.projection_nodes.find((pn: any) => pn.id === n.id);
+            if (p) {
+              return { ...n, fx: p.x, fy: p.y, fz: p.z };
+            }
+            return n;
+          });
+          setData({ ...data, graph: { nodes: newNodes, links: [] } }); // Hide links in embedding space
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+        setIsEmbeddingMode(true);
+      }
+    } else {
+      setLoading(true);
+      await loadData();
+      setIsEmbeddingMode(false);
     }
   };
 
@@ -100,7 +129,7 @@ export const ClusterExplorer: React.FC = () => {
             Navigate the multi-CPSE material catalog in 3D space. Spheres represent materials, grouped by AI semantic similarity.
           </p>
           
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '20px' }}>
             <div style={{ background: 'rgba(255,255,255,0.05)', padding: '12px', borderRadius: '10px' }}>
               <div style={{ fontSize: '20px', fontWeight: 800, color: '#00D68F' }}>{data?.total_clusters || 0}</div>
               <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 700 }}>UNIQUE CLUSTERS</div>
@@ -110,6 +139,30 @@ export const ClusterExplorer: React.FC = () => {
               <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 700 }}>TOTAL MATERIALS</div>
             </div>
           </div>
+          
+          <button
+            onClick={toggleEmbeddingMode}
+            disabled={loading}
+            style={{
+              width: '100%',
+              padding: '12px',
+              borderRadius: '8px',
+              border: isEmbeddingMode ? '1px solid #10B981' : '1px solid rgba(255,255,255,0.2)',
+              background: isEmbeddingMode ? 'rgba(16,185,129,0.1)' : 'rgba(255,255,255,0.05)',
+              color: isEmbeddingMode ? '#10B981' : '#F0F4FF',
+              fontWeight: 700,
+              fontSize: '13px',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            <Box size={16} />
+            {isEmbeddingMode ? 'Revert to Network Graph' : 'View in AI Embedding Space (3D)'}
+          </button>
         </div>
       </div>
 
