@@ -333,12 +333,12 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
   };
 
   const loadingSteps = [
-    { text: "INITIALIZING DEEP LEARNING ENGINE..." },
-    { text: "EXTRACTING NLP TOKENS & NER TAGS..." },
-    { text: "GENERATING 384D VECTOR EMBEDDINGS..." },
-    { text: "QUERYING GLOBAL FAISS INDEX..." },
-    { text: "CALCULATING COSINE SIMILARITY..." },
-    { text: "ENFORCING METALLURGY SAFETY GATES..." }
+    { text: "INITIALIZING DEEP LEARNING ENGINE...", icon: <Cpu size={24} /> },
+    { text: "EXTRACTING NLP TOKENS & NER TAGS...", icon: <Layers size={24} /> },
+    { text: "GENERATING 384D VECTOR EMBEDDINGS...", icon: <Network size={24} /> },
+    { text: "QUERYING GLOBAL FAISS INDEX...", icon: <Database size={24} /> },
+    { text: "CALCULATING COSINE SIMILARITY...", icon: <Sparkles size={24} /> },
+    { text: "ENFORCING METALLURGY SAFETY GATES...", icon: <ShieldCheck size={24} /> }
   ];
 
   const handleSearch = async (overrideText?: string, overrideCpse?: string) => {
