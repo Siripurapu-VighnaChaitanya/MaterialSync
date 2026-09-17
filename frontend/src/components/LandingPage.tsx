@@ -189,8 +189,8 @@ export const LandingPage: React.FC<{ onNavigate: (tab: string) => void }> = ({ o
             transition={{ duration: 0.8, delay: 0.2 }}
             style={{ fontSize: '1.25rem', color: '#CBD5E1', marginBottom: '40px', lineHeight: 1.6 }}
           >
-            The unified intelligence platform for <span style={{ color: '#FACC15', fontWeight: 600 }}>cross-CPSE procurement</span>. 
-            Harness deep learning to instantly resolve material duplicates, <span style={{ color: '#4ADE80', fontWeight: 600 }}>unlock capital</span>, and secure supply chains.
+            A smart AI platform to <span style={{ color: '#FACC15', fontWeight: 600 }}>find duplicate materials across CPSEs</span> (IOCL, ONGC, BPCL). 
+            We automatically match identical items in seconds to <span style={{ color: '#4ADE80', fontWeight: 600 }}>stop duplicate buying and save public funds</span>.
           </motion.p>
           
           <div style={{ display: 'flex', gap: '20px', marginBottom: '50px' }}>
