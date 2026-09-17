@@ -3,11 +3,11 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
 // ─── 1. PROCEDURAL TAPERED BIOLOGICAL DENDRITE GEOMETRY ───
-// Uses Parallel Transport Frames for zero-twist, organically tapering biological nerve fibers
+// Generates zero-twist, organically tapering biological nerve fibers using Parallel Transport Frames
 function createTaperedDendriteGeometry(
   curve: THREE.Curve<THREE.Vector3>,
-  tubularSegments = 44,
-  startRadius = 0.22,
+  tubularSegments = 46,
+  startRadius = 0.24,
   endRadius = 0.022,
   radialSegments = 10
 ): THREE.BufferGeometry {
@@ -50,8 +50,8 @@ function createTaperedDendriteGeometry(
 
   for (let i = 0; i <= tubularSegments; i++) {
     const progress = i / tubularSegments;
-    // Organic power curve: thick root, gradual tapering, ultra-fine terminal tendril
-    const currentRadius = THREE.MathUtils.lerp(startRadius, endRadius, Math.pow(progress, 0.7));
+    // Biological non-linear taper: robust cellular root, thinning to whisper-fine terminal tendril
+    const currentRadius = THREE.MathUtils.lerp(startRadius, endRadius, Math.pow(progress, 0.68));
     const p = points[i];
     const n = normals[i];
     const b = binormals[i];
@@ -94,8 +94,8 @@ function createTaperedDendriteGeometry(
   return geometry;
 }
 
-// ─── 2. BIOLOGICAL FRESNEL SHADER WITH SINGLE ACTION POTENTIAL WAVE ───
-const BioAxonShader = {
+// ─── 2. BIOLOGICAL FRESNEL SHADER (CELLULAR RIM GLOW + SINGLE INTERNAL WAVE) ───
+const BioNerveShader = {
   vertexShader: `
     varying vec3 vNormal;
     varying vec3 vViewPosition;
@@ -113,7 +113,7 @@ const BioAxonShader = {
     uniform vec3 uBaseColor;
     uniform vec3 uRimColor;
     uniform vec3 uPulseColor;
-    uniform float uPulseProgress; // -1.0 to 1.0 (negative during resting refractory period)
+    uniform float uPulseProgress; // 0.0 to 1.0; negative during resting refractory pause
     uniform float uTime;
     uniform float uOpacity;
 
@@ -125,22 +125,22 @@ const BioAxonShader = {
       vec3 normal = normalize(vNormal);
       vec3 viewDir = normalize(vViewPosition);
 
-      // Microscopic Darkfield Fresnel Rim Illumination
+      // Microscopic Darkfield Fresnel Rim Effect (Reference Image 1 & 2)
       float NdotV = max(dot(normal, viewDir), 0.0);
-      float fresnel = pow(1.0 - NdotV, 2.3);
+      float fresnel = pow(1.0 - NdotV, 2.2);
 
-      // Biological Membrane: Deep bio-indigo interior with translucent electric cyan rim
+      // Translucent biological tissue with glowing electric bio-cyan outline
       vec3 membrane = mix(uBaseColor, uRimColor, fresnel * 0.88 + 0.12);
 
-      // Single Traveling Action Potential (fiber lights up from inside as pulse passes)
+      // EXACTLY ONE Action Potential wave flowing inside the fiber
       float electricPulse = 0.0;
       if (uPulseProgress >= 0.0 && uPulseProgress <= 1.0) {
         float dist = abs(vUv.x - uPulseProgress);
-        electricPulse = exp(-dist * dist * 32.0) * 2.2;
+        electricPulse = exp(-dist * dist * 35.0) * 2.2;
       }
 
-      // Subtle biological membrane micro-shimmer
-      float shimmer = sin(vUv.y * 24.0 + uTime * 1.5) * 0.035;
+      // Subtle biological membrane micro-texture shimmer
+      float shimmer = sin(vUv.y * 22.0 + uTime * 1.5) * 0.035;
       vec3 finalColor = membrane + electricPulse * uPulseColor + shimmer * uRimColor;
 
       float alpha = clamp(uOpacity * (0.65 + fresnel * 0.35 + electricPulse * 0.35), 0.0, 1.0);
@@ -149,19 +149,18 @@ const BioAxonShader = {
   `
 };
 
-// ─── 3. DATA TYPES ───
-interface AxonBranch {
+// ─── 3. DATA STRUCTURES ───
+interface DendriteBranch {
   curve: THREE.CatmullRomCurve3;
   geo: THREE.BufferGeometry;
   terminalPos: THREE.Vector3;
   material: THREE.ShaderMaterial;
-  // EXACTLY ONE signal per axon
+  // STRICTLY ONE signal per branch with slow velocity and refractory rest
   pulse: {
-    progress: number; // >= 0: traveling; < 0: resting in refractory period
-    speed: number;    // Slow, graceful biological speed
-    restDuration: number;
+    progress: number;
+    speed: number;
+    restPeriod: number;
   };
-  myelinSheaths?: { pos: THREE.Vector3; rot: THREE.Euler }[];
 }
 
 interface BioNeuron {
@@ -171,7 +170,8 @@ interface BioNeuron {
   somaGeo: THREE.BufferGeometry;
   somaMaterial: THREE.ShaderMaterial;
   nucleusColor: string;
-  branches: AxonBranch[];
+  branches: DendriteBranch[];
+  subBranches: DendriteBranch[];
 }
 
 export const BiomorphicNeuralBackground: React.FC = () => {
@@ -181,200 +181,142 @@ export const BiomorphicNeuralBackground: React.FC = () => {
   const boutonRef = useRef<THREE.InstancedMesh>(null);
   const somaRefs = useRef<(THREE.Group | null)[]>([]);
 
-  // ─── 4. BUILD EXPANDED 12-NEURON BIOLOGICAL CORTEX ───
-  const { neurons, totalAxons, totalBoutons, allAxons } = useMemo(() => {
-    // 12 Neurons in 3 Depth Layers (Foreground, Midground, Deep Background)
+  // ─── 4. WIDELY EXPANDED BIOLOGICAL NEURAL CORTEX ───
+  const { neurons, totalBranches, totalBoutons, allBranches } = useMemo(() => {
+    // 8 Neurons distributed widely across a vast 3D canvas (X: -16 to +16, Y: -10 to +10, Z: -7 to -26)
+    // Lots of breathing room, sweeping long tentacles, and delicate daughter sub-branches
     const configs = [
-      // ── FOREGROUND LAYER (Sharp, prominent, detailed somas & axons) ──
       // 1. Hero Upper-Right Multipolar Neuron (Reference 1 & 2 Right Side)
       {
         id: 1,
-        pos: new THREE.Vector3(6.5, 2.2, -6.5),
-        radius: 1.45,
-        nucleusColor: '#9333ea',
+        pos: new THREE.Vector3(10.5, 4.2, -7.5),
+        radius: 1.55,
+        nucleusColor: '#9333ea', // Deep purple nucleus as in Image 2
         baseColor: new THREE.Color('#031528'),
         rimColor: new THREE.Color('#00B4D8'),
         branches: [
-          { dir: new THREE.Vector3(-0.95, -0.3, 0.2), len: 9.2, startR: 0.24, endR: 0.03, curls: [new THREE.Vector3(-0.6, 0.8, -0.7), new THREE.Vector3(-0.9, -0.5, 0.7)], hasMyelin: true },
-          { dir: new THREE.Vector3(-0.65, -0.75, 0.15), len: 8.0, startR: 0.18, endR: 0.025, curls: [new THREE.Vector3(-0.5, -0.7, 0.6)] },
-          { dir: new THREE.Vector3(-0.35, 0.9, -0.2), len: 6.2, startR: 0.16, endR: 0.025, curls: [new THREE.Vector3(-0.3, 0.6, 0.5)] },
-          { dir: new THREE.Vector3(0.6, -0.75, 0.2), len: 5.5, startR: 0.14, endR: 0.02, curls: [new THREE.Vector3(0.5, -0.4, -0.4)] },
-          { dir: new THREE.Vector3(0.85, 0.35, -0.2), len: 5.0, startR: 0.13, endR: 0.02, curls: [new THREE.Vector3(0.4, 0.3, 0.4)] }
+          { dir: new THREE.Vector3(-0.95, -0.3, 0.2), len: 12.5, startR: 0.26, endR: 0.03, curls: [new THREE.Vector3(-0.8, 1.2, -0.8), new THREE.Vector3(-1.2, -0.6, 0.9)] },
+          { dir: new THREE.Vector3(-0.65, -0.75, 0.15), len: 10.5, startR: 0.20, endR: 0.025, curls: [new THREE.Vector3(-0.6, -1.0, 0.8)] },
+          { dir: new THREE.Vector3(-0.35, 0.9, -0.2), len: 8.5, startR: 0.17, endR: 0.025, curls: [new THREE.Vector3(-0.4, 0.8, 0.6)] },
+          { dir: new THREE.Vector3(0.65, -0.7, 0.2), len: 7.5, startR: 0.15, endR: 0.02, curls: [new THREE.Vector3(0.6, -0.5, -0.5)] },
+          { dir: new THREE.Vector3(0.85, 0.45, -0.2), len: 7.0, startR: 0.14, endR: 0.02, curls: [new THREE.Vector3(0.5, 0.4, 0.5)] }
         ]
       },
-      // 2. Foreground Left Neuron
+      // 2. Far-Left Midground Neuron (Reaching vast sweeping dendrites right across center)
       {
         id: 2,
-        pos: new THREE.Vector3(-7.2, -0.5, -7.5),
-        radius: 1.35,
-        nucleusColor: '#0284c7',
+        pos: new THREE.Vector3(-11.5, 1.5, -9.5),
+        radius: 1.45,
+        nucleusColor: '#0284c7', // Bio-cyan nucleus
         baseColor: new THREE.Color('#021124'),
         rimColor: new THREE.Color('#38BDF8'),
         branches: [
-          { dir: new THREE.Vector3(0.9, 0.4, 0.15), len: 9.5, startR: 0.22, endR: 0.03, curls: [new THREE.Vector3(0.7, -0.6, 0.7), new THREE.Vector3(0.9, 0.5, -0.6)], hasMyelin: true },
-          { dir: new THREE.Vector3(0.7, -0.7, 0.2), len: 7.5, startR: 0.17, endR: 0.025, curls: [new THREE.Vector3(0.5, -0.6, 0.5)] },
-          { dir: new THREE.Vector3(0.3, 0.95, -0.2), len: 6.5, startR: 0.15, endR: 0.025, curls: [new THREE.Vector3(0.3, 0.7, -0.4)] },
-          { dir: new THREE.Vector3(-0.8, -0.5, 0.3), len: 5.2, startR: 0.13, endR: 0.02, curls: [new THREE.Vector3(-0.4, -0.4, 0.3)] }
+          { dir: new THREE.Vector3(0.92, 0.35, 0.15), len: 13.5, startR: 0.25, endR: 0.03, curls: [new THREE.Vector3(1.0, -0.8, 0.9), new THREE.Vector3(1.2, 0.7, -0.8)] },
+          { dir: new THREE.Vector3(0.75, -0.65, 0.2), len: 11.0, startR: 0.19, endR: 0.025, curls: [new THREE.Vector3(0.7, -0.8, 0.6)] },
+          { dir: new THREE.Vector3(0.35, 0.9, -0.2), len: 9.0, startR: 0.16, endR: 0.025, curls: [new THREE.Vector3(0.4, 0.9, -0.5)] },
+          { dir: new THREE.Vector3(-0.8, -0.55, 0.3), len: 7.5, startR: 0.14, endR: 0.02, curls: [new THREE.Vector3(-0.5, -0.5, 0.4)] }
         ]
       },
-      // 3. Foreground Top-Center Neuron
+      // 3. Lower-Center / Right Neuron
       {
         id: 3,
-        pos: new THREE.Vector3(-1.2, 5.0, -8.5),
-        radius: 1.25,
-        nucleusColor: '#d97706',
+        pos: new THREE.Vector3(3.5, -7.0, -12.0),
+        radius: 1.30,
+        nucleusColor: '#d97706', // Golden amber nucleus
         baseColor: new THREE.Color('#031528'),
         rimColor: new THREE.Color('#06B6D4'),
         branches: [
-          { dir: new THREE.Vector3(0.65, -0.75, 0.15), len: 8.2, startR: 0.20, endR: 0.025, curls: [new THREE.Vector3(0.5, -0.8, 0.6)] },
-          { dir: new THREE.Vector3(-0.75, -0.65, 0.2), len: 7.8, startR: 0.18, endR: 0.025, curls: [new THREE.Vector3(-0.6, -0.5, -0.5)] },
-          { dir: new THREE.Vector3(0.3, 0.8, -0.3), len: 5.0, startR: 0.13, endR: 0.02, curls: [new THREE.Vector3(0.3, 0.5, 0.3)] }
+          { dir: new THREE.Vector3(-0.65, 0.75, 0.2), len: 11.0, startR: 0.22, endR: 0.025, curls: [new THREE.Vector3(-0.8, 0.9, -0.6)] },
+          { dir: new THREE.Vector3(0.8, 0.55, -0.2), len: 9.5, startR: 0.18, endR: 0.025, curls: [new THREE.Vector3(0.7, 0.6, -0.5)] },
+          { dir: new THREE.Vector3(-0.5, -0.8, 0.2), len: 7.0, startR: 0.14, endR: 0.02, curls: [new THREE.Vector3(-0.4, -0.6, 0.4)] }
         ]
       },
-
-      // ── MIDGROUND LAYER (Connecting neural pathways & synapses) ──
-      // 4. Midground Right-Bottom
+      // 4. Lower-Left Deep Neuron
       {
         id: 4,
-        pos: new THREE.Vector3(4.2, -4.5, -11.5),
-        radius: 1.1,
+        pos: new THREE.Vector3(-8.5, -6.5, -15.0),
+        radius: 1.20,
         nucleusColor: '#9333ea',
         baseColor: new THREE.Color('#021124'),
         rimColor: new THREE.Color('#00B4D8'),
         branches: [
-          { dir: new THREE.Vector3(-0.8, 0.6, 0.2), len: 7.8, startR: 0.16, endR: 0.025, curls: [new THREE.Vector3(-0.6, 0.7, -0.5)] },
-          { dir: new THREE.Vector3(0.5, 0.85, -0.2), len: 6.5, startR: 0.14, endR: 0.02, curls: [new THREE.Vector3(0.4, 0.6, 0.4)] },
-          { dir: new THREE.Vector3(-0.5, -0.85, 0.15), len: 5.5, startR: 0.12, endR: 0.02, curls: [new THREE.Vector3(-0.3, -0.5, 0.3)] }
+          { dir: new THREE.Vector3(0.8, 0.6, 0.2), len: 10.5, startR: 0.19, endR: 0.025, curls: [new THREE.Vector3(0.7, 0.7, -0.5)] },
+          { dir: new THREE.Vector3(0.6, -0.75, -0.2), len: 8.5, startR: 0.15, endR: 0.02, curls: [new THREE.Vector3(0.5, -0.6, 0.4)] }
         ]
       },
-      // 5. Midground Left-Top
+      // 5. Top-Center Deep Neuron (Atmospheric Depth)
       {
         id: 5,
-        pos: new THREE.Vector3(-5.5, 3.6, -12.5),
-        radius: 1.05,
+        pos: new THREE.Vector3(-1.5, 7.5, -18.0),
+        radius: 1.10,
         nucleusColor: '#0284c7',
-        baseColor: new THREE.Color('#031528'),
+        baseColor: new THREE.Color('#010e1c'),
         rimColor: new THREE.Color('#38BDF8'),
         branches: [
-          { dir: new THREE.Vector3(0.85, -0.5, 0.2), len: 8.0, startR: 0.16, endR: 0.025, curls: [new THREE.Vector3(0.6, -0.6, 0.5)] },
-          { dir: new THREE.Vector3(-0.6, 0.8, -0.2), len: 6.0, startR: 0.13, endR: 0.02, curls: [new THREE.Vector3(-0.4, 0.5, 0.3)] },
-          { dir: new THREE.Vector3(0.4, 0.9, 0.15), len: 5.2, startR: 0.12, endR: 0.02, curls: [new THREE.Vector3(0.3, 0.6, -0.4)] }
+          { dir: new THREE.Vector3(0.7, -0.7, 0.2), len: 10.0, startR: 0.16, endR: 0.02, curls: [new THREE.Vector3(0.6, -0.6, 0.5)] },
+          { dir: new THREE.Vector3(-0.75, -0.65, -0.2), len: 9.0, startR: 0.15, endR: 0.02, curls: [new THREE.Vector3(-0.5, -0.6, -0.4)] }
         ]
       },
-      // 6. Midground Bottom-Left
+      // 6. Far-Right Deep Background Neuron
       {
         id: 6,
-        pos: new THREE.Vector3(-2.8, -5.2, -13.5),
-        radius: 1.0,
+        pos: new THREE.Vector3(12.5, -3.5, -21.0),
+        radius: 1.05,
         nucleusColor: '#d97706',
-        baseColor: new THREE.Color('#021124'),
-        rimColor: new THREE.Color('#06B6D4'),
+        baseColor: new THREE.Color('#010e1c'),
+        rimColor: new THREE.Color('#00B4D8'),
         branches: [
-          { dir: new THREE.Vector3(0.7, 0.7, 0.2), len: 7.5, startR: 0.15, endR: 0.02, curls: [new THREE.Vector3(0.5, 0.6, -0.4)] },
-          { dir: new THREE.Vector3(-0.8, 0.55, -0.2), len: 6.8, startR: 0.14, endR: 0.02, curls: [new THREE.Vector3(-0.5, 0.4, 0.3)] }
+          { dir: new THREE.Vector3(-0.85, 0.5, 0.2), len: 10.5, startR: 0.15, endR: 0.02, curls: [new THREE.Vector3(-0.7, 0.6, 0.4)] },
+          { dir: new THREE.Vector3(-0.4, -0.9, -0.2), len: 8.0, startR: 0.13, endR: 0.02, curls: [new THREE.Vector3(-0.3, -0.7, -0.3)] }
         ]
       },
-      // 7. Midground Center-Right
+      // 7. Center-Deep Focal Background Neuron (Soft Blurred Silhouette)
       {
         id: 7,
-        pos: new THREE.Vector3(1.8, -0.8, -14.5),
+        pos: new THREE.Vector3(0.5, 0.0, -24.0),
         radius: 0.95,
         nucleusColor: '#9333ea',
-        baseColor: new THREE.Color('#031528'),
-        rimColor: new THREE.Color('#00B4D8'),
+        baseColor: new THREE.Color('#010e1c'),
+        rimColor: new THREE.Color('#0284C7'),
         branches: [
-          { dir: new THREE.Vector3(-0.7, -0.7, 0.2), len: 7.2, startR: 0.14, endR: 0.02, curls: [new THREE.Vector3(-0.5, -0.5, 0.4)] },
-          { dir: new THREE.Vector3(0.8, 0.6, -0.2), len: 6.5, startR: 0.13, endR: 0.02, curls: [new THREE.Vector3(0.5, 0.4, -0.3)] }
+          { dir: new THREE.Vector3(-0.7, -0.7, 0.2), len: 9.0, startR: 0.13, endR: 0.02, curls: [new THREE.Vector3(-0.5, -0.5, 0.4)] },
+          { dir: new THREE.Vector3(0.7, 0.7, -0.2), len: 8.5, startR: 0.12, endR: 0.02, curls: [new THREE.Vector3(0.5, 0.5, -0.4)] }
         ]
       },
-
-      // ── DEEP BACKGROUND LAYER (Soft blurred depth-of-field silhouettes) ──
-      // 8. Deep Upper-Right
+      // 8. Far-Upper-Left Deep Silhouette
       {
         id: 8,
-        pos: new THREE.Vector3(8.5, 5.5, -19.0),
-        radius: 0.85,
+        pos: new THREE.Vector3(-11.0, 7.0, -27.0),
+        radius: 0.90,
         nucleusColor: '#0284c7',
         baseColor: new THREE.Color('#010e1c'),
         rimColor: new THREE.Color('#0284C7'),
         branches: [
-          { dir: new THREE.Vector3(-0.8, -0.6, 0.2), len: 7.5, startR: 0.12, endR: 0.02, curls: [new THREE.Vector3(-0.5, -0.5, 0.4)] },
-          { dir: new THREE.Vector3(-0.3, -0.9, -0.2), len: 6.2, startR: 0.11, endR: 0.02, curls: [new THREE.Vector3(-0.2, -0.6, -0.3)] }
-        ]
-      },
-      // 9. Deep Upper-Left
-      {
-        id: 9,
-        pos: new THREE.Vector3(-9.0, 5.0, -21.0),
-        radius: 0.8,
-        nucleusColor: '#9333ea',
-        baseColor: new THREE.Color('#010e1c'),
-        rimColor: new THREE.Color('#00B4D8'),
-        branches: [
-          { dir: new THREE.Vector3(0.85, -0.5, 0.2), len: 7.5, startR: 0.12, endR: 0.02, curls: [new THREE.Vector3(0.5, -0.4, 0.4)] },
-          { dir: new THREE.Vector3(0.5, 0.85, -0.2), len: 5.8, startR: 0.10, endR: 0.02, curls: [new THREE.Vector3(0.3, 0.5, -0.3)] }
-        ]
-      },
-      // 10. Deep Bottom-Center
-      {
-        id: 10,
-        pos: new THREE.Vector3(0.0, -6.5, -23.0),
-        radius: 0.8,
-        nucleusColor: '#d97706',
-        baseColor: new THREE.Color('#010e1c'),
-        rimColor: new THREE.Color('#0284C7'),
-        branches: [
-          { dir: new THREE.Vector3(0.6, 0.8, 0.2), len: 7.0, startR: 0.11, endR: 0.02, curls: [new THREE.Vector3(0.4, 0.5, -0.3)] },
-          { dir: new THREE.Vector3(-0.6, 0.8, -0.2), len: 6.5, startR: 0.11, endR: 0.02, curls: [new THREE.Vector3(-0.4, 0.5, 0.3)] }
-        ]
-      },
-      // 11. Deep Far-Right
-      {
-        id: 11,
-        pos: new THREE.Vector3(9.2, -2.5, -25.0),
-        radius: 0.75,
-        nucleusColor: '#0284c7',
-        baseColor: new THREE.Color('#010e1c'),
-        rimColor: new THREE.Color('#00B4D8'),
-        branches: [
-          { dir: new THREE.Vector3(-0.85, 0.5, 0.2), len: 7.2, startR: 0.10, endR: 0.02, curls: [new THREE.Vector3(-0.5, 0.4, 0.3)] }
-        ]
-      },
-      // 12. Deep Far-Left
-      {
-        id: 12,
-        pos: new THREE.Vector3(-9.5, -3.0, -26.0),
-        radius: 0.75,
-        nucleusColor: '#9333ea',
-        baseColor: new THREE.Color('#010e1c'),
-        rimColor: new THREE.Color('#0284C7'),
-        branches: [
-          { dir: new THREE.Vector3(0.85, 0.5, 0.2), len: 7.0, startR: 0.10, endR: 0.02, curls: [new THREE.Vector3(0.5, 0.4, -0.3)] }
+          { dir: new THREE.Vector3(0.85, -0.5, 0.2), len: 9.5, startR: 0.12, endR: 0.02, curls: [new THREE.Vector3(0.6, -0.4, 0.4)] }
         ]
       }
     ];
 
-    let axonCounter = 0;
+    let branchCounter = 0;
     let boutonCounter = 0;
-    const axonList: AxonBranch[] = [];
+    const branchList: DendriteBranch[] = [];
 
     const neuronList: BioNeuron[] = configs.map((cfg, cIdx) => {
-      // ── Organic Multi-Lobed Biological Soma ──
+      // ── Organic Multi-Lobed Biological Soma Geometry ──
       const somaGeo = new THREE.SphereGeometry(cfg.radius, 32, 32);
       const posAttr = somaGeo.attributes.position;
       const v = new THREE.Vector3();
       for (let i = 0; i < posAttr.count; i++) {
         v.fromBufferAttribute(posAttr, i);
-        // Smooth metabolic cellular deformation
-        const noise = Math.sin(v.x * 2.8) * Math.cos(v.y * 2.8) * Math.sin(v.z * 2.8) * 0.15;
+        const noise = Math.sin(v.x * 2.6) * Math.cos(v.y * 2.6) * Math.sin(v.z * 2.6) * 0.14;
         v.multiplyScalar(1.0 + noise);
         posAttr.setXYZ(i, v.x, v.y, v.z);
       }
       somaGeo.computeVertexNormals();
 
       const somaMat = new THREE.ShaderMaterial({
-        vertexShader: BioAxonShader.vertexShader,
-        fragmentShader: BioAxonShader.fragmentShader,
+        vertexShader: BioNerveShader.vertexShader,
+        fragmentShader: BioNerveShader.fragmentShader,
         uniforms: {
           uBaseColor: { value: cfg.baseColor },
           uRimColor: { value: cfg.rimColor },
@@ -387,7 +329,8 @@ export const BiomorphicNeuralBackground: React.FC = () => {
         side: THREE.FrontSide
       });
 
-      const branches: AxonBranch[] = [];
+      const branches: DendriteBranch[] = [];
+      const subBranches: DendriteBranch[] = [];
 
       cfg.branches.forEach((bConf, bIdx) => {
         const dir = bConf.dir.clone().normalize();
@@ -400,27 +343,12 @@ export const BiomorphicNeuralBackground: React.FC = () => {
         const p3 = cfg.pos.clone().add(dir.clone().multiplyScalar(bConf.len * 0.8)).add(c1.clone().multiplyScalar(1.2));
         const p4 = cfg.pos.clone().add(dir.clone().multiplyScalar(bConf.len)).add(c2.clone().multiplyScalar(1.5));
 
-        const curve = new THREE.CatmullRomCurve3([p0, p1, p2, p3, p4], false, 'centripetal');
-        const geo = createTaperedDendriteGeometry(curve, 44, bConf.startR, bConf.endR, 10);
-
-        // Segmented Myelin Sheaths along main axons (Reference Image 2)
-        const myelinSheaths: { pos: THREE.Vector3; rot: THREE.Euler }[] = [];
-        if (bConf.hasMyelin) {
-          for (let m = 0.16; m <= 0.72; m += 0.11) {
-            const pt = curve.getPointAt(m);
-            const tan = curve.getTangentAt(m);
-            const rot = new THREE.Euler(
-              Math.atan2(tan.y, Math.sqrt(tan.x * tan.x + tan.z * tan.z)),
-              Math.atan2(-tan.x, -tan.z),
-              0
-            );
-            myelinSheaths.push({ pos: pt, rot });
-          }
-        }
+        const mainCurve = new THREE.CatmullRomCurve3([p0, p1, p2, p3, p4], false, 'centripetal');
+        const mainGeo = createTaperedDendriteGeometry(mainCurve, 46, bConf.startR, bConf.endR, 10);
 
         const branchMat = new THREE.ShaderMaterial({
-          vertexShader: BioAxonShader.vertexShader,
-          fragmentShader: BioAxonShader.fragmentShader,
+          vertexShader: BioNerveShader.vertexShader,
+          fragmentShader: BioNerveShader.fragmentShader,
           uniforms: {
             uBaseColor: { value: cfg.baseColor },
             uRimColor: { value: cfg.rimColor },
@@ -433,29 +361,63 @@ export const BiomorphicNeuralBackground: React.FC = () => {
           side: THREE.FrontSide
         });
 
-        // ── EXACTLY ONE SIGNAL PER AXON: Slow, graceful, biological rhythm ──
-        // Spreads out initial progress so signals fire sequentially rather than all at once
+        // ── STRICTLY ONE SIGNAL PER BRANCH (Slow & Graceful Biological Speed) ──
+        // Stagger initial progress across branches so signals fire organically
         const initialProgress = ((cIdx * 7 + bIdx * 3) % 10) / 10 - 0.2;
-        const branchPulse = {
+        const mainPulse = {
           progress: initialProgress,
-          speed: 0.065 + Math.random() * 0.035, // Slow, majestic biological velocity (~14s per cycle)
-          restDuration: 0.35 + Math.random() * 0.45 // Natural refractory period
+          speed: 0.06 + Math.random() * 0.03, // Takes ~15 seconds to travel length of nerve
+          restPeriod: 0.4 + Math.random() * 0.4 // Refractory rest pause
         };
 
-        axonCounter++;
+        branchCounter++;
         boutonCounter++;
 
-        const branchItem: AxonBranch = {
-          curve,
-          geo,
+        const mainBranchItem: DendriteBranch = {
+          curve: mainCurve,
+          geo: mainGeo,
           terminalPos: p4,
           material: branchMat,
-          pulse: branchPulse,
-          myelinSheaths
+          pulse: mainPulse
         };
 
-        branches.push(branchItem);
-        axonList.push(branchItem);
+        branches.push(mainBranchItem);
+        branchList.push(mainBranchItem);
+
+        // ── DENDRITIC ARBORIZATION: Realistic Fine Daughter Sub-Branches ──
+        if (bConf.len > 7.5) {
+          const splitT = 0.45 + Math.random() * 0.18;
+          const subStart = mainCurve.getPointAt(splitT);
+          const subTangent = mainCurve.getTangentAt(splitT);
+          const sideVec = new THREE.Vector3(-subTangent.y, subTangent.x, subTangent.z * 0.6).normalize();
+
+          const subMid = subStart.clone().add(subTangent.clone().multiplyScalar(2.2)).add(sideVec.clone().multiplyScalar(1.4));
+          const subEnd = subMid.clone().add(subTangent.clone().multiplyScalar(2.0)).add(sideVec.clone().multiplyScalar(1.0));
+
+          const subCurve = new THREE.CatmullRomCurve3([subStart, subMid, subEnd], false, 'centripetal');
+          const subGeo = createTaperedDendriteGeometry(subCurve, 30, bConf.startR * 0.65, bConf.endR * 0.85, 8);
+          const subMat = branchMat.clone();
+
+          const subPulse = {
+            progress: (initialProgress + 0.4) % 1.0 - 0.2,
+            speed: 0.07 + Math.random() * 0.03,
+            restPeriod: 0.45 + Math.random() * 0.4
+          };
+
+          branchCounter++;
+          boutonCounter++;
+
+          const subBranchItem: DendriteBranch = {
+            curve: subCurve,
+            geo: subGeo,
+            terminalPos: subEnd,
+            material: subMat,
+            pulse: subPulse
+          };
+
+          subBranches.push(subBranchItem);
+          branchList.push(subBranchItem);
+        }
       });
 
       return {
@@ -465,19 +427,20 @@ export const BiomorphicNeuralBackground: React.FC = () => {
         somaGeo,
         somaMaterial: somaMat,
         nucleusColor: cfg.nucleusColor,
-        branches
+        branches,
+        subBranches
       };
     });
 
     return {
       neurons: neuronList,
-      totalAxons: axonCounter,
+      totalBranches: branchCounter,
       totalBoutons: boutonCounter,
-      allAxons: axonList
+      allBranches: branchList
     };
   }, []);
 
-  // ─── 5. FLOATING MICRO-CYTOPLASM BOKEH PARTICLES (Bio-fluid Depth) ───
+  // ─── 5. FLOATING MICRO-VESICLE CYTOPLASM PARTICLES (Bio-fluid Depth) ───
   const cytoplasmField = useMemo(() => {
     const count = 350;
     const positions = new Float32Array(count * 3);
@@ -488,8 +451,8 @@ export const BiomorphicNeuralBackground: React.FC = () => {
     const whiteBio = new THREE.Color('#FFFFFF');
 
     for (let i = 0; i < count; i++) {
-      positions[i * 3 + 0] = (Math.random() - 0.5) * 44;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 28;
+      positions[i * 3 + 0] = (Math.random() - 0.5) * 46;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 30;
       positions[i * 3 + 2] = -4 - Math.random() * 28;
 
       const r = Math.random();
@@ -508,16 +471,16 @@ export const BiomorphicNeuralBackground: React.FC = () => {
   const tempMatrix = useMemo(() => new THREE.Matrix4(), []);
   const zeroMatrix = useMemo(() => new THREE.Matrix4().makeScale(0, 0, 0), []);
 
-  // Initialize all instanced matrices to 0 to prevent any stray artifacts
+  // Initialize instanced matrices to 0
   React.useEffect(() => {
     if (sparkCoreRef.current) {
-      for (let i = 0; i < totalAxons; i++) {
+      for (let i = 0; i < totalBranches; i++) {
         sparkCoreRef.current.setMatrixAt(i, zeroMatrix);
       }
       sparkCoreRef.current.instanceMatrix.needsUpdate = true;
     }
     if (sparkHaloRef.current) {
-      for (let i = 0; i < totalAxons; i++) {
+      for (let i = 0; i < totalBranches; i++) {
         sparkHaloRef.current.setMatrixAt(i, zeroMatrix);
       }
       sparkHaloRef.current.instanceMatrix.needsUpdate = true;
@@ -528,20 +491,20 @@ export const BiomorphicNeuralBackground: React.FC = () => {
       }
       boutonRef.current.instanceMatrix.needsUpdate = true;
     }
-  }, [totalAxons, totalBoutons, zeroMatrix]);
+  }, [totalBranches, totalBoutons, zeroMatrix]);
 
-  // ─── 6. 60 FPS BIOLOGICAL SIMULATION LOOP ───
+  // ─── 6. 60 FPS REAL-TIME BIOLOGICAL SIMULATION LOOP ───
   useFrame((state, delta) => {
     const time = state.clock.elapsedTime;
 
-    // A. Slow, majestic global fluid drift
+    // A. Slow, majestic global microscopic fluid drift
     if (masterGroupRef.current) {
       masterGroupRef.current.rotation.y = Math.sin(time * 0.05) * 0.03;
       masterGroupRef.current.rotation.x = Math.cos(time * 0.04) * 0.02;
       masterGroupRef.current.position.y = Math.sin(time * 0.12) * 0.10;
     }
 
-    // B. Somas Organic Respiration / Pulsation
+    // B. Organic Somas Breathing / Respiration
     neurons.forEach((neuron, idx) => {
       const g = somaRefs.current[idx];
       if (g) {
@@ -551,60 +514,60 @@ export const BiomorphicNeuralBackground: React.FC = () => {
       neuron.somaMaterial.uniforms.uTime.value = time;
     });
 
-    // C. Propagate Exactly ONE Action Potential per Axon (Slow & Graceful)
-    let axonIdx = 0;
+    // C. Propagate EXACTLY ONE Signal Per Axon (Slow & Graceful)
+    let branchIdx = 0;
     let boutonIdx = 0;
 
-    allAxons.forEach(axon => {
-      const p = axon.pulse;
+    allBranches.forEach(branch => {
+      const p = branch.pulse;
       p.progress += delta * p.speed;
 
-      // When impulse completes journey, trigger terminal flash and refractory rest
+      // When impulse reaches the terminal, trigger flash and refractory resting pause
       if (p.progress > 1.05) {
-        p.progress = -p.restDuration; // Refractory delay before next action potential
+        p.progress = -p.restPeriod; // Refractory rest pause
       }
 
-      // Update shader uniform to light up nerve fiber as pulse glides along it
-      axon.material.uniforms.uPulseProgress.value = p.progress;
-      axon.material.uniforms.uTime.value = time;
+      // Update shader uniform to light up nerve fiber from inside
+      branch.material.uniforms.uPulseProgress.value = p.progress;
+      branch.material.uniforms.uTime.value = time;
 
-      // ── Position the Single Traveling Electrical Spark ──
+      // Position the Single Traveling Electrical Action Potential
       if (p.progress >= 0.0 && p.progress <= 1.0) {
-        const pos = axon.curve.getPointAt(p.progress);
+        const pos = branch.curve.getPointAt(p.progress);
 
-        // Hot White-Gold Core (Luminous particle)
+        // Core Hot White-Gold Spark
         if (sparkCoreRef.current) {
           const coreScale = 0.14 + Math.sin(p.progress * Math.PI) * 0.06;
           tempMatrix.makeScale(coreScale, coreScale, coreScale);
           tempMatrix.setPosition(pos);
-          sparkCoreRef.current.setMatrixAt(axonIdx, tempMatrix);
+          sparkCoreRef.current.setMatrixAt(branchIdx, tempMatrix);
         }
 
-        // Radiant Warm Golden Halo (Plasma Corona)
+        // Radiant Warm Golden Corona Halo (Plasma Aura)
         if (sparkHaloRef.current) {
           const haloScale = (0.14 + Math.sin(p.progress * Math.PI) * 0.06) * 3.2;
           tempMatrix.makeScale(haloScale, haloScale, haloScale);
           tempMatrix.setPosition(pos);
-          sparkHaloRef.current.setMatrixAt(axonIdx, tempMatrix);
+          sparkHaloRef.current.setMatrixAt(branchIdx, tempMatrix);
         }
       } else {
-        // Hide spark during refractory rest period
-        if (sparkCoreRef.current) sparkCoreRef.current.setMatrixAt(axonIdx, zeroMatrix);
-        if (sparkHaloRef.current) sparkHaloRef.current.setMatrixAt(axonIdx, zeroMatrix);
+        // Inactive during refractory rest
+        if (sparkCoreRef.current) sparkCoreRef.current.setMatrixAt(branchIdx, zeroMatrix);
+        if (sparkHaloRef.current) sparkHaloRef.current.setMatrixAt(branchIdx, zeroMatrix);
       }
 
-      // ── Synaptic Bouton (Flashes brightly when impulse arrives at tip) ──
+      // Synaptic Bouton (Flashes brightly when impulse arrives at tip)
       if (boutonRef.current && boutonIdx < totalBoutons) {
         const isFiring = p.progress >= 0.92 && p.progress <= 1.05;
-        const bScale = isFiring ? 0.20 : 0.09 + Math.sin(time * 1.8 + boutonIdx) * 0.012;
+        const bScale = isFiring ? 0.22 : 0.09 + Math.sin(time * 1.8 + boutonIdx) * 0.012;
 
         tempMatrix.makeScale(bScale, bScale, bScale);
-        tempMatrix.setPosition(axon.terminalPos);
+        tempMatrix.setPosition(branch.terminalPos);
         boutonRef.current.setMatrixAt(boutonIdx, tempMatrix);
         boutonIdx++;
       }
 
-      axonIdx++;
+      branchIdx++;
     });
 
     if (sparkCoreRef.current) sparkCoreRef.current.instanceMatrix.needsUpdate = true;
@@ -620,13 +583,13 @@ export const BiomorphicNeuralBackground: React.FC = () => {
 
       {/* Fluorescent Darkfield Microscope Lighting */}
       <ambientLight intensity={0.75} color="#072b4a" />
-      <directionalLight position={[12, 14, 8]} intensity={2.4} color="#FEF08A" />
-      <directionalLight position={[-14, -10, -8]} intensity={3.6} color="#00B4D8" />
+      <directionalLight position={[14, 16, 8]} intensity={2.4} color="#FEF08A" />
+      <directionalLight position={[-16, -12, -8]} intensity={3.6} color="#00B4D8" />
       
       {/* Local Bioluminescent Highlights */}
-      <pointLight position={[6.5, 2.2, -4.5]} intensity={2.5} color="#FACC15" distance={16} />
-      <pointLight position={[-7.2, -0.5, -5.5]} intensity={2.4} color="#00B4D8" distance={16} />
-      <pointLight position={[-1.2, 5.0, -6.5]} intensity={2.0} color="#FACC15" distance={14} />
+      <pointLight position={[10.5, 4.2, -5.5]} intensity={2.5} color="#FACC15" distance={18} />
+      <pointLight position={[-11.5, 1.5, -7.5]} intensity={2.4} color="#00B4D8" distance={18} />
+      <pointLight position={[3.5, -7.0, -9.5]} intensity={2.0} color="#FACC15" distance={16} />
 
       {/* Floating Microscopic Cytoplasm Bokeh Particles */}
       <points geometry={cytoplasmField}>
@@ -662,7 +625,7 @@ export const BiomorphicNeuralBackground: React.FC = () => {
                 />
               </mesh>
 
-              {/* Smooth Flared Root Cones connecting soma to axons */}
+              {/* Smooth Flared Root Cones connecting soma to dendrites */}
               {neuron.branches.map((b, bIdx) => {
                 const tangent = b.curve.getTangentAt(0);
                 const rootPos = tangent.clone().multiplyScalar(neuron.radius * 0.72);
@@ -686,21 +649,10 @@ export const BiomorphicNeuralBackground: React.FC = () => {
               <mesh key={`b-${bIdx}`} geometry={b.geo} material={b.material} />
             ))}
 
-            {/* ─── MYELIN SHEATH CYLINDERS (Reference Image 2) ─── */}
-            {neuron.branches.map(b =>
-              b.myelinSheaths?.map((m, mIdx) => (
-                <mesh key={`myelin-${mIdx}`} position={m.pos} rotation={m.rot}>
-                  <cylinderGeometry args={[0.15, 0.15, 0.32, 16]} />
-                  <meshStandardMaterial
-                    color="#38BDF8"
-                    emissive="#0284C7"
-                    emissiveIntensity={0.45}
-                    roughness={0.25}
-                    metalness={0.45}
-                  />
-                </mesh>
-              ))
-            )}
+            {/* ─── DENDRITIC ARBORIZATION (Fine Daughter Sub-Branches) ─── */}
+            {neuron.subBranches.map((sb, sbIdx) => (
+              <mesh key={`sb-${sbIdx}`} geometry={sb.geo} material={sb.material} />
+            ))}
           </group>
         ))}
 
@@ -722,7 +674,7 @@ export const BiomorphicNeuralBackground: React.FC = () => {
         {/* ─── SINGLE ACTION POTENTIAL CORE (Hot White-Gold Energy Spark) ─── */}
         <instancedMesh
           ref={sparkCoreRef}
-          args={[undefined, undefined, totalAxons]}
+          args={[undefined, undefined, totalBranches]}
         >
           <sphereGeometry args={[1, 14, 14]} />
           <meshBasicMaterial
@@ -736,7 +688,7 @@ export const BiomorphicNeuralBackground: React.FC = () => {
         {/* ─── RADIANT GOLDEN CORONA HALO (Warm Plasma Aura) ─── */}
         <instancedMesh
           ref={sparkHaloRef}
-          args={[undefined, undefined, totalAxons]}
+          args={[undefined, undefined, totalBranches]}
         >
           <sphereGeometry args={[1, 14, 14]} />
           <meshBasicMaterial
