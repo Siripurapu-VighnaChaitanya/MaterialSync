@@ -84,7 +84,6 @@ const TERMINAL_SEQUENCE: readonly string[] = [
   "> EXTRACTING NLP TOKENS & NER TAGS...",
   "> GENERATING 384D VECTOR EMBEDDINGS...",
   "> QUERYING GLOBAL FAISS INDEX...",
-  "> MATCH FOUND: 99.8% CONFIDENCE",
   "> SYSTEM READY."
 ];
 
@@ -132,7 +131,7 @@ const TerminalWindow: React.FC = () => {
         <span style={{ fontSize: '11px', color: '#A3E635', marginLeft: 'auto', letterSpacing: '0.05em' }}>neural-engine.sh</span>
       </div>
       {displayedLines.map((line, idx) => {
-        const isSuccess = Boolean(line && (line.includes("MATCH FOUND") || line.includes("READY")));
+        const isSuccess = Boolean(line && line.includes("READY"));
         return (
           <motion.div 
             key={idx}
