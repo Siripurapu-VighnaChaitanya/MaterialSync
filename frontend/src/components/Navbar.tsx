@@ -80,8 +80,10 @@ export const Navbar: React.FC<NavbarProps> = ({
       >
         {/* ── Brand ── */}
         <div
+          id="navbar-brand-logo"
+          title="MaterialSync - Home"
           style={{ display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer', flexShrink: 0 }}
-          onClick={() => setActiveTab('checker')}
+          onClick={() => setActiveTab('home')}
         >
           <Logo3D />
           <span style={{ 
