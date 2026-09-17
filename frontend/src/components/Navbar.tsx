@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   Activity, ShieldCheck, Database, Search,
-  GitMerge, FileText, Upload, Cpu, ChevronDown
+  GitMerge, FileText, Upload, Cpu, ChevronDown, Home
 } from 'lucide-react';
 import { Logo3D } from './3d/Logo3D';
 
@@ -22,9 +22,9 @@ const ROLES = [
 ];
 
 const ROLE_COLORS: Record<string, string> = {
-  officer: '#4F8EF7',
-  approver: '#00D68F',
-  auditor: '#F7B731',
+  officer: '#22C55E',
+  approver: '#FACC15',
+  auditor: '#A3E635',
 };
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -37,6 +37,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   setActiveRole,
 }) => {
   const navItems = [
+    { id: 'home', label: 'Home', icon: Home },
     { id: 'checker', label: 'Command Center', icon: Search },
     { id: 'bulk', label: 'Bulk Ingest', icon: Upload },
     { id: 'clusters', label: 'Cluster Network', icon: GitMerge },
@@ -83,7 +84,14 @@ export const Navbar: React.FC<NavbarProps> = ({
           onClick={() => setActiveTab('checker')}
         >
           <Logo3D />
-          <span style={{ fontSize: '20px', fontWeight: 900, letterSpacing: '-0.03em', color: '#F0F4FF' }}>
+          <span style={{ 
+            fontSize: '20px', 
+            fontWeight: 900, 
+            letterSpacing: '-0.03em', 
+            background: 'linear-gradient(90deg, #FACC15, #22C55E)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent'
+          }}>
             MaterialSync
           </span>
         </div>
@@ -99,9 +107,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                 id={`nav-tab-${item.id}`}
                 onClick={() => setActiveTab(item.id)}
                 style={{
-                  background: isActive ? 'rgba(79,142,247,0.12)' : 'transparent',
-                  color: isActive ? '#7AAEFF' : 'var(--text-muted)',
-                  border: isActive ? '1px solid rgba(79,142,247,0.25)' : '1px solid transparent',
+                  background: isActive ? 'rgba(250, 204, 21, 0.12)' : 'transparent',
+                  color: isActive ? '#FACC15' : 'var(--text-muted)',
+                  border: isActive ? '1px solid rgba(250, 204, 21, 0.3)' : '1px solid transparent',
+                  boxShadow: isActive ? '0 0 15px rgba(250, 204, 21, 0.08)' : 'none',
                   padding: '7px 14px',
                   borderRadius: '10px',
                   fontSize: '13px',
@@ -114,7 +123,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   whiteSpace: 'nowrap',
                 }}
               >
-                <Icon size={14} />
+                <Icon size={14} color={isActive ? '#FACC15' : 'currentColor'} />
                 <span>{item.label}</span>
               </button>
             );

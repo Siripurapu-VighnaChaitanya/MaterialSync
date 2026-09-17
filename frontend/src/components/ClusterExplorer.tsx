@@ -77,7 +77,7 @@ export const ClusterExplorer: React.FC = () => {
   if (loading) {
     return (
       <div style={{ height: 'calc(100vh - 150px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div className="animate-spin" style={{ color: '#4F8EF7' }}><Activity size={48} /></div>
+        <div className="animate-spin" style={{ color: '#FACC15' }}><Activity size={48} /></div>
       </div>
     );
   }
@@ -87,9 +87,9 @@ export const ClusterExplorer: React.FC = () => {
     const cpseColors: Record<string, string> = {
       IOCL: '#FF6B35',
       ONGC: '#FF4757',
-      BPCL: '#4F8EF7',
-      GAIL: '#00D68F',
-      NTPC: '#A855F7'
+      BPCL: '#EAB308',
+      GAIL: '#22C55E',
+      NTPC: '#A3E635'
     };
     return cpseColors[node.source_cpse] || '#8B96B0';
   };
@@ -120,8 +120,8 @@ export const ClusterExplorer: React.FC = () => {
       <div className="cluster-panel-left">
         <div className="glass-panel-glow" style={{ padding: '24px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-            <div style={{ background: 'rgba(79,142,247,0.15)', padding: '8px', borderRadius: '10px' }}>
-              <GitMerge size={20} color="#4F8EF7" />
+            <div style={{ background: 'rgba(250,204,21,0.12)', padding: '8px', borderRadius: '10px' }}>
+              <GitMerge size={20} color="#FACC15" />
             </div>
             <h2 style={{ fontSize: '18px', fontWeight: 800, color: '#F0F4FF' }}>3D Cluster Matrix</h2>
           </div>
@@ -147,9 +147,9 @@ export const ClusterExplorer: React.FC = () => {
               width: '100%',
               padding: '12px',
               borderRadius: '8px',
-              border: isEmbeddingMode ? '1px solid #10B981' : '1px solid rgba(255,255,255,0.2)',
+              border: isEmbeddingMode ? '1px solid #10B981' : '1px solid rgba(250,204,21,0.3)',
               background: isEmbeddingMode ? 'rgba(16,185,129,0.1)' : 'rgba(255,255,255,0.05)',
-              color: isEmbeddingMode ? '#10B981' : '#F0F4FF',
+              color: isEmbeddingMode ? '#10B981' : '#FACC15',
               fontWeight: 700,
               fontSize: '13px',
               cursor: loading ? 'not-allowed' : 'pointer',
@@ -169,11 +169,11 @@ export const ClusterExplorer: React.FC = () => {
       {/* Node Detail Inspector (Right) */}
       {selectedNode && (
         <div className="animate-slide-right cluster-panel-right">
-          <div className="glass-panel" style={{ padding: '24px', border: '1px solid rgba(79,142,247,0.4)' }}>
+          <div className="glass-panel" style={{ padding: '24px', border: '1px solid rgba(250,204,21,0.35)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Layers size={18} color="#4F8EF7" />
-                <span style={{ fontSize: '14px', fontWeight: 700, color: '#7AAEFF', letterSpacing: '0.05em' }}>Node Inspector</span>
+                <Layers size={18} color="#22C55E" />
+                <span style={{ fontSize: '14px', fontWeight: 700, color: '#FACC15', letterSpacing: '0.05em' }}>Node Inspector</span>
               </div>
               <button onClick={() => setSelectedNode(null)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
                 ✕

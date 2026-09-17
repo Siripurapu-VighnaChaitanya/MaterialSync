@@ -71,12 +71,12 @@ export const AnalyticsView: React.FC = () => {
       <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px', marginBottom: '28px' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
-            <div style={{ padding: '8px', borderRadius: '10px', background: 'rgba(16, 185, 129, 0.15)', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
-              <DollarSign size={22} color="#10B981" />
+            <div style={{ padding: '8px', borderRadius: '10px', background: 'rgba(250, 204, 21, 0.12)', border: '1px solid rgba(250, 204, 21, 0.3)' }}>
+              <DollarSign size={22} color="#FACC15" />
             </div>
             <div>
               <h2 style={{ fontSize: '26px', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.02em', margin: 0 }}>
-                Executive ROI & Cross-CPSE Capital Optimization
+                Executive ROI & <span style={{ background: 'linear-gradient(90deg, #FACC15, #22C55E)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Capital Optimization</span>
               </h2>
               <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '2px', margin: 0 }}>
                 High-level financial intelligence, dead capital liberation, and ground-truth verified audit performance.
@@ -96,15 +96,16 @@ export const AnalyticsView: React.FC = () => {
               fontWeight: 700,
               cursor: 'pointer',
               border: 'none',
-              background: activeTab === 'roi' ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)' : 'transparent',
-              color: activeTab === 'roi' ? '#FFFFFF' : 'var(--text-secondary)',
+              background: activeTab === 'roi' ? 'linear-gradient(135deg, #FACC15 0%, #EAB308 25%, #22C55E 80%, #16A34A 100%)' : 'transparent',
+              color: activeTab === 'roi' ? '#050810' : 'var(--text-secondary)',
+              boxShadow: activeTab === 'roi' ? '0 0 15px rgba(34, 197, 94, 0.3)' : 'none',
               transition: 'all 0.2s ease',
               display: 'flex',
               alignItems: 'center',
               gap: '6px'
             }}
           >
-            <TrendingUp size={14} /> Executive ROI & Savings
+            <TrendingUp size={14} color={activeTab === 'roi' ? '#050810' : 'currentColor'} /> Executive ROI & Savings
           </button>
           <button
             onClick={() => setActiveTab('benchmark')}
@@ -115,15 +116,16 @@ export const AnalyticsView: React.FC = () => {
               fontWeight: 700,
               cursor: 'pointer',
               border: 'none',
-              background: activeTab === 'benchmark' ? 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)' : 'transparent',
-              color: activeTab === 'benchmark' ? '#FFFFFF' : 'var(--text-secondary)',
+              background: activeTab === 'benchmark' ? 'linear-gradient(135deg, #FACC15 0%, #EAB308 100%)' : 'transparent',
+              color: activeTab === 'benchmark' ? '#050810' : 'var(--text-secondary)',
+              boxShadow: activeTab === 'benchmark' ? '0 0 15px rgba(250, 204, 21, 0.3)' : 'none',
               transition: 'all 0.2s ease',
               display: 'flex',
               alignItems: 'center',
               gap: '6px'
             }}
           >
-            <Award size={14} /> Ground-Truth Benchmark
+            <Award size={14} color={activeTab === 'benchmark' ? '#050810' : 'currentColor'} /> Ground-Truth Benchmark
           </button>
         </div>
       </div>
@@ -147,16 +149,16 @@ export const AnalyticsView: React.FC = () => {
           </span>
         </div>
 
-        <div className="glass-panel" style={{ padding: '22px', borderLeft: '4px solid #3B82F6', position: 'relative', overflow: 'hidden' }}>
+        <div className="glass-panel" style={{ padding: '22px', borderLeft: '4px solid #FACC15', position: 'relative', overflow: 'hidden' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <span style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>
               Duplicate Buys Blocked
             </span>
-            <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '12px', background: 'rgba(59, 130, 246, 0.15)', color: '#60A5FA', fontWeight: 700 }}>
+            <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '12px', background: 'rgba(250, 204, 21, 0.15)', color: '#FACC15', fontWeight: 700 }}>
               Zero PO Leakage
             </span>
           </div>
-          <div style={{ fontSize: '32px', fontWeight: 900, color: '#60A5FA', marginTop: '8px', letterSpacing: '-0.02em' }}>
+          <div style={{ fontSize: '32px', fontWeight: 900, color: '#FACC15', marginTop: '8px', letterSpacing: '-0.02em' }}>
             3,420
           </div>
           <span style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '4px', display: 'block' }}>
@@ -164,16 +166,16 @@ export const AnalyticsView: React.FC = () => {
           </span>
         </div>
 
-        <div className="glass-panel" style={{ padding: '22px', borderLeft: '4px solid #F59E0B', position: 'relative', overflow: 'hidden' }}>
+        <div className="glass-panel" style={{ padding: '22px', borderLeft: '4px solid #EAB308', position: 'relative', overflow: 'hidden' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <span style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>
               Dormant Stock Liquidated
             </span>
-            <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '12px', background: 'rgba(245, 158, 11, 0.15)', color: '#FCD34D', fontWeight: 700 }}>
+            <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '12px', background: 'rgba(234, 179, 8, 0.15)', color: '#FCD34D', fontWeight: 700 }}>
               Inter-CPSE Sharing
             </span>
           </div>
-          <div style={{ fontSize: '32px', fontWeight: 900, color: '#F59E0B', marginTop: '8px', letterSpacing: '-0.02em' }}>
+          <div style={{ fontSize: '32px', fontWeight: 900, color: '#FACC15', marginTop: '8px', letterSpacing: '-0.02em' }}>
             ₹18.40 Cr
           </div>
           <span style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '4px', display: 'block' }}>
@@ -181,16 +183,16 @@ export const AnalyticsView: React.FC = () => {
           </span>
         </div>
 
-        <div className="glass-panel" style={{ padding: '22px', borderLeft: '4px solid #8B5CF6', position: 'relative', overflow: 'hidden' }}>
+        <div className="glass-panel" style={{ padding: '22px', borderLeft: '4px solid #A3E635', position: 'relative', overflow: 'hidden' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <span style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>
               Catalogue Redundancy Cut
             </span>
-            <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '12px', background: 'rgba(139, 92, 246, 0.15)', color: '#C4B5FD', fontWeight: 700 }}>
+            <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '12px', background: 'rgba(163, 230, 53, 0.15)', color: '#A3E635', fontWeight: 700 }}>
               Unified SKU Standard
             </span>
           </div>
-          <div style={{ fontSize: '32px', fontWeight: 900, color: '#A78BFA', marginTop: '8px', letterSpacing: '-0.02em' }}>
+          <div style={{ fontSize: '32px', fontWeight: 900, color: '#A3E635', marginTop: '8px', letterSpacing: '-0.02em' }}>
             69.1%
           </div>
           <span style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '4px', display: 'block' }}>
@@ -202,10 +204,10 @@ export const AnalyticsView: React.FC = () => {
       {activeTab === 'roi' && (
         <>
           {/* Interactive ROI Savings Simulator */}
-          <div className="glass-panel" style={{ padding: '28px', marginBottom: '32px', border: '1px solid rgba(16, 185, 129, 0.25)', background: 'radial-gradient(ellipse at top right, rgba(16, 185, 129, 0.08) 0%, rgba(10, 15, 29, 0.95) 70%)' }}>
+          <div className="glass-panel" style={{ padding: '28px', marginBottom: '32px', border: '1px solid rgba(34, 197, 94, 0.25)', background: 'radial-gradient(ellipse at top right, rgba(250, 204, 21, 0.08) 0%, rgba(10, 15, 29, 0.95) 70%)' }}>
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', gap: '12px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Calculator size={22} color="#10B981" />
+                <Calculator size={22} color="#FACC15" />
                 <div>
                   <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#FFFFFF', margin: 0 }}>
                     Enterprise Cross-CPSE Value Simulator
@@ -249,7 +251,7 @@ export const AnalyticsView: React.FC = () => {
                     <span style={{ fontSize: '13px', fontWeight: 600, color: '#E2E8F0' }}>
                       Annual Material Procurement Spend
                     </span>
-                    <span style={{ fontSize: '14px', fontWeight: 800, color: '#10B981' }}>
+                    <span style={{ fontSize: '14px', fontWeight: 800, color: '#22C55E' }}>
                       ₹{annualSpendCr.toLocaleString('en-IN')} Cr
                     </span>
                   </div>
@@ -260,7 +262,7 @@ export const AnalyticsView: React.FC = () => {
                     step={50}
                     value={annualSpendCr}
                     onChange={(e) => setAnnualSpendCr(Number(e.target.value))}
-                    style={{ width: '100%', accentColor: '#10B981', cursor: 'pointer' }}
+                    style={{ width: '100%', accentColor: '#22C55E', cursor: 'pointer' }}
                   />
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: 'var(--text-muted)', marginTop: '4px' }}>
                     <span>₹200 Cr (Single Entity)</span>
@@ -274,7 +276,7 @@ export const AnalyticsView: React.FC = () => {
                     <span style={{ fontSize: '13px', fontWeight: 600, color: '#E2E8F0' }}>
                       Catalogue Duplication & Variance Rate
                     </span>
-                    <span style={{ fontSize: '14px', fontWeight: 800, color: '#60A5FA' }}>
+                    <span style={{ fontSize: '14px', fontWeight: 800, color: '#FACC15' }}>
                       {duplicationRate}%
                     </span>
                   </div>
@@ -285,7 +287,7 @@ export const AnalyticsView: React.FC = () => {
                     step={1}
                     value={duplicationRate}
                     onChange={(e) => setDuplicationRate(Number(e.target.value))}
-                    style={{ width: '100%', accentColor: '#3B82F6', cursor: 'pointer' }}
+                    style={{ width: '100%', accentColor: '#FACC15', cursor: 'pointer' }}
                   />
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: 'var(--text-muted)', marginTop: '4px' }}>
                     <span>5% (Conservative)</span>
@@ -299,7 +301,7 @@ export const AnalyticsView: React.FC = () => {
                     <span style={{ fontSize: '13px', fontWeight: 600, color: '#E2E8F0' }}>
                       Annual Warehouse Inventory Carrying Cost
                     </span>
-                    <span style={{ fontSize: '14px', fontWeight: 800, color: '#F59E0B' }}>
+                    <span style={{ fontSize: '14px', fontWeight: 800, color: '#EAB308' }}>
                       {carryingCostRate}% / yr
                     </span>
                   </div>
@@ -310,7 +312,7 @@ export const AnalyticsView: React.FC = () => {
                     step={1}
                     value={carryingCostRate}
                     onChange={(e) => setCarryingCostRate(Number(e.target.value))}
-                    style={{ width: '100%', accentColor: '#F59E0B', cursor: 'pointer' }}
+                    style={{ width: '100%', accentColor: '#EAB308', cursor: 'pointer' }}
                   />
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: 'var(--text-muted)', marginTop: '4px' }}>
                     <span>10% (Capital + Space)</span>
@@ -324,7 +326,7 @@ export const AnalyticsView: React.FC = () => {
                     <span style={{ fontSize: '13px', fontWeight: 600, color: '#E2E8F0' }}>
                       Cross-CPSE Shared Stock Offset Ratio
                     </span>
-                    <span style={{ fontSize: '14px', fontWeight: 800, color: '#A855F7' }}>
+                    <span style={{ fontSize: '14px', fontWeight: 800, color: '#A3E635' }}>
                       {interCpseShareRate}%
                     </span>
                   </div>
@@ -335,7 +337,7 @@ export const AnalyticsView: React.FC = () => {
                     step={1}
                     value={interCpseShareRate}
                     onChange={(e) => setInterCpseShareRate(Number(e.target.value))}
-                    style={{ width: '100%', accentColor: '#A855F7', cursor: 'pointer' }}
+                    style={{ width: '100%', accentColor: '#A3E635', cursor: 'pointer' }}
                   />
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: 'var(--text-muted)', marginTop: '4px' }}>
                     <span>2% (Basic Transfers)</span>
@@ -365,30 +367,30 @@ export const AnalyticsView: React.FC = () => {
                     <div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
                         <span style={{ color: 'var(--text-secondary)' }}>Avoided Duplicate PO Capital</span>
-                        <span style={{ fontWeight: 700, color: '#60A5FA' }}>₹{avoidedPoSpend} Cr</span>
+                        <span style={{ fontWeight: 700, color: '#FACC15' }}>₹{avoidedPoSpend} Cr</span>
                       </div>
                       <div style={{ height: '6px', background: 'rgba(255,255,255,0.06)', borderRadius: '3px', overflow: 'hidden' }}>
-                        <div style={{ width: `${Math.min(100, (avoidedPoSpend / totalAnnualSavings) * 100)}%`, height: '100%', background: '#3B82F6' }} />
+                        <div style={{ width: `${Math.min(100, (avoidedPoSpend / totalAnnualSavings) * 100)}%`, height: '100%', background: 'linear-gradient(90deg, #FACC15, #EAB308)' }} />
                       </div>
                     </div>
 
                     <div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
                         <span style={{ color: 'var(--text-secondary)' }}>Carrying & Holding Cost Reductions</span>
-                        <span style={{ fontWeight: 700, color: '#F59E0B' }}>₹{savedCarryingCost} Cr</span>
+                        <span style={{ fontWeight: 700, color: '#22C55E' }}>₹{savedCarryingCost} Cr</span>
                       </div>
                       <div style={{ height: '6px', background: 'rgba(255,255,255,0.06)', borderRadius: '3px', overflow: 'hidden' }}>
-                        <div style={{ width: `${Math.min(100, (savedCarryingCost / totalAnnualSavings) * 100)}%`, height: '100%', background: '#F59E0B' }} />
+                        <div style={{ width: `${Math.min(100, (savedCarryingCost / totalAnnualSavings) * 100)}%`, height: '100%', background: '#22C55E' }} />
                       </div>
                     </div>
 
                     <div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
                         <span style={{ color: 'var(--text-secondary)' }}>Inter-CPSE Virtual Warehouse Sharing</span>
-                        <span style={{ fontWeight: 700, color: '#A855F7' }}>₹{interCpseSavings} Cr</span>
+                        <span style={{ fontWeight: 700, color: '#A3E635' }}>₹{interCpseSavings} Cr</span>
                       </div>
                       <div style={{ height: '6px', background: 'rgba(255,255,255,0.06)', borderRadius: '3px', overflow: 'hidden' }}>
-                        <div style={{ width: `${Math.min(100, (interCpseSavings / totalAnnualSavings) * 100)}%`, height: '100%', background: '#A855F7' }} />
+                        <div style={{ width: `${Math.min(100, (interCpseSavings / totalAnnualSavings) * 100)}%`, height: '100%', background: '#A3E635' }} />
                       </div>
                     </div>
                   </div>
@@ -400,8 +402,8 @@ export const AnalyticsView: React.FC = () => {
                     <span style={{ fontSize: '11px', color: '#6EE7B7', fontWeight: 600 }}>System Payback Period</span>
                     <div style={{ fontSize: '18px', fontWeight: 800, color: '#FFFFFF', marginTop: '2px' }}>&lt; 14 Days</div>
                   </div>
-                  <div style={{ background: 'rgba(59, 130, 246, 0.1)', padding: '12px', borderRadius: '8px', border: '1px solid rgba(59, 130, 246, 0.2)' }}>
-                    <span style={{ fontSize: '11px', color: '#93C5FD', fontWeight: 600 }}>Implementation ROI</span>
+                  <div style={{ background: 'rgba(250, 204, 21, 0.1)', padding: '12px', borderRadius: '8px', border: '1px solid rgba(250, 204, 21, 0.25)' }}>
+                    <span style={{ fontSize: '11px', color: '#FACC15', fontWeight: 600 }}>Implementation ROI</span>
                     <div style={{ fontSize: '18px', fontWeight: 800, color: '#FFFFFF', marginTop: '2px' }}>{implementationRoi}% ROI</div>
                   </div>
                 </div>
@@ -412,7 +414,7 @@ export const AnalyticsView: React.FC = () => {
           {/* Cross-CPSE Value Matrix Table */}
           <div className="glass-panel" style={{ padding: '24px', marginBottom: '32px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-              <Building2 size={20} color="#3B82F6" />
+              <Building2 size={20} color="#FACC15" />
               <h3 style={{ fontSize: '16px', fontWeight: 800, color: '#FFFFFF', margin: 0 }}>
                 Enterprise Financial Matrix Across Participating CPSEs
               </h3>
@@ -435,7 +437,7 @@ export const AnalyticsView: React.FC = () => {
                     <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', background: idx % 2 === 0 ? 'rgba(255,255,255,0.01)' : 'transparent' }}>
                       <td style={{ padding: '14px 16px', fontWeight: 700, color: '#FFFFFF' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <span style={{ fontSize: '11px', padding: '2px 6px', borderRadius: '4px', background: 'rgba(59, 130, 246, 0.2)', color: '#60A5FA', fontWeight: 800 }}>{item.code}</span>
+                          <span style={{ fontSize: '11px', padding: '2px 6px', borderRadius: '4px', background: 'rgba(250, 204, 21, 0.15)', color: '#FACC15', fontWeight: 800 }}>{item.code}</span>
                           <span>{item.name}</span>
                         </div>
                       </td>
@@ -489,7 +491,7 @@ export const AnalyticsView: React.FC = () => {
               <div style={{ background: '#0B0F19', padding: '16px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600 }}>False Positive Rate (FPR)</span>
-                  <span style={{ fontSize: '20px', fontWeight: 800, color: '#60A5FA' }}>
+                  <span style={{ fontSize: '20px', fontWeight: 800, color: '#A3E635' }}>
                     {evalMetrics.false_positive_rate ? `${(evalMetrics.false_positive_rate * 100).toFixed(3)}%` : '0.025%'}
                   </span>
                 </div>
@@ -534,7 +536,7 @@ export const AnalyticsView: React.FC = () => {
               {[
                 { name: 'Indian Oil Corporation Ltd (IOCL)', code: 'IOCL', count: 112, color: '#F97316' },
                 { name: 'Oil & Natural Gas Corp (ONGC)', code: 'ONGC', count: 117, color: '#EF4444' },
-                { name: 'Bharat Petroleum Corp Ltd (BPCL)', code: 'BPCL', count: 118, color: '#3B82F6' },
+                { name: 'Bharat Petroleum Corp Ltd (BPCL)', code: 'BPCL', count: 118, color: '#EAB308' },
                 { name: 'Gas Authority of India Ltd (GAIL)', code: 'GAIL', count: 109, color: '#10B981' },
               ].map((c) => (
                 <div key={c.code} style={{ background: '#0B0F19', padding: '14px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
@@ -572,7 +574,7 @@ export const AnalyticsView: React.FC = () => {
           <span style={{ fontSize: '11px', padding: '4px 10px', borderRadius: '6px', background: 'rgba(16, 185, 129, 0.15)', color: '#34D399', fontWeight: 700 }}>
             GeM Aligned
           </span>
-          <span style={{ fontSize: '11px', padding: '4px 10px', borderRadius: '6px', background: 'rgba(59, 130, 246, 0.15)', color: '#60A5FA', fontWeight: 700 }}>
+          <span style={{ fontSize: '11px', padding: '4px 10px', borderRadius: '6px', background: 'rgba(250, 204, 21, 0.15)', color: '#FACC15', fontWeight: 700 }}>
             CVC Compliant
           </span>
         </div>

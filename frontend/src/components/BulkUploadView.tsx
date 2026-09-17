@@ -114,10 +114,10 @@ export const BulkUploadView: React.FC = () => {
           
           <div style={{ 
             width: '64px', height: '64px', borderRadius: '50%', 
-            background: 'rgba(79,142,247,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            margin: '0 auto 20px', border: '1px solid rgba(79,142,247,0.3)'
+            background: 'rgba(34,197,94,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            margin: '0 auto 20px', border: '1px solid rgba(250,204,21,0.35)'
           }}>
-            <FileSpreadsheet size={32} color="#4F8EF7" />
+            <FileSpreadsheet size={32} color="#FACC15" />
           </div>
           
           <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#F0F4FF', marginBottom: '8px' }}>
@@ -139,12 +139,12 @@ export const BulkUploadView: React.FC = () => {
 
           {isUploading && (
             <div style={{ maxWidth: '400px', margin: '0 auto' }} className="animate-fadeInUp">
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '12px', fontWeight: 700, color: '#4F8EF7' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '12px', fontWeight: 700, color: '#FACC15' }}>
                 <span>Processing Records...</span>
                 <span>{Math.round(progress)}%</span>
               </div>
               <div className="progress-bar-track">
-                <div className="progress-bar-fill" style={{ width: `${progress}%`, background: '#4F8EF7', boxShadow: '0 0 10px rgba(79,142,247,0.5)' }} />
+                <div className="progress-bar-fill" style={{ width: `${progress}%`, background: 'linear-gradient(90deg, #FACC15, #22C55E)', boxShadow: '0 0 10px rgba(34,197,94,0.5)' }} />
               </div>
             </div>
           )}
@@ -156,7 +156,7 @@ export const BulkUploadView: React.FC = () => {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: '24px' }}>
             <div className="glass-card" style={{ padding: '24px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-                <Layers size={20} color="#4F8EF7" />
+                <Layers size={20} color="#22C55E" />
                 <h4 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Records Processed</h4>
               </div>
               <div style={{ fontSize: '32px', fontWeight: 900, color: '#F0F4FF' }}>{results.total_processed}</div>

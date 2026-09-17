@@ -39,8 +39,8 @@ const ConfidenceGauge: React.FC<{ score: number; verdict: string }> = ({ score, 
   const offset = circ - (displayedPct / 100) * circ;
 
   const color =
-    verdict === 'likely_duplicate' ? '#00D68F' :
-    verdict === 'possible_duplicate' ? '#F7B731' : '#4F8EF7';
+    verdict === 'likely_duplicate' ? '#22C55E' :
+    verdict === 'possible_duplicate' ? '#FACC15' : '#84CC16';
 
   const label =
     verdict === 'likely_duplicate' ? 'DUPLICATE DETECTED' :
@@ -88,13 +88,13 @@ const ConfidenceGauge: React.FC<{ score: number; verdict: string }> = ({ score, 
 /* ─── Attribute Pill Grid ─── */
 const AttrGrid: React.FC<{ attrs: any }> = ({ attrs }) => {
   const fields = [
-    { key: 'material_type', label: 'Type', color: '#4F8EF7' },
-    { key: 'sub_type', label: 'Sub-Type', color: '#A855F7' },
-    { key: 'dimension_value', label: 'Dimension', color: '#4F8EF7', suffix: ' mm' },
-    { key: 'grade', label: 'Grade', color: '#00D68F' },
-    { key: 'pressure_rating', label: 'Pressure', color: '#F7B731' },
-    { key: 'schedule', label: 'Schedule', color: '#F7B731' },
-    { key: 'standard', label: 'Standard', color: '#8B96B0' },
+    { key: 'material_type', label: 'Type', color: '#FACC15' },
+    { key: 'sub_type', label: 'Sub-Type', color: '#A3E635' },
+    { key: 'dimension_value', label: 'Dimension', color: '#22C55E', suffix: ' mm' },
+    { key: 'grade', label: 'Grade', color: '#10B981' },
+    { key: 'pressure_rating', label: 'Pressure', color: '#FACC15' },
+    { key: 'schedule', label: 'Schedule', color: '#EAB308' },
+    { key: 'standard', label: 'Standard', color: '#94A3B8' },
   ];
 
   return (
@@ -397,7 +397,7 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
 
   const topVerdict = result?.top_verdict || '';
   const isMatch = topVerdict === 'likely_duplicate';
-  const holoColor = isMatch ? '#00D68F' : topVerdict === 'possible_duplicate' ? '#F7B731' : '#4F8EF7';
+  const holoColor = isMatch ? '#22C55E' : topVerdict === 'possible_duplicate' ? '#FACC15' : '#84CC16';
 
   return (
     <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '36px 28px' }}>
@@ -429,8 +429,8 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
             style={{
               position: 'absolute',
               left: 0, right: 0, height: '2px',
-              background: '#4F8EF7',
-              boxShadow: '0 0 15px 2px rgba(79,142,247,0.7)',
+              background: 'linear-gradient(90deg, #FACC15, #22C55E)',
+              boxShadow: '0 0 15px 2px rgba(250,204,21,0.6)',
               zIndex: 10
             }}
           />
@@ -570,14 +570,14 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
                   initial={{ width: '0%' }}
                   animate={{ width: `${(scanStep / (loadingSteps.length - 1)) * 100}%` }}
                   transition={{ duration: 1.2, ease: 'easeInOut' }}
-                  style={{ position: 'absolute', top: '50%', left: 0, height: '6px', background: 'linear-gradient(90deg, #06B6D4, #8B5CF6, #EC4899)', transform: 'translateY(-50%)', borderRadius: '3px', zIndex: 1, boxShadow: '0 0 15px rgba(139, 92, 246, 0.8)' }} 
+                  style={{ position: 'absolute', top: '50%', left: 0, height: '6px', background: 'linear-gradient(90deg, #FACC15, #EAB308, #22C55E, #16A34A)', transform: 'translateY(-50%)', borderRadius: '3px', zIndex: 1, boxShadow: '0 0 15px rgba(34, 197, 94, 0.6)' }} 
                 />
 
                 {/* Nodes */}
                 {loadingSteps.map((step, idx) => {
                   const isActive = scanStep >= idx;
                   const isCurrent = scanStep === idx;
-                  const colors = ['#06B6D4', '#10B981', '#8B5CF6', '#F59E0B', '#EC4899'];
+                  const colors = ['#FACC15', '#EAB308', '#22C55E', '#16A34A', '#A3E635'];
                   const nodeColor = colors[idx];
                   
                   return (
@@ -669,8 +669,8 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
                 transition={{ type: 'spring', stiffness: 300, damping: 20 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-                  <Layers size={16} color="#4F8EF7" />
-                  <span style={{ fontSize: '13px', fontWeight: 700, color: '#7AAEFF', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  <Layers size={16} color="#FACC15" />
+                  <span style={{ fontSize: '13px', fontWeight: 700, color: '#FACC15', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                     Extracted Physical Attributes
                   </span>
                 </div>
@@ -704,12 +704,12 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
                   <AttrGrid attrs={result.extracted_attributes} />
                 )}
                 <div style={{
-                  marginTop: '16px', background: 'rgba(79,142,247,0.06)', border: '1px solid rgba(79,142,247,0.18)',
+                  marginTop: '16px', background: 'rgba(250,204,21,0.06)', border: '1px solid rgba(250,204,21,0.2)',
                   borderRadius: '10px', padding: '12px 14px', display: 'flex', gap: '10px', alignItems: 'flex-start',
                 }}>
-                  <ShieldCheck size={16} color="#4F8EF7" style={{ flexShrink: 0, marginTop: '1px' }} />
+                  <ShieldCheck size={16} color="#22C55E" style={{ flexShrink: 0, marginTop: '1px' }} />
                   <div style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                    <strong style={{ color: '#7AAEFF' }}>Zero-Guessing Safety Gate:</strong> Missing attributes are never inferred. Dense vector similarity alone cannot merge items if metallurgy or pressure class conflicts.
+                    <strong style={{ color: '#FACC15' }}>Zero-Guessing Safety Gate:</strong> Missing attributes are never inferred. Dense vector similarity alone cannot merge items if metallurgy or pressure class conflicts.
                   </div>
                 </div>
                 

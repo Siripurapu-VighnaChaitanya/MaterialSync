@@ -96,13 +96,13 @@ export const DemoGuideModal: React.FC<DemoGuideModalProps> = ({ onClose, onSelec
           display: 'flex',
           flexDirection: 'column',
           background: '#111827',
-          border: '1px solid rgba(59, 130, 246, 0.4)',
+          border: '1px solid rgba(250, 204, 21, 0.35)',
         }}
       >
         {/* Modal Header */}
         <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <BookOpen size={20} color="#F59E0B" />
+            <BookOpen size={20} color="#FACC15" />
             <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#FFFFFF' }}>
               SIH 2026 Judge Presentation Playbook
             </h3>
@@ -142,8 +142,9 @@ export const DemoGuideModal: React.FC<DemoGuideModalProps> = ({ onClose, onSelec
                   width: '28px',
                   height: '28px',
                   borderRadius: '50%',
-                  background: 'rgba(59, 130, 246, 0.2)',
-                  color: '#60A5FA',
+                  background: 'rgba(34, 197, 94, 0.15)',
+                  color: '#22C55E',
+                  border: '1px solid rgba(34, 197, 94, 0.3)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',

@@ -8,13 +8,11 @@ export const CanvasBackground = () => {
   const gridRef = useRef<THREE.Group>(null);
 
   // Mouse reactive rotation
-  useFrame((state) => {
-    const t = state.clock.getElapsedTime();
-    
+  useFrame((state, delta) => {
     if (group.current) {
-      // Subtle constant rotation
-      group.current.rotation.y = t * 0.05;
-      group.current.rotation.x = t * 0.02;
+      // Subtle constant rotation using frame delta
+      group.current.rotation.y += delta * 0.05;
+      group.current.rotation.x += delta * 0.02;
     }
 
     if (gridRef.current) {
@@ -33,8 +31,8 @@ export const CanvasBackground = () => {
       <color attach="background" args={['#030509']} />
       <fog attach="fog" args={['#030509', 10, 40]} />
       <ambientLight intensity={0.2} />
-      <directionalLight position={[10, 10, 5]} intensity={1.5} color="#3B82F6" />
-      <pointLight position={[-10, -10, -10]} intensity={1} color="#8B5CF6" />
+      <directionalLight position={[10, 10, 5]} intensity={1.5} color="#FACC15" />
+      <pointLight position={[-10, -10, -10]} intensity={1.2} color="#22C55E" />
 
       <Stars radius={100} depth={50} count={6000} factor={4} saturation={1} fade speed={1.5} />
 
@@ -46,8 +44,8 @@ export const CanvasBackground = () => {
           infiniteGrid 
           fadeDistance={30} 
           fadeStrength={5} 
-          cellColor="#3B82F6" 
-          sectionColor="#8B5CF6" 
+          cellColor="#10B981" 
+          sectionColor="#FACC15" 
           sectionSize={3} 
           cellSize={0.5} 
         />
@@ -69,7 +67,7 @@ export const CanvasBackground = () => {
           >
             <Sphere args={[Math.random() * 0.3 + 0.1, 32, 32]}>
               <MeshDistortMaterial 
-                color={Math.random() > 0.5 ? '#3B82F6' : '#10B981'}
+                color={Math.random() > 0.5 ? '#FACC15' : '#22C55E'}
                 transparent
                 opacity={0.6}
                 distort={0.6}

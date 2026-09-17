@@ -319,12 +319,12 @@ export const UNSPSCView: React.FC = () => {
       <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px', marginBottom: '28px' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
-            <div style={{ padding: '8px', borderRadius: '10px', background: 'rgba(59, 130, 246, 0.15)', border: '1px solid rgba(59, 130, 246, 0.3)' }}>
-              <FolderTree size={22} color="#3B82F6" />
+            <div style={{ padding: '8px', borderRadius: '10px', background: 'rgba(250, 204, 21, 0.12)', border: '1px solid rgba(250, 204, 21, 0.3)' }}>
+              <FolderTree size={22} color="#FACC15" />
             </div>
             <div>
               <h2 style={{ fontSize: '26px', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.02em', margin: 0 }}>
-                Interactive 3D UNSPSC Taxonomy Tree Explorer
+                Interactive 3D UNSPSC <span style={{ background: 'linear-gradient(90deg, #FACC15, #22C55E)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Taxonomy Explorer</span>
               </h2>
               <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '2px', margin: 0 }}>
                 International 4-tier United Nations Standard Products and Services Code & GeM (Government e-Marketplace) alignment hierarchy.
@@ -343,15 +343,16 @@ export const UNSPSCView: React.FC = () => {
               fontSize: '12px',
               fontWeight: 700,
               cursor: 'pointer',
-              background: is3DMode ? 'rgba(59, 130, 246, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-              border: is3DMode ? '1px solid #3B82F6' : '1px solid var(--border-subtle)',
-              color: is3DMode ? '#60A5FA' : 'var(--text-secondary)',
+              background: is3DMode ? 'rgba(250, 204, 21, 0.15)' : 'rgba(255, 255, 255, 0.05)',
+              border: is3DMode ? '1px solid #FACC15' : '1px solid var(--border-subtle)',
+              color: is3DMode ? '#FACC15' : 'var(--text-secondary)',
+              boxShadow: is3DMode ? '0 0 15px rgba(250, 204, 21, 0.2)' : 'none',
               display: 'flex',
               alignItems: 'center',
               gap: '6px'
             }}
           >
-            <Compass size={14} /> {is3DMode ? '3D Isometric View ON' : 'Flat View'}
+            <Compass size={14} color={is3DMode ? '#FACC15' : 'currentColor'} /> {is3DMode ? '3D Isometric View ON' : 'Flat View'}
           </button>
           <button
             onClick={expandAll}
@@ -387,7 +388,7 @@ export const UNSPSCView: React.FC = () => {
       </div>
 
       {/* Interactive Classification Sandbox Bar */}
-      <div className="glass-panel" style={{ padding: '20px 24px', marginBottom: '28px', border: '1px solid rgba(59, 130, 246, 0.25)' }}>
+      <div className="glass-panel" style={{ padding: '20px 24px', marginBottom: '28px', border: '1px solid rgba(34, 197, 94, 0.25)' }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center' }}>
           <div style={{ flex: 1, minWidth: '280px', position: 'relative' }}>
             <Search size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '14px', top: '14px' }} />
@@ -435,9 +436,9 @@ export const UNSPSCView: React.FC = () => {
                 handleMap(q.text);
               }}
               style={{
-                background: 'rgba(255, 255, 255, 0.04)',
-                border: '1px solid var(--border-subtle)',
-                color: '#93C5FD',
+                background: 'rgba(250, 204, 21, 0.05)',
+                border: '1px solid rgba(250, 204, 21, 0.25)',
+                color: '#FEF08A',
                 padding: '4px 10px',
                 borderRadius: '6px',
                 fontSize: '11px',
@@ -445,12 +446,14 @@ export const UNSPSCView: React.FC = () => {
                 transition: 'all 0.15s ease'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = '#3B82F6';
-                e.currentTarget.style.background = 'rgba(59, 130, 246, 0.15)';
+                e.currentTarget.style.borderColor = '#22C55E';
+                e.currentTarget.style.background = 'rgba(34, 197, 94, 0.15)';
+                e.currentTarget.style.color = '#FFFFFF';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = 'var(--border-subtle)';
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
+                e.currentTarget.style.borderColor = 'rgba(250, 204, 21, 0.25)';
+                e.currentTarget.style.background = 'rgba(250, 204, 21, 0.05)';
+                e.currentTarget.style.color = '#FEF08A';
               }}
             >
               {q.label}
@@ -472,7 +475,7 @@ export const UNSPSCView: React.FC = () => {
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Layers size={18} color="#3B82F6" />
+              <Layers size={18} color="#22C55E" />
               <span style={{ fontSize: '14px', fontWeight: 800, color: '#FFFFFF' }}>
                 4-Tier Taxonomy Hierarchy Matrix
               </span>
@@ -520,10 +523,10 @@ export const UNSPSCView: React.FC = () => {
                 <div
                   key={segment.id}
                   style={{
-                    background: segHighlighted ? 'rgba(59, 130, 246, 0.08)' : 'rgba(11, 15, 25, 0.7)',
+                    background: segHighlighted ? 'rgba(250, 204, 21, 0.1)' : 'rgba(11, 15, 25, 0.7)',
                     borderRadius: '12px',
-                    border: segHighlighted ? '1px solid #3B82F6' : '1px solid rgba(255, 255, 255, 0.08)',
-                    boxShadow: segHighlighted ? '0 0 20px rgba(59, 130, 246, 0.2)' : 'none',
+                    border: segHighlighted ? '1px solid #FACC15' : '1px solid rgba(255, 255, 255, 0.08)',
+                    boxShadow: segHighlighted ? '0 0 20px rgba(250, 204, 21, 0.2)' : 'none',
                     padding: '16px',
                     transition: 'all 0.2s ease',
                   }}
@@ -548,7 +551,7 @@ export const UNSPSCView: React.FC = () => {
                       >
                         {isSegExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                       </button>
-                      <span style={{ fontSize: '10px', padding: '2px 8px', borderRadius: '4px', background: '#3B82F6', color: '#FFFFFF', fontWeight: 800 }}>
+                      <span style={{ fontSize: '10px', padding: '2px 8px', borderRadius: '4px', background: 'linear-gradient(135deg, #FACC15, #EAB308)', color: '#050810', fontWeight: 800 }}>
                         SEGMENT {segment.code}
                       </span>
                       <span style={{ fontSize: '14px', fontWeight: 800, color: '#FFFFFF' }}>
@@ -565,7 +568,7 @@ export const UNSPSCView: React.FC = () => {
                           e.stopPropagation();
                           setSelectedNode(segment);
                         }}
-                        style={{ background: 'transparent', border: 'none', color: '#60A5FA', cursor: 'pointer', padding: '4px' }}
+                        style={{ background: 'transparent', border: 'none', color: '#FACC15', cursor: 'pointer', padding: '4px' }}
                       >
                         <Eye size={14} />
                       </button>
@@ -574,7 +577,7 @@ export const UNSPSCView: React.FC = () => {
 
                   {/* Families List */}
                   {isSegExpanded && segment.children && (
-                    <div style={{ marginTop: '14px', marginLeft: '24px', paddingLeft: '16px', borderLeft: '2px dashed rgba(59, 130, 246, 0.3)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <div style={{ marginTop: '14px', marginLeft: '24px', paddingLeft: '16px', borderLeft: '2px dashed rgba(250, 204, 21, 0.35)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                       {segment.children.map((family) => {
                         const famHighlighted = isNodeHighlighted(family);
                         const isFamExpanded = expandedNodes[family.id];
@@ -583,10 +586,10 @@ export const UNSPSCView: React.FC = () => {
                           <div
                             key={family.id}
                             style={{
-                              background: famHighlighted ? 'rgba(16, 185, 129, 0.08)' : 'rgba(15, 23, 42, 0.6)',
+                              background: famHighlighted ? 'rgba(34, 197, 94, 0.1)' : 'rgba(15, 23, 42, 0.6)',
                               borderRadius: '10px',
-                              border: famHighlighted ? '1px solid #10B981' : '1px solid rgba(255, 255, 255, 0.05)',
-                              boxShadow: famHighlighted ? '0 0 15px rgba(16, 185, 129, 0.2)' : 'none',
+                              border: famHighlighted ? '1px solid #22C55E' : '1px solid rgba(255, 255, 255, 0.05)',
+                              boxShadow: famHighlighted ? '0 0 15px rgba(34, 197, 94, 0.2)' : 'none',
                               padding: '12px 14px',
                             }}
                           >
@@ -610,7 +613,7 @@ export const UNSPSCView: React.FC = () => {
                                 >
                                   {isFamExpanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
                                 </button>
-                                <span style={{ fontSize: '10px', padding: '2px 6px', borderRadius: '4px', background: '#10B981', color: '#FFFFFF', fontWeight: 700 }}>
+                                <span style={{ fontSize: '10px', padding: '2px 6px', borderRadius: '4px', background: 'linear-gradient(135deg, #22C55E, #16A34A)', color: '#050810', fontWeight: 800 }}>
                                   FAMILY {family.code}
                                 </span>
                                 <span style={{ fontSize: '13px', fontWeight: 700, color: '#F1F5F9' }}>
@@ -627,7 +630,7 @@ export const UNSPSCView: React.FC = () => {
                                     e.stopPropagation();
                                     setSelectedNode(family);
                                   }}
-                                  style={{ background: 'transparent', border: 'none', color: '#34D399', cursor: 'pointer', padding: '2px' }}
+                                  style={{ background: 'transparent', border: 'none', color: '#22C55E', cursor: 'pointer', padding: '2px' }}
                                 >
                                   <Eye size={12} />
                                 </button>
@@ -636,7 +639,7 @@ export const UNSPSCView: React.FC = () => {
 
                             {/* Classes List */}
                             {isFamExpanded && family.children && (
-                              <div style={{ marginTop: '10px', marginLeft: '20px', paddingLeft: '14px', borderLeft: '2px dashed rgba(16, 185, 129, 0.3)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                              <div style={{ marginTop: '10px', marginLeft: '20px', paddingLeft: '14px', borderLeft: '2px dashed rgba(34, 197, 94, 0.35)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                                 {family.children.map((cls) => {
                                   const clsHighlighted = isNodeHighlighted(cls);
                                   const isClsExpanded = expandedNodes[cls.id];
@@ -645,10 +648,10 @@ export const UNSPSCView: React.FC = () => {
                                     <div
                                       key={cls.id}
                                       style={{
-                                        background: clsHighlighted ? 'rgba(245, 158, 11, 0.1)' : 'rgba(2, 6, 23, 0.7)',
+                                        background: clsHighlighted ? 'rgba(234, 179, 8, 0.12)' : 'rgba(2, 6, 23, 0.7)',
                                         borderRadius: '8px',
-                                        border: clsHighlighted ? '1px solid #F59E0B' : '1px solid rgba(255, 255, 255, 0.04)',
-                                        boxShadow: clsHighlighted ? '0 0 15px rgba(245, 158, 11, 0.2)' : 'none',
+                                        border: clsHighlighted ? '1px solid #EAB308' : '1px solid rgba(255, 255, 255, 0.04)',
+                                        boxShadow: clsHighlighted ? '0 0 15px rgba(234, 179, 8, 0.2)' : 'none',
                                         padding: '10px 12px',
                                       }}
                                     >
@@ -672,7 +675,7 @@ export const UNSPSCView: React.FC = () => {
                                           >
                                             {isClsExpanded ? <ChevronDown size={10} /> : <ChevronRight size={10} />}
                                           </button>
-                                          <span style={{ fontSize: '9px', padding: '1px 5px', borderRadius: '3px', background: '#F59E0B', color: '#000000', fontWeight: 800 }}>
+                                          <span style={{ fontSize: '9px', padding: '1px 5px', borderRadius: '3px', background: '#EAB308', color: '#050810', fontWeight: 800 }}>
                                             CLASS {cls.code}
                                           </span>
                                           <span style={{ fontSize: '12px', fontWeight: 700, color: '#FFFFFF' }}>
@@ -685,7 +688,7 @@ export const UNSPSCView: React.FC = () => {
                                             e.stopPropagation();
                                             setSelectedNode(cls);
                                           }}
-                                          style={{ background: 'transparent', border: 'none', color: '#FCD34D', cursor: 'pointer', padding: '2px' }}
+                                          style={{ background: 'transparent', border: 'none', color: '#EAB308', cursor: 'pointer', padding: '2px' }}
                                         >
                                           <Eye size={12} />
                                         </button>
@@ -693,7 +696,7 @@ export const UNSPSCView: React.FC = () => {
 
                                       {/* Commodities List */}
                                       {isClsExpanded && cls.children && (
-                                        <div style={{ marginTop: '8px', marginLeft: '16px', paddingLeft: '12px', borderLeft: '2px solid rgba(245, 158, 11, 0.25)', display: 'grid', gridTemplateColumns: '1fr', gap: '6px' }}>
+                                        <div style={{ marginTop: '8px', marginLeft: '16px', paddingLeft: '12px', borderLeft: '2px solid rgba(234, 179, 8, 0.3)', display: 'grid', gridTemplateColumns: '1fr', gap: '6px' }}>
                                           {cls.children.map((com) => {
                                             const comMatch = isNodeHighlighted(com);
                                             const isTarget = comMatch === 'commodity-match';
@@ -710,10 +713,10 @@ export const UNSPSCView: React.FC = () => {
                                                 }}
                                                 style={{
                                                   background: isTarget
-                                                    ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(5, 150, 105, 0.15) 100%)'
+                                                    ? 'linear-gradient(135deg, rgba(34, 197, 94, 0.25) 0%, rgba(250, 204, 21, 0.15) 100%)'
                                                     : 'rgba(255, 255, 255, 0.02)',
                                                   border: isTarget
-                                                    ? '1px solid #10B981'
+                                                    ? '1px solid #22C55E'
                                                     : '1px solid rgba(255, 255, 255, 0.05)',
                                                   borderRadius: '6px',
                                                   padding: '8px 10px',
@@ -721,14 +724,14 @@ export const UNSPSCView: React.FC = () => {
                                                   display: 'flex',
                                                   justifyContent: 'space-between',
                                                   alignItems: 'center',
-                                                  boxShadow: isTarget ? '0 0 16px rgba(16, 185, 129, 0.4)' : 'none',
+                                                  boxShadow: isTarget ? '0 0 16px rgba(34, 197, 94, 0.4)' : 'none',
                                                   transform: isTarget ? 'scale(1.01)' : 'none',
                                                   transition: 'all 0.2s ease'
                                                 }}
                                               >
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                                  <Tag size={12} color={isTarget ? '#10B981' : '#60A5FA'} />
-                                                  <span style={{ fontSize: '11px', fontWeight: 800, color: isTarget ? '#34D399' : '#60A5FA', fontFamily: 'monospace' }}>
+                                                  <Tag size={12} color={isTarget ? '#22C55E' : '#FACC15'} />
+                                                  <span style={{ fontSize: '11px', fontWeight: 800, color: isTarget ? '#4ADE80' : '#FACC15', fontFamily: 'monospace' }}>
                                                     {com.code}
                                                   </span>
                                                   <span style={{ fontSize: '12px', color: isTarget ? '#FFFFFF' : '#CBD5E1', fontWeight: isTarget ? 700 : 500 }}>
@@ -738,12 +741,12 @@ export const UNSPSCView: React.FC = () => {
 
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                                                   {com.gemCode && (
-                                                    <span style={{ fontSize: '9px', padding: '1px 5px', borderRadius: '4px', background: 'rgba(59, 130, 246, 0.2)', color: '#93C5FD', fontWeight: 700 }}>
+                                                    <span style={{ fontSize: '9px', padding: '1px 5px', borderRadius: '4px', background: 'rgba(250, 204, 21, 0.15)', color: '#FEF08A', fontWeight: 700 }}>
                                                       GeM
                                                     </span>
                                                   )}
                                                   {isTarget && (
-                                                    <span style={{ fontSize: '9px', padding: '1px 6px', borderRadius: '4px', background: '#10B981', color: '#000000', fontWeight: 800 }}>
+                                                    <span style={{ fontSize: '9px', padding: '1px 6px', borderRadius: '4px', background: '#22C55E', color: '#050810', fontWeight: 800 }}>
                                                       MATCH
                                                     </span>
                                                   )}
@@ -773,19 +776,19 @@ export const UNSPSCView: React.FC = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           {/* Active Classification Card */}
           {mapping ? (
-            <div className="glass-panel-glow" style={{ padding: '24px', border: '1px solid rgba(59, 130, 246, 0.3)' }}>
+            <div className="glass-panel-glow" style={{ padding: '24px', border: '1px solid rgba(34, 197, 94, 0.35)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
                 <div>
                   <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.05em' }}>
                     UNSPSC Standard Commodity Code
                   </span>
-                  <div style={{ fontSize: '28px', fontWeight: 900, color: '#60A5FA', letterSpacing: '0.04em', marginTop: '2px' }}>
+                  <div style={{ fontSize: '28px', fontWeight: 900, color: '#FACC15', letterSpacing: '0.04em', marginTop: '2px' }}>
                     {mapping.unspsc_code}
                   </div>
                 </div>
 
                 <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: '20px', fontWeight: 900, color: mapping.confidence >= 0.8 ? '#10B981' : '#F59E0B' }}>
+                  <div style={{ fontSize: '20px', fontWeight: 900, color: mapping.confidence >= 0.8 ? '#22C55E' : '#FACC15' }}>
                     {Math.round(mapping.confidence * 100)}%
                   </div>
                   <span style={{ fontSize: '10px', color: 'var(--text-muted)', display: 'block', textTransform: 'uppercase' }}>Confidence</span>
@@ -803,7 +806,7 @@ export const UNSPSCView: React.FC = () => {
                 <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
                   <strong>Category:</strong> {mapping.commodity_category}
                 </div>
-                <div style={{ marginTop: '4px', fontSize: '11px', color: '#93C5FD', fontFamily: 'monospace' }}>
+                <div style={{ marginTop: '4px', fontSize: '11px', color: '#FEF08A', fontFamily: 'monospace' }}>
                   <strong>Path:</strong> {mapping.hierarchy}
                 </div>
               </div>
@@ -814,19 +817,19 @@ export const UNSPSCView: React.FC = () => {
               </div>
 
               {/* GeM Badge */}
-              <div style={{ background: 'rgba(59, 130, 246, 0.1)', border: '1px solid rgba(59, 130, 246, 0.25)', padding: '10px 14px', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ background: 'rgba(250, 204, 21, 0.08)', border: '1px solid rgba(250, 204, 21, 0.25)', padding: '10px 14px', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Bookmark size={15} color="#60A5FA" />
+                  <Bookmark size={15} color="#FACC15" />
                   <span style={{ fontSize: '11px', fontWeight: 700, color: '#FFFFFF' }}>Government e-Marketplace (GeM)</span>
                 </div>
-                <span style={{ fontSize: '11px', color: '#93C5FD', fontWeight: 700, fontFamily: 'monospace' }}>
+                <span style={{ fontSize: '11px', color: '#FEF08A', fontWeight: 700, fontFamily: 'monospace' }}>
                   Aligned for Central Tender
                 </span>
               </div>
             </div>
           ) : (
-            <div className="glass-panel" style={{ padding: '28px', textAlign: 'center', color: 'var(--text-muted)' }}>
-              <Compass size={32} color="#3B82F6" style={{ margin: '0 auto 12px', opacity: 0.8 }} />
+            <div className="glass-panel" style={{ padding: '28px', textAlign: 'center', color: 'var(--text-muted)', border: '1px solid rgba(34, 197, 94, 0.2)' }}>
+              <Compass size={32} color="#22C55E" style={{ margin: '0 auto 12px', opacity: 0.8 }} />
               <h4 style={{ fontSize: '15px', fontWeight: 700, color: '#FFFFFF', marginBottom: '6px' }}>
                 Interactive Taxonomy Navigator
               </h4>
@@ -838,9 +841,9 @@ export const UNSPSCView: React.FC = () => {
 
           {/* Node Inspector */}
           {selectedNode && (
-            <div className="glass-panel" style={{ padding: '20px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+            <div className="glass-panel" style={{ padding: '20px', border: '1px solid rgba(250, 204, 21, 0.25)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                <span style={{ fontSize: '11px', textTransform: 'uppercase', fontWeight: 800, color: '#3B82F6' }}>
+                <span style={{ fontSize: '11px', textTransform: 'uppercase', fontWeight: 800, color: '#22C55E' }}>
                   Node Inspector ({selectedNode.level})
                 </span>
                 <span style={{ fontSize: '12px', fontFamily: 'monospace', fontWeight: 700, color: '#FFFFFF' }}>
@@ -854,7 +857,7 @@ export const UNSPSCView: React.FC = () => {
 
               {selectedNode.gemCode && (
                 <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
-                  <strong>GeM Identifier:</strong> <span style={{ color: '#60A5FA', fontFamily: 'monospace' }}>{selectedNode.gemCode}</span>
+                  <strong>GeM Identifier:</strong> <span style={{ color: '#FACC15', fontFamily: 'monospace' }}>{selectedNode.gemCode}</span>
                 </div>
               )}
 
@@ -882,7 +885,7 @@ export const UNSPSCView: React.FC = () => {
                         }}
                       >
                         <span>{item}</span>
-                        <ArrowRight size={12} color="#60A5FA" />
+                        <ArrowRight size={12} color="#22C55E" />
                       </div>
                     ))}
                   </div>

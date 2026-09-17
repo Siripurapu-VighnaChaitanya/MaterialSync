@@ -43,7 +43,7 @@ export const Hologram3D: React.FC<Hologram3DProps> = ({ color = '#10B981', isMat
           <mesh ref={innerRef}>
             <icosahedronGeometry args={[1.2, 3]} />
             <MeshDistortMaterial
-              color={isMatched ? color : '#3B82F6'}
+              color={isMatched ? color : '#FACC15'}
               transparent
               opacity={0.8}
               distort={0.4}

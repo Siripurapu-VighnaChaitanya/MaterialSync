@@ -11,20 +11,20 @@
   --text-secondary: #8B96B0;
   --text-muted: #4A5568;
 
-  --color-primary: #4F8EF7;
-  --color-primary-glow: rgba(79, 142, 247, 0.4);
-  --color-accent: #F7B731;
-  --color-success: #00D68F;
-  --color-warning: #F7B731;
+  --color-primary: #22C55E;
+  --color-primary-glow: rgba(34, 197, 94, 0.4);
+  --color-accent: #FACC15;
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
   --color-danger: #FF4757;
 
   --cpse-iocl: #FF6B35;
   --cpse-ongc: #FF4757;
-  --cpse-bpcl: #4F8EF7;
-  --cpse-gail: #00D68F;
-  --cpse-ntpc: #A855F7;
-  --cpse-sail: #F7B731;
-  --cpse-bhel: #06B6D4;
+  --cpse-bpcl: #EAB308;
+  --cpse-gail: #22C55E;
+  --cpse-ntpc: #A3E635;
+  --cpse-sail: #FACC15;
+  --cpse-bhel: #10B981;
   --cpse-coal: #8B96B0;
 }
 
@@ -102,8 +102,8 @@ code, pre, .font-mono {
   background: rgba(12, 17, 32, 0.8);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(79, 142, 247, 0.2);
-  box-shadow: 0 0 40px rgba(79, 142, 247, 0.08), 0 20px 60px rgba(0,0,0,0.5);
+  border: 1px solid rgba(250, 204, 21, 0.25);
+  box-shadow: 0 0 40px rgba(34, 197, 94, 0.1), 0 20px 60px rgba(0,0,0,0.5);
   border-radius: 20px;
 }
 
@@ -115,7 +115,7 @@ code, pre, .font-mono {
 }
 .glass-card:hover {
   background: rgba(255,255,255,0.05);
-  border-color: rgba(255,255,255,0.12);
+  border-color: rgba(250, 204, 21, 0.25);
   transform: translateY(-2px);
   box-shadow: 0 8px 32px rgba(0,0,0,0.3);
 }
@@ -136,11 +136,11 @@ code, pre, .font-mono {
 }
 .badge-iocl { background: rgba(255,107,53,0.15); color: #FF8C5A; border: 1px solid rgba(255,107,53,0.3); }
 .badge-ongc { background: rgba(255,71,87,0.15); color: #FF6B78; border: 1px solid rgba(255,71,87,0.3); }
-.badge-bpcl { background: rgba(79,142,247,0.15); color: #7AAEFF; border: 1px solid rgba(79,142,247,0.3); }
-.badge-gail { background: rgba(0,214,143,0.15); color: #2FFFA7; border: 1px solid rgba(0,214,143,0.3); }
-.badge-ntpc { background: rgba(168,85,247,0.15); color: #C084FC; border: 1px solid rgba(168,85,247,0.3); }
+.badge-bpcl { background: rgba(250,204,21,0.15); color: #FACC15; border: 1px solid rgba(250,204,21,0.3); }
+.badge-gail { background: rgba(34,197,94,0.15); color: #4ADE80; border: 1px solid rgba(34,197,94,0.3); }
+.badge-ntpc { background: rgba(163,230,53,0.15); color: #A3E635; border: 1px solid rgba(163,230,53,0.3); }
 .badge-sail { background: rgba(247,183,49,0.15); color: #FCD34D; border: 1px solid rgba(247,183,49,0.3); }
-.badge-bhel { background: rgba(6,182,212,0.15); color: #22D3EE; border: 1px solid rgba(6,182,212,0.3); }
+.badge-bhel { background: rgba(16,185,129,0.15); color: #34D399; border: 1px solid rgba(16,185,129,0.3); }
 .badge-generic { background: rgba(139,150,176,0.15); color: #A0AEC0; border: 1px solid rgba(139,150,176,0.3); }
 
 /* ═══════════════════════════════════════════
@@ -178,12 +178,12 @@ code, pre, .font-mono {
    BUTTONS
 ═══════════════════════════════════════════ */
 .btn-primary {
-  background: linear-gradient(135deg, #4F8EF7 0%, #2563EB 100%);
-  color: #FFFFFF;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, #FACC15 0%, #EAB308 30%, #22C55E 80%, #16A34A 100%);
+  color: #050810;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   padding: 12px 24px;
   border-radius: 12px;
-  font-weight: 700;
+  font-weight: 800;
   font-size: 14px;
   cursor: pointer;
   transition: all 0.25s ease;
@@ -193,8 +193,8 @@ code, pre, .font-mono {
   letter-spacing: 0.01em;
 }
 .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #6BA3FF 0%, #4F8EF7 100%);
-  box-shadow: 0 0 25px rgba(79, 142, 247, 0.5), 0 4px 20px rgba(0,0,0,0.3);
+  background: linear-gradient(135deg, #FDE047 0%, #FACC15 30%, #4ADE80 80%, #22C55E 100%);
+  box-shadow: 0 0 25px rgba(34, 197, 94, 0.45), 0 4px 20px rgba(0,0,0,0.3);
   transform: translateY(-2px);
 }
 .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -304,8 +304,8 @@ code, pre, .font-mono {
 .animate-fadeInUp { animation: fadeInUp 0.4s ease forwards; }
 
 @keyframes glow-pulse {
-  0%, 100% { box-shadow: 0 0 10px rgba(79,142,247,0.3); }
-  50% { box-shadow: 0 0 30px rgba(79,142,247,0.7), 0 0 60px rgba(79,142,247,0.2); }
+  0%, 100% { box-shadow: 0 0 10px rgba(34,197,94,0.3); }
+  50% { box-shadow: 0 0 30px rgba(250,204,21,0.6), 0 0 60px rgba(34,197,94,0.25); }
 }
 .animate-glow { animation: glow-pulse 2.5s ease-in-out infinite; }
 
@@ -372,9 +372,9 @@ code, pre, .font-mono {
   transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Shimmer text */
+/* Shimmer text - Yellow + Green */
 .shimmer-text {
-  background: linear-gradient(90deg, var(--color-primary) 0%, #A855F7 50%, var(--color-primary) 100%);
+  background: linear-gradient(90deg, #FACC15 0%, #22C55E 50%, #FACC15 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -397,9 +397,9 @@ code, pre, .font-mono {
   font-family: 'Outfit', sans-serif;
 }
 .input-field:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(79,142,247,0.15);
-  background: rgba(79,142,247,0.05);
+  border-color: #FACC15;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+  background: rgba(34, 197, 94, 0.04);
 }
 .input-field::placeholder { color: var(--text-muted); }
 
@@ -434,16 +434,16 @@ code, pre, .font-mono {
 
 /* Drag-and-drop zone */
 .dropzone {
-  border: 2px dashed rgba(79,142,247,0.3);
+  border: 2px dashed rgba(34, 197, 94, 0.35);
   border-radius: 16px;
-  background: rgba(79,142,247,0.04);
+  background: rgba(34, 197, 94, 0.04);
   transition: all 0.3s ease;
   cursor: pointer;
 }
 .dropzone:hover, .dropzone.active {
-  border-color: rgba(79,142,247,0.7);
-  background: rgba(79,142,247,0.08);
-  box-shadow: 0 0 30px rgba(79,142,247,0.1);
+  border-color: #FACC15;
+  background: rgba(250, 204, 21, 0.06);
+  box-shadow: 0 0 30px rgba(34, 197, 94, 0.15);
 }
 
 /* Tooltip */
@@ -478,9 +478,9 @@ code, pre, .font-mono {
   border: 1px solid transparent;
 }
 .role-pill.active {
-  background: rgba(79,142,247,0.2);
-  color: #7AAEFF;
-  border-color: rgba(79,142,247,0.4);
+  background: rgba(250, 204, 21, 0.15);
+  color: #FACC15;
+  border-color: rgba(250, 204, 21, 0.4);
 }
 .role-pill:not(.active) {
   background: transparent;

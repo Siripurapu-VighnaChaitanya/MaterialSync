@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Navbar } from './components/Navbar';
 import { LiveChecker } from './components/LiveChecker';
@@ -9,23 +9,19 @@ import { AnalyticsView } from './components/AnalyticsView';
 import { UNSPSCView } from './components/UNSPSCView';
 import { DemoGuideModal } from './components/DemoGuideModal';
 import { CanvasBackground } from './components/3d/CanvasBackground';
+import { LandingPage } from './components/LandingPage';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { api } from './services/api';
 import { AnimatePresence, motion } from 'framer-motion';
 
 export const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('checker');
+  const [activeTab, setActiveTab] = useState('home');
   const [activeRole, setActiveRole] = useState('officer');
   const [isBackendOnline, setIsBackendOnline] = useState(false);
   const [indexedMaterials, setIndexedMaterials] = useState(456);
   const [isDemoGuideOpen, setIsDemoGuideOpen] = useState(false);
 
-  useEffect(() => {
-    checkHealth();
-    const interval = setInterval(checkHealth, 8000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const checkHealth = async () => {
+  const checkHealth = useCallback(async () => {
     try {
       const res = await api.checkHealth();
       setIsBackendOnline(res.status === 'healthy');
@@ -33,7 +29,13 @@ export const App: React.FC = () => {
     } catch {
       setIsBackendOnline(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    checkHealth();
+    const interval = setInterval(checkHealth, 8000);
+    return () => clearInterval(interval);
+  }, [checkHealth]);
 
   const handleSelectDemoStep = (stepNumber: number) => {
     if (stepNumber === 1 || stepNumber === 2 || stepNumber === 5) {
@@ -49,12 +51,15 @@ export const App: React.FC = () => {
     <>
       {/* 3D WebGL Canvas Layer (Background) */}
       <div className="canvas-container">
-        <Canvas camera={{ position: [0, 0, 10], fov: 50 }}>
-          <CanvasBackground />
-          {/* Note: In a full 3D app, 3D-specific components like LiveChecker3D would render here,
-              but we will overlay them contextually or have them communicate via state. 
-              For now, the CanvasBackground provides the stunning 3D environment. */}
-        </Canvas>
+        <ErrorBoundary fallback={<div style={{ position: 'fixed', inset: 0, background: '#050810' }} />}>
+          <Canvas 
+            camera={{ position: [0, 0, 10], fov: 50 }}
+            dpr={[1, 1.5]}
+            gl={{ antialias: false, powerPreference: 'low-power' }}
+          >
+            <CanvasBackground />
+          </Canvas>
+        </ErrorBoundary>
       </div>
 
       {/* Standard HTML UI Layer (Foreground) */}
@@ -72,29 +77,32 @@ export const App: React.FC = () => {
 
         {/* Main Content Sections */}
         <main style={{ flex: 1, paddingBottom: '40px', position: 'relative' }}>
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.3, ease: 'easeOut' }}
-              style={{ width: '100%', height: '100%' }}
-            >
-              {activeTab === 'checker' && (
-                <LiveChecker
-                  onCodeReused={(code) => console.log(`Reused material code: ${code}`)}
-                  activeRole={activeRole}
-                />
-              )}
-              
-              {activeTab === 'bulk' && <BulkUploadView />}
-              {activeTab === 'clusters' && <ClusterExplorer />}
-              {activeTab === 'review' && <ReviewQueue />}
-              {activeTab === 'analytics' && <AnalyticsView />}
-              {activeTab === 'unspsc' && <UNSPSCView />}
-            </motion.div>
-          </AnimatePresence>
+          <ErrorBoundary onReset={() => setActiveTab('home')}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
+                style={{ width: '100%', height: '100%' }}
+              >
+                {activeTab === 'home' && <LandingPage onNavigate={setActiveTab} />}
+                {activeTab === 'checker' && (
+                  <LiveChecker
+                    onCodeReused={(code) => console.log(`Reused material code: ${code}`)}
+                    activeRole={activeRole}
+                  />
+                )}
+                
+                {activeTab === 'bulk' && <BulkUploadView />}
+                {activeTab === 'clusters' && <ClusterExplorer />}
+                {activeTab === 'review' && <ReviewQueue />}
+                {activeTab === 'analytics' && <AnalyticsView />}
+                {activeTab === 'unspsc' && <UNSPSCView />}
+              </motion.div>
+            </AnimatePresence>
+          </ErrorBoundary>
         </main>
 
         {/* Demo Guide Modal */}
