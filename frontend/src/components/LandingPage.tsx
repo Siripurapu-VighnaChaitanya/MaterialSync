@@ -1,57 +1,278 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Canvas, useFrame } from '@react-three/fiber';
+import { Float, MeshDistortMaterial } from '@react-three/drei';
+import * as THREE from 'three';
 import { 
   Zap, Database, Search, Layers
 } from 'lucide-react';
 import { ErrorBoundary } from './ErrorBoundary';
 
-/* ─── 3D NEURAL NETWORK ELEMENT (Yellow + Green Palette) ─── */
+/* ─── 3D QUANTUM NEURAL GYROSCOPE (Cinematic Yellow + Green) ─── */
 const NeuralNetwork3D: React.FC = () => {
-  const groupRef = React.useRef<any>(null);
-  
-  useFrame((_, delta) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y += delta * 0.25;
-      groupRef.current.rotation.x += delta * 0.12;
+  const masterGroupRef = useRef<THREE.Group>(null);
+  const innerCoreRef = useRef<THREE.Mesh>(null);
+  const midGeodesicRef = useRef<THREE.Mesh>(null);
+  const outerLatticeRef = useRef<THREE.Mesh>(null);
+  const ring1Ref = useRef<THREE.Group>(null);
+  const ring2Ref = useRef<THREE.Group>(null);
+  const ring3Ref = useRef<THREE.Group>(null);
+  const sparksRef = useRef<THREE.Group>(null);
+
+  // Pre-compute floating ambient data spark positions
+  const sparklePositions = useMemo(() => {
+    const pts: [number, number, number][] = [];
+    for (let i = 0; i < 24; i++) {
+      const radius = 2.2 + (i % 5) * 0.45;
+      const theta = (i / 24) * Math.PI * 2 + (i % 3) * 0.5;
+      const phi = (((i * 7) % 11) / 11 - 0.5) * Math.PI * 0.9;
+      pts.push([
+        radius * Math.cos(phi) * Math.cos(theta),
+        radius * Math.sin(phi),
+        radius * Math.cos(phi) * Math.sin(theta)
+      ]);
+    }
+    return pts;
+  }, []);
+
+  useFrame((state, delta) => {
+    // 1. Fluid Mouse Parallax: smooth damping (not jerky)
+    if (masterGroupRef.current) {
+      const targetRotX = -state.pointer.y * 0.4;
+      const targetRotY = state.pointer.x * 0.5;
+      masterGroupRef.current.rotation.x = THREE.MathUtils.lerp(masterGroupRef.current.rotation.x, targetRotX, 0.05);
+      masterGroupRef.current.rotation.y = THREE.MathUtils.lerp(masterGroupRef.current.rotation.y, targetRotY, 0.05);
+    }
+
+    // 2. Multi-tier Gyroscopic Orbital Rotations (Independent orbits)
+    if (ring1Ref.current) ring1Ref.current.rotation.z += delta * 0.42;
+    if (ring2Ref.current) ring2Ref.current.rotation.z -= delta * 0.32;
+    if (ring3Ref.current) ring3Ref.current.rotation.z += delta * 0.52;
+
+    // 3. Central Quantum Core Counter-Rotations
+    if (innerCoreRef.current) {
+      innerCoreRef.current.rotation.y += delta * 0.6;
+      innerCoreRef.current.rotation.z += delta * 0.3;
+    }
+    if (midGeodesicRef.current) {
+      midGeodesicRef.current.rotation.y -= delta * 0.28;
+      midGeodesicRef.current.rotation.x += delta * 0.14;
+    }
+    if (outerLatticeRef.current) {
+      outerLatticeRef.current.rotation.z += delta * 0.16;
+      outerLatticeRef.current.rotation.y -= delta * 0.2;
+    }
+
+    // 4. Ambient Sparkles gentle spin
+    if (sparksRef.current) {
+      sparksRef.current.rotation.y += delta * 0.1;
     }
   });
 
   return (
-    <group ref={groupRef}>
-      {/* Central Golden Core */}
-      <mesh>
-        <sphereGeometry args={[1.5, 32, 32]} />
-        <meshStandardMaterial 
-          color="#FACC15" 
-          emissive="#EAB308" 
-          emissiveIntensity={0.6} 
-          wireframe 
-        />
-      </mesh>
-      
-      {/* Orbiting Emerald / Spring Green Nodes */}
-      {[...Array(12)].map((_, i) => (
-        <mesh 
-          key={i} 
-          position={[
-            Math.sin((i / 12) * Math.PI * 2) * 3,
-            Math.cos((i / 4) * Math.PI) * 2,
-            Math.cos((i / 12) * Math.PI * 2) * 3
-          ]}
-        >
-          <sphereGeometry args={[0.3, 16, 16]} />
-          <meshStandardMaterial 
-            color="#22C55E" 
-            emissive="#10B981" 
-            emissiveIntensity={0.85} 
+    <group ref={masterGroupRef}>
+      <Float speed={2.2} rotationIntensity={0.2} floatIntensity={0.4} floatingRange={[-0.15, 0.15]}>
+        
+        {/* ─── A. CENTRAL QUANTUM CORE ─── */}
+        {/* 1. Undulating Golden Energy Heart */}
+        <mesh ref={innerCoreRef}>
+          <sphereGeometry args={[0.9, 32, 32]} />
+          <MeshDistortMaterial
+            color="#FACC15"
+            emissive="#EAB308"
+            emissiveIntensity={0.9}
+            distort={0.35}
+            speed={3.5}
+            roughness={0.15}
+            metalness={0.85}
           />
         </mesh>
-      ))}
-      
-      <ambientLight intensity={0.65} />
-      <pointLight position={[10, 10, 10]} intensity={1.4} color="#FACC15" />
-      <pointLight position={[-10, -10, -10]} intensity={1.4} color="#22C55E" />
+
+        {/* 2. Middle Golden Geodesic Icosahedron Cage */}
+        <mesh ref={midGeodesicRef}>
+          <icosahedronGeometry args={[1.35, 2]} />
+          <meshStandardMaterial
+            color="#FACC15"
+            emissive="#EAB308"
+            emissiveIntensity={0.65}
+            wireframe
+            transparent
+            opacity={0.8}
+          />
+        </mesh>
+
+        {/* 3. Outer Emerald Harmonic Octahedral Shell */}
+        <mesh ref={outerLatticeRef}>
+          <icosahedronGeometry args={[1.7, 1]} />
+          <meshStandardMaterial
+            color="#22C55E"
+            emissive="#10B981"
+            emissiveIntensity={0.45}
+            wireframe
+            transparent
+            opacity={0.35}
+          />
+        </mesh>
+
+        {/* Radial Energy Spoke Beams (Connecting Core to Space) */}
+        {[...Array(6)].map((_, i) => {
+          const ang = (i / 6) * Math.PI * 2;
+          return (
+            <mesh
+              key={i}
+              position={[Math.cos(ang) * 1.15, Math.sin(ang) * 1.15, 0]}
+              rotation={[0, 0, ang + Math.PI / 2]}
+            >
+              <cylinderGeometry args={[0.008, 0.008, 2.3, 6]} />
+              <meshBasicMaterial color="#FACC15" transparent opacity={0.25} />
+            </mesh>
+          );
+        })}
+
+        {/* ─── B. GYROSCOPIC ORBITAL RINGS ─── */}
+        {/* Ring 1: Equatorial Orbital Ring (Electric Emerald #22C55E) */}
+        <group ref={ring1Ref}>
+          {/* Cyber Ring Track */}
+          <mesh>
+            <torusGeometry args={[2.55, 0.015, 16, 120]} />
+            <meshStandardMaterial
+              color="#22C55E"
+              emissive="#10B981"
+              emissiveIntensity={0.7}
+              transparent
+              opacity={0.65}
+            />
+          </mesh>
+
+          {/* 4 Orbiting Emerald Data Nodes */}
+          {[...Array(4)].map((_, i) => {
+            const angle = (i / 4) * Math.PI * 2;
+            const x = Math.cos(angle) * 2.55;
+            const y = Math.sin(angle) * 2.55;
+            return (
+              <group key={i} position={[x, y, 0]}>
+                <mesh>
+                  <sphereGeometry args={[0.2, 24, 24]} />
+                  <meshStandardMaterial
+                    color="#22C55E"
+                    emissive="#10B981"
+                    emissiveIntensity={0.9}
+                    roughness={0.2}
+                    metalness={0.8}
+                  />
+                </mesh>
+                {/* Node Halo */}
+                <mesh rotation={[Math.PI / 2, 0, 0]}>
+                  <ringGeometry args={[0.26, 0.29, 24]} />
+                  <meshBasicMaterial color="#4ADE80" transparent opacity={0.5} side={THREE.DoubleSide} />
+                </mesh>
+              </group>
+            );
+          })}
+        </group>
+
+        {/* Ring 2: Inclined 45° Orbital Ring (Golden Amber #FACC15) */}
+        <group rotation={[Math.PI / 3, Math.PI / 6, 0]}>
+          <group ref={ring2Ref}>
+            {/* Cyber Ring Track */}
+            <mesh>
+              <torusGeometry args={[3.05, 0.015, 16, 120]} />
+              <meshStandardMaterial
+                color="#FACC15"
+                emissive="#EAB308"
+                emissiveIntensity={0.7}
+                transparent
+                opacity={0.65}
+              />
+            </mesh>
+
+            {/* 4 Orbiting Golden Amber Nodes */}
+            {[...Array(4)].map((_, i) => {
+              const angle = (i / 4) * Math.PI * 2 + Math.PI / 4;
+              const x = Math.cos(angle) * 3.05;
+              const y = Math.sin(angle) * 3.05;
+              return (
+                <group key={i} position={[x, y, 0]}>
+                  <mesh>
+                    <sphereGeometry args={[0.22, 24, 24]} />
+                    <meshStandardMaterial
+                      color="#FACC15"
+                      emissive="#EAB308"
+                      emissiveIntensity={0.95}
+                      roughness={0.2}
+                      metalness={0.9}
+                    />
+                  </mesh>
+                  {/* Node Halo */}
+                  <mesh rotation={[Math.PI / 2, 0, 0]}>
+                    <ringGeometry args={[0.28, 0.31, 24]} />
+                    <meshBasicMaterial color="#FEF08A" transparent opacity={0.55} side={THREE.DoubleSide} />
+                  </mesh>
+                </group>
+              );
+            })}
+          </group>
+        </group>
+
+        {/* Ring 3: Polar -55° Orbital Ring (Cyber Lime #A3E635) */}
+        <group rotation={[-Math.PI / 3, -Math.PI / 4, Math.PI / 8]}>
+          <group ref={ring3Ref}>
+            {/* Cyber Ring Track */}
+            <mesh>
+              <torusGeometry args={[3.55, 0.015, 16, 120]} />
+              <meshStandardMaterial
+                color="#A3E635"
+                emissive="#84CC16"
+                emissiveIntensity={0.6}
+                transparent
+                opacity={0.55}
+              />
+            </mesh>
+
+            {/* 3 Orbiting Cyber Lime Nodes */}
+            {[...Array(3)].map((_, i) => {
+              const angle = (i / 3) * Math.PI * 2;
+              const x = Math.cos(angle) * 3.55;
+              const y = Math.sin(angle) * 3.55;
+              return (
+                <group key={i} position={[x, y, 0]}>
+                  <mesh>
+                    <sphereGeometry args={[0.24, 24, 24]} />
+                    <meshStandardMaterial
+                      color="#A3E635"
+                      emissive="#84CC16"
+                      emissiveIntensity={0.9}
+                      roughness={0.25}
+                      metalness={0.75}
+                    />
+                  </mesh>
+                </group>
+              );
+            })}
+          </group>
+        </group>
+
+        {/* ─── C. AMBIENT QUANTUM DATA SPARKLES ─── */}
+        <group ref={sparksRef}>
+          {sparklePositions.map((pos, i) => (
+            <mesh key={i} position={pos}>
+              <sphereGeometry args={[0.045, 8, 8]} />
+              <meshBasicMaterial
+                color={i % 2 === 0 ? '#FACC15' : '#22C55E'}
+                transparent
+                opacity={0.7}
+              />
+            </mesh>
+          ))}
+        </group>
+
+        {/* Dynamic Scene Lights */}
+        <pointLight position={[0, 0, 0]} intensity={2.4} color="#FACC15" distance={8} />
+        <directionalLight position={[6, 8, 6]} intensity={1.6} color="#FACC15" />
+        <pointLight position={[-6, -6, -4]} intensity={2.0} color="#22C55E" />
+        <ambientLight intensity={0.4} />
+
+      </Float>
     </group>
   );
 };
