@@ -367,6 +367,7 @@ export const CanvasBackground: React.FC<CanvasBackgroundProps> = ({ activeTab = 
 
   // 60 FPS Interactive Mouse Parallax & Smooth Celestial Drift
   useFrame((state) => {
+    if (activeTab === 'clusters') return;
     const time = state.clock.elapsedTime;
 
     // Smooth whole-world tilt & mouse parallax
@@ -385,6 +386,11 @@ export const CanvasBackground: React.FC<CanvasBackgroundProps> = ({ activeTab = 
       gridRef.current.rotation.x = THREE.MathUtils.lerp(gridRef.current.rotation.x, -targetY + 1.25, 0.04);
     }
   });
+
+  // When on clusters page, remove cyber grid square boxes, floating cubes, and wave network
+  if (activeTab === 'clusters') {
+    return <color attach="background" args={['#020612']} />;
+  }
 
   return (
     <>

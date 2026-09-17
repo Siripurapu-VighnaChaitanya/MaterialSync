@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ForceGraph3D from 'react-force-graph-3d';
 import { api } from '../services/api';
 import { ClustersResponse } from '../types';
-import { Activity, GitMerge, AlertTriangle, Layers, Maximize, ZoomIn, Box } from 'lucide-react';
+import { Activity, GitMerge, AlertTriangle, Layers, Maximize2, ZoomIn, Box, Plus, Minus } from 'lucide-react';
 import * as THREE from 'three';
 
 export const ClusterExplorer: React.FC = () => {
@@ -73,6 +73,58 @@ export const ClusterExplorer: React.FC = () => {
     },
     [graphRef]
   );
+
+  // 3D Camera Zoom Controls
+  const handleZoomIn = useCallback(() => {
+    if (!graphRef.current) return;
+    try {
+      const currentPos = graphRef.current.cameraPosition();
+      const controls = (graphRef.current.controls && graphRef.current.controls()) as any;
+      const target = controls?.target ? { x: controls.target.x, y: controls.target.y, z: controls.target.z } : { x: 0, y: 0, z: 0 };
+
+      const factor = 0.7; // Move 30% closer
+      const newPos = {
+        x: target.x + (currentPos.x - target.x) * factor,
+        y: target.y + (currentPos.y - target.y) * factor,
+        z: target.z + (currentPos.z - target.z) * factor
+      };
+      graphRef.current.cameraPosition(newPos, target, 400);
+    } catch (e) {
+      console.error('Zoom in error:', e);
+    }
+  }, []);
+
+  const handleZoomOut = useCallback(() => {
+    if (!graphRef.current) return;
+    try {
+      const currentPos = graphRef.current.cameraPosition();
+      const controls = (graphRef.current.controls && graphRef.current.controls()) as any;
+      const target = controls?.target ? { x: controls.target.x, y: controls.target.y, z: controls.target.z } : { x: 0, y: 0, z: 0 };
+
+      const factor = 1.42; // Move 42% further
+      const newPos = {
+        x: target.x + (currentPos.x - target.x) * factor,
+        y: target.y + (currentPos.y - target.y) * factor,
+        z: target.z + (currentPos.z - target.z) * factor
+      };
+      graphRef.current.cameraPosition(newPos, target, 400);
+    } catch (e) {
+      console.error('Zoom out error:', e);
+    }
+  }, []);
+
+  const handleResetZoom = useCallback(() => {
+    if (!graphRef.current) return;
+    try {
+      if (typeof graphRef.current.zoomToFit === 'function') {
+        graphRef.current.zoomToFit(800, 40);
+      } else {
+        graphRef.current.cameraPosition({ x: 0, y: 0, z: 300 }, { x: 0, y: 0, z: 0 }, 800);
+      }
+    } catch (e) {
+      console.error('Reset zoom error:', e);
+    }
+  }, []);
 
   if (loading) {
     return (
@@ -207,6 +259,34 @@ export const ClusterExplorer: React.FC = () => {
           <ZoomIn size={14} color="var(--text-muted)" />
           <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Scroll to Zoom · Click & Drag to Rotate · Click Node to Inspect</span>
         </div>
+      </div>
+
+      {/* Floating 3D Zoom Controls (Right Side) */}
+      <div className="cluster-zoom-controls" aria-label="3D Navigation Controls">
+        <button
+          onClick={handleZoomIn}
+          title="Zoom In (+)"
+          aria-label="Zoom In"
+          className="cluster-zoom-btn"
+        >
+          <Plus size={18} />
+        </button>
+        <button
+          onClick={handleResetZoom}
+          title="Reset View / Fit to Screen"
+          aria-label="Reset View"
+          className="cluster-zoom-btn"
+        >
+          <Maximize2 size={16} />
+        </button>
+        <button
+          onClick={handleZoomOut}
+          title="Zoom Out (-)"
+          aria-label="Zoom Out"
+          className="cluster-zoom-btn"
+        >
+          <Minus size={18} />
+        </button>
       </div>
     </div>
   );
