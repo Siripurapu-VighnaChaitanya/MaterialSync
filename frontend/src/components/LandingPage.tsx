@@ -25,7 +25,8 @@ const NeuralNetwork3D: React.FC = () => {
   });
 
   return (
-    <group>
+    // Move spinning yellow sphere to bottom-right so it never merges into the upper wave network
+    <group position={[1.4, -1.35, 0]} scale={0.85}>
       {/* Central Golden Wireframe Core */}
       <mesh ref={coreRef}>
         <sphereGeometry args={[1.5, 32, 32]} />

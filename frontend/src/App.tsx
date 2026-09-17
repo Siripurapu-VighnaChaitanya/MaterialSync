@@ -57,7 +57,7 @@ export const App: React.FC = () => {
             dpr={[1, 2]}
             gl={{ antialias: true, powerPreference: 'high-performance', alpha: true }}
           >
-            <CanvasBackground />
+            <CanvasBackground activeTab={activeTab} />
           </Canvas>
         </ErrorBoundary>
       </div>

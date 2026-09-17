@@ -17,7 +17,7 @@ const NeuralPlexusLandscape: React.FC = () => {
   const TOTAL_NODES = COLS * ROWS;
 
   // Grid node base coordinates
-  const { baseGrid, edges, hotNodeIndices } = useMemo(() => {
+  const { baseGrid, edges, standardNodeIndices, hotNodeIndices } = useMemo(() => {
     const nodes: { x: number; z: number; phase: number }[] = [];
     const edgeList: [number, number][] = [];
     const hotSet = new Set<number>();
@@ -52,14 +52,23 @@ const NeuralPlexusLandscape: React.FC = () => {
       }
     }
 
-    // Pick 18% prominent "hot nodes" with bright golden-white cores (matching reference photo)
+    // Partition nodes into standard nodes and hot nodes for exact 1-to-1 instance mapping
+    const standardIndices: number[] = [];
+    const hotIndices: number[] = [];
     for (let i = 0; i < TOTAL_NODES; i++) {
       if ((i * 17 + 7) % 100 < 18) {
-        hotSet.add(i);
+        hotIndices.push(i);
+      } else {
+        standardIndices.push(i);
       }
     }
 
-    return { baseGrid: nodes, edges: edgeList, hotNodeIndices: hotSet };
+    return { 
+      baseGrid: nodes, 
+      edges: edgeList, 
+      standardNodeIndices: standardIndices, 
+      hotNodeIndices: hotIndices 
+    };
   }, []);
 
   // Pre-allocate Float32Buffers for line positions & vertex coordinates
@@ -88,6 +97,23 @@ const NeuralPlexusLandscape: React.FC = () => {
 
   const tempMatrix = useMemo(() => new THREE.Matrix4(), []);
   const tempVec = useMemo(() => new THREE.Vector3(), []);
+  const zeroMatrix = useMemo(() => new THREE.Matrix4().makeScale(0, 0, 0), []);
+
+  // Guarantee ZERO uninitialized stray instances at (0, 0, 0)
+  React.useEffect(() => {
+    if (nodesInstancedRef.current) {
+      for (let i = 0; i < standardNodeIndices.length; i++) {
+        nodesInstancedRef.current.setMatrixAt(i, zeroMatrix);
+      }
+      nodesInstancedRef.current.instanceMatrix.needsUpdate = true;
+    }
+    if (hotNodesInstancedRef.current) {
+      for (let i = 0; i < hotNodeIndices.length; i++) {
+        hotNodesInstancedRef.current.setMatrixAt(i, zeroMatrix);
+      }
+      hotNodesInstancedRef.current.instanceMatrix.needsUpdate = true;
+    }
+  }, [standardNodeIndices.length, hotNodeIndices.length, zeroMatrix]);
 
   // 60 FPS Autonomous Continuous Harmonic Wave Simulation
   useFrame((state, delta) => {
@@ -99,31 +125,44 @@ const NeuralPlexusLandscape: React.FC = () => {
       const x = node.x;
       const z = node.z;
 
-      // Complex biological wave formula: gentle ocean of neural synapses
+      // Biological wave formula: gentle ocean of neural synapses
       const wave1 = Math.sin(x * 0.22 + t * 0.55 + node.phase) * 1.35;
       const wave2 = Math.cos(z * 0.26 + t * 0.48) * 1.10;
       const wave3 = Math.sin((x + z) * 0.16 + t * 0.38) * 0.75;
-      const y = wave1 + wave2 + wave3 + 1.2; // Elevated floating height above grid boxes
+      const y = wave1 + wave2 + wave3 + 1.2;
 
       currentPositions[i * 3 + 0] = x;
       currentPositions[i * 3 + 1] = y;
       currentPositions[i * 3 + 2] = z;
-
-      // Update instanced node spheres
-      const isHot = hotNodeIndices.has(i);
-      const scale = isHot ? 0.065 : 0.038;
-      tempMatrix.makeScale(scale, scale, scale);
-      tempMatrix.setPosition(x, y, z);
-
-      if (isHot && hotNodesInstancedRef.current) {
-        hotNodesInstancedRef.current.setMatrixAt(i, tempMatrix);
-      } else if (nodesInstancedRef.current) {
-        nodesInstancedRef.current.setMatrixAt(i, tempMatrix);
-      }
     }
 
-    if (nodesInstancedRef.current) nodesInstancedRef.current.instanceMatrix.needsUpdate = true;
-    if (hotNodesInstancedRef.current) hotNodesInstancedRef.current.instanceMatrix.needsUpdate = true;
+    // Update standard cyan nodes (exact 1-to-1 index mapping)
+    if (nodesInstancedRef.current) {
+      for (let s = 0; s < standardNodeIndices.length; s++) {
+        const idx = standardNodeIndices[s];
+        const px = currentPositions[idx * 3 + 0];
+        const py = currentPositions[idx * 3 + 1];
+        const pz = currentPositions[idx * 3 + 2];
+        tempMatrix.makeScale(0.038, 0.038, 0.038);
+        tempMatrix.setPosition(px, py, pz);
+        nodesInstancedRef.current.setMatrixAt(s, tempMatrix);
+      }
+      nodesInstancedRef.current.instanceMatrix.needsUpdate = true;
+    }
+
+    // Update hot golden-white super nodes (exact 1-to-1 index mapping)
+    if (hotNodesInstancedRef.current) {
+      for (let h = 0; h < hotNodeIndices.length; h++) {
+        const idx = hotNodeIndices[h];
+        const px = currentPositions[idx * 3 + 0];
+        const py = currentPositions[idx * 3 + 1];
+        const pz = currentPositions[idx * 3 + 2];
+        tempMatrix.makeScale(0.065, 0.065, 0.065);
+        tempMatrix.setPosition(px, py, pz);
+        hotNodesInstancedRef.current.setMatrixAt(h, tempMatrix);
+      }
+      hotNodesInstancedRef.current.instanceMatrix.needsUpdate = true;
+    }
 
     // 2. Update all line segments connecting vertices
     for (let e = 0; e < edges.length; e++) {
@@ -186,7 +225,8 @@ const NeuralPlexusLandscape: React.FC = () => {
   });
 
   return (
-    <group position={[0, -0.4, -4]} rotation={[-0.18, 0, 0]}>
+    // Elevated wave network positioned across the upper-mid space
+    <group position={[0, 0.8, -4.8]} rotation={[-0.22, 0, 0]}>
       {/* ─── Glowing Plexus Filaments (Electric Cyan/Azure) ─── */}
       <lineSegments ref={meshLinesRef} geometry={lineGeometry}>
         <lineBasicMaterial
@@ -198,10 +238,10 @@ const NeuralPlexusLandscape: React.FC = () => {
         />
       </lineSegments>
 
-      {/* ─── Standard Cyan Network Nodes ─── */}
+      {/* ─── Standard Cyan Network Nodes (Exact capacity, 0 stray instances) ─── */}
       <instancedMesh
         ref={nodesInstancedRef}
-        args={[undefined, undefined, TOTAL_NODES]}
+        args={[undefined, undefined, standardNodeIndices.length]}
       >
         <sphereGeometry args={[1, 10, 10]} />
         <meshBasicMaterial
@@ -211,10 +251,10 @@ const NeuralPlexusLandscape: React.FC = () => {
         />
       </instancedMesh>
 
-      {/* ─── Glowing Golden-White Super Nodes (Reference Image Highlights) ─── */}
+      {/* ─── Glowing Golden-White Super Nodes (Exact capacity, 0 stray instances) ─── */}
       <instancedMesh
         ref={hotNodesInstancedRef}
-        args={[undefined, undefined, TOTAL_NODES]}
+        args={[undefined, undefined, hotNodeIndices.length]}
       >
         <sphereGeometry args={[1, 12, 12]} />
         <meshBasicMaterial
@@ -288,8 +328,12 @@ const FloatingDataCubes: React.FC = () => {
   );
 };
 
+interface CanvasBackgroundProps {
+  activeTab?: string;
+}
+
 // ─── 3. MASTER CANVAS BACKGROUND (GRID BOXES + FLOATING CUBES + UNDULATING PLEXUS) ───
-export const CanvasBackground: React.FC = () => {
+export const CanvasBackground: React.FC<CanvasBackgroundProps> = ({ activeTab = 'home' }) => {
   const masterGroupRef = useRef<THREE.Group>(null);
   const gridRef = useRef<THREE.Group>(null);
 
@@ -388,8 +432,8 @@ export const CanvasBackground: React.FC = () => {
         <FloatingDataCubes />
 
         {/* ─── UPPER LAYER: UNDULATING 3D NEURAL PLEXUS WAVE (REFERENCE IMAGE) ─── */}
-        {/* Positioned above the square grid floor, sweeping across the viewport */}
-        <NeuralPlexusLandscape />
+        {/* Removed strictly for the 'clusters' network section as requested */}
+        {activeTab !== 'clusters' && <NeuralPlexusLandscape />}
 
       </group>
     </>
