@@ -46,3 +46,7 @@ yarn-error.log*
 *.sqlite3
 *.db
 backend/*.db
+
+# Standalone Neuron Animation
+neuron-animation/
+
