@@ -53,9 +53,9 @@ export const App: React.FC = () => {
       <div className="canvas-container">
         <ErrorBoundary fallback={<div style={{ position: 'fixed', inset: 0, background: '#050810' }} />}>
           <Canvas 
-            camera={{ position: [0, 0, 10], fov: 50 }}
-            dpr={[1, 1.5]}
-            gl={{ antialias: false, powerPreference: 'low-power' }}
+            camera={{ position: [0, 0.5, 9.5], fov: 48 }}
+            dpr={[1, 2]}
+            gl={{ antialias: true, powerPreference: 'high-performance', alpha: true }}
           >
             <CanvasBackground />
           </Canvas>
