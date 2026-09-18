@@ -127,22 +127,22 @@ const TerminalWindow: React.FC = () => {
       style={{
         padding: '22px 24px',
         borderRadius: '16px',
-        background: 'rgba(51, 65, 85, 0.92)',
+        background: 'rgba(3, 7, 18, 0.97)',
         backdropFilter: 'blur(20px)',
-        border: '1px solid rgba(148, 163, 184, 0.35)',
-        boxShadow: '0 15px 35px rgba(15, 23, 42, 0.12)',
+        border: '1.5px solid rgba(255, 255, 255, 0.12)',
+        boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 0, 0, 0.3)',
         fontFamily: 'monospace',
         minHeight: '260px',
         display: 'flex',
         flexDirection: 'column',
-        gap: '8px'
+        gap: '9px'
       }}
     >
-      <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid rgba(255,255,255,0.12)', paddingBottom: '12px', marginBottom: '10px', alignItems: 'center' }}>
-        <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#EF4444' }} />
-        <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#F59E0B' }} />
-        <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#10B981' }} />
-        <span style={{ fontSize: '11px', color: '#CBD5E1', marginLeft: 'auto', letterSpacing: '0.05em' }}>neural-engine.sh</span>
+      <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', paddingBottom: '12px', marginBottom: '10px', alignItems: 'center' }}>
+        <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#EF4444', boxShadow: '0 0 6px rgba(239, 68, 68, 0.6)' }} />
+        <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#F59E0B', boxShadow: '0 0 6px rgba(245, 158, 11, 0.6)' }} />
+        <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#10B981', boxShadow: '0 0 6px rgba(16, 185, 129, 0.6)' }} />
+        <span style={{ fontSize: '11px', color: '#94A3B8', fontWeight: 800, marginLeft: 'auto', letterSpacing: '0.08em' }}>neural-engine.sh</span>
       </div>
       {displayedLines.map((line, idx) => {
         const isSuccess = Boolean(line && line.includes("READY"));
@@ -153,30 +153,40 @@ const TerminalWindow: React.FC = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.25 }}
             style={{ 
-              color: isSuccess ? '#34D399' : '#FACC15', 
-              fontWeight: isSuccess ? 800 : 700,
-              fontSize: '0.92rem',
+              color: isSuccess ? '#00E676' : '#FACC15', 
+              fontWeight: 900,
+              fontSize: '0.94rem',
+              letterSpacing: '0.03em',
               display: 'flex',
               alignItems: 'center',
-              gap: '6px',
+              gap: '8px',
               textShadow: isSuccess 
-                ? '0 0 12px rgba(52, 211, 153, 0.45)' 
-                : '0 0 10px rgba(250, 204, 21, 0.25)'
+                ? '0 0 12px rgba(0, 230, 118, 0.9), 0 0 25px rgba(0, 230, 118, 0.5)' 
+                : '0 0 10px rgba(250, 204, 21, 0.8), 0 0 22px rgba(250, 204, 21, 0.45)'
             }}
           >
-            <span style={{ color: isSuccess ? '#34D399' : '#FACC15', fontWeight: 900 }}>{'>'}</span>
+            <span style={{ 
+              color: isSuccess ? '#00E676' : '#FACC15', 
+              fontWeight: 900,
+              textShadow: isSuccess 
+                ? '0 0 14px rgba(0, 230, 118, 1)' 
+                : '0 0 14px rgba(250, 204, 21, 1)'
+            }}>
+              {'>'}
+            </span>
             <span>{line.replace(/^>\s*/, '')}</span>
             {isSuccess && (
               <span style={{ 
                 fontSize: '10px', 
-                background: 'rgba(16, 185, 129, 0.25)', 
-                border: '1px solid #10B981', 
-                color: '#34D399', 
+                background: 'rgba(0, 230, 118, 0.2)', 
+                border: '1.5px solid #00E676', 
+                color: '#00E676', 
                 padding: '2px 8px', 
                 borderRadius: '6px',
-                fontWeight: 800,
+                fontWeight: 900,
                 marginLeft: '8px',
-                letterSpacing: '0.04em'
+                letterSpacing: '0.06em',
+                boxShadow: '0 0 12px rgba(0, 230, 118, 0.6)'
               }}>
                 ONLINE
               </span>
@@ -190,8 +200,8 @@ const TerminalWindow: React.FC = () => {
         style={{ 
           width: '8px', 
           height: '16px', 
-          background: visibleCount >= TERMINAL_SEQUENCE.length ? '#34D399' : '#FACC15', 
-          boxShadow: visibleCount >= TERMINAL_SEQUENCE.length ? '0 0 8px #34D399' : '0 0 8px #FACC15',
+          background: visibleCount >= TERMINAL_SEQUENCE.length ? '#00E676' : '#FACC15', 
+          boxShadow: visibleCount >= TERMINAL_SEQUENCE.length ? '0 0 12px #00E676, 0 0 20px #00E676' : '0 0 12px #FACC15, 0 0 20px #FACC15',
           display: 'inline-block', 
           marginTop: '4px', 
           borderRadius: '1px' 
