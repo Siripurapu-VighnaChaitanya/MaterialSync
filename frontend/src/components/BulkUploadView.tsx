@@ -204,22 +204,21 @@ export const BulkUploadView: React.FC = () => {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '28px', flexWrap: 'wrap', gap: '16px' }}>
         <div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '4px 12px', borderRadius: '20px', background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.3)', marginBottom: '10px' }}>
-            <Zap size={14} color="#22C55E" />
-            <span style={{ fontSize: '12px', fontWeight: 700, color: '#22C55E', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '4px 12px', borderRadius: '20px', background: 'rgba(5,150,105,0.12)', border: '1.5px solid rgba(5,150,105,0.3)', marginBottom: '10px' }}>
+            <Zap size={14} color="#059669" />
+            <span style={{ fontSize: '12px', fontWeight: 800, color: '#047857', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               High-Throughput ERP Ingestion Pipeline
             </span>
           </div>
-          <h1 style={{ fontSize: '32px', fontWeight: 900, color: '#F8FAFC', letterSpacing: '-0.02em', marginBottom: '8px' }}>
+          <h1 style={{ fontSize: '32px', fontWeight: 900, color: '#000000', letterSpacing: '-0.02em', marginBottom: '8px' }}>
             Enterprise Bulk Ingest & Harmonization
           </h1>
           <p style={{ 
             fontSize: '15px', 
-            color: '#E2E8F0', 
-            fontWeight: 500, 
+            color: '#000000', 
+            fontWeight: 700, 
             maxWidth: '720px', 
-            lineHeight: '1.6',
-            textShadow: '0 2px 10px rgba(0,0,0,0.85)'
+            lineHeight: '1.6'
           }}>
             Ingest legacy SAP/Oracle ERP CSV extracts in bulk. MaterialSync automatically tokenizes descriptions, extracts engineering attributes, runs high-speed vector deduplication, and generates a standardized master catalog.
           </p>
@@ -230,7 +229,7 @@ export const BulkUploadView: React.FC = () => {
           <button 
             onClick={handleDownloadSampleTemplate}
             className="btn-secondary"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 18px', fontSize: '13px' }}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 18px', fontSize: '13px', fontWeight: 800, color: '#000000' }}
             title="Download standard CPSE CSV format with ONGC, BPCL, IOCL items"
           >
             <Download size={15} /> Sample CPSE CSV
@@ -245,6 +244,7 @@ export const BulkUploadView: React.FC = () => {
               gap: '8px', 
               padding: '10px 20px', 
               fontSize: '13px',
+              fontWeight: 800,
               background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
               boxShadow: '0 0 20px rgba(16,185,129,0.35)',
               border: '1px solid rgba(52,211,153,0.5)'
@@ -261,8 +261,9 @@ export const BulkUploadView: React.FC = () => {
         style={{ 
           padding: '16px 24px', 
           marginBottom: '28px', 
-          background: 'rgba(15, 23, 42, 0.7)',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
+          background: '#FFFFFF',
+          border: '1.5px solid rgba(203, 213, 225, 0.9)',
+          boxShadow: '0 2px 10px rgba(0,0,0,0.04)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -271,19 +272,19 @@ export const BulkUploadView: React.FC = () => {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <Database size={18} color="#FACC15" />
-          <span style={{ fontSize: '13px', fontWeight: 700, color: '#F0F4FF' }}>Enterprise Pipeline:</span>
+          <Database size={18} color="#D97706" />
+          <span style={{ fontSize: '13px', fontWeight: 900, color: '#000000' }}>Enterprise Pipeline:</span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#E2E8F0', flexWrap: 'wrap' }}>
-          <span style={{ padding: '4px 10px', background: 'rgba(255,255,255,0.06)', borderRadius: '6px', color: '#CBD5E1' }}>1. Raw SAP Dump (.CSV)</span>
-          <ArrowRight size={14} color="#94A3B8" />
-          <span style={{ padding: '4px 10px', background: 'rgba(59,130,246,0.12)', borderRadius: '6px', color: '#60A5FA' }}>2. Entity & Unit Normalization</span>
-          <ArrowRight size={14} color="#94A3B8" />
-          <span style={{ padding: '4px 10px', background: 'rgba(168,85,247,0.12)', borderRadius: '6px', color: '#C084FC' }}>3. 384-D Vector Cross-CPSE Search</span>
-          <ArrowRight size={14} color="#94A3B8" />
-          <span style={{ padding: '4px 10px', background: 'rgba(34,197,94,0.12)', borderRadius: '6px', color: '#4ADE80' }}>4. Deterministic Safety Gate</span>
-          <ArrowRight size={14} color="#94A3B8" />
-          <span style={{ padding: '4px 10px', background: 'rgba(250,204,21,0.12)', borderRadius: '6px', color: '#FDE047', fontWeight: 700 }}>5. Harmonized Master Catalog</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#000000', flexWrap: 'wrap' }}>
+          <span style={{ padding: '4px 10px', background: '#F1F5F9', borderRadius: '6px', color: '#000000', fontWeight: 800, border: '1px solid #CBD5E1' }}>1. Raw SAP Dump (.CSV)</span>
+          <ArrowRight size={14} color="#000000" />
+          <span style={{ padding: '4px 10px', background: 'rgba(59,130,246,0.12)', borderRadius: '6px', color: '#1D4ED8', fontWeight: 800, border: '1px solid rgba(59,130,246,0.3)' }}>2. Entity & Unit Normalization</span>
+          <ArrowRight size={14} color="#000000" />
+          <span style={{ padding: '4px 10px', background: 'rgba(168,85,247,0.12)', borderRadius: '6px', color: '#7E22CE', fontWeight: 800, border: '1px solid rgba(168,85,247,0.3)' }}>3. 384-D Vector Cross-CPSE Search</span>
+          <ArrowRight size={14} color="#000000" />
+          <span style={{ padding: '4px 10px', background: 'rgba(34,197,94,0.12)', borderRadius: '6px', color: '#047857', fontWeight: 800, border: '1px solid rgba(34,197,94,0.3)' }}>4. Deterministic Safety Gate</span>
+          <ArrowRight size={14} color="#000000" />
+          <span style={{ padding: '4px 10px', background: 'rgba(245,158,11,0.15)', borderRadius: '6px', color: '#B45309', fontWeight: 900, border: '1px solid rgba(245,158,11,0.3)' }}>5. Harmonized Master Catalog</span>
         </div>
       </div>
 
@@ -291,7 +292,15 @@ export const BulkUploadView: React.FC = () => {
       {!results && (
         <div 
           className={`glass-panel dropzone ${isDragging ? 'active' : ''}`} 
-          style={{ padding: '54px 36px', textAlign: 'center', marginBottom: '24px', background: 'rgba(15, 23, 42, 0.65)' }}
+          style={{ 
+            padding: '54px 36px', 
+            textAlign: 'center', 
+            marginBottom: '24px', 
+            background: '#FFFFFF',
+            border: '2px dashed rgba(148, 163, 184, 0.9)',
+            borderRadius: '16px',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.04)'
+          }}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
@@ -307,17 +316,17 @@ export const BulkUploadView: React.FC = () => {
           
           <div style={{ 
             width: '68px', height: '68px', borderRadius: '50%', 
-            background: 'rgba(34,197,94,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            margin: '0 auto 18px', border: '1px solid rgba(250,204,21,0.35)',
-            boxShadow: '0 0 25px rgba(34,197,94,0.2)'
+            background: 'rgba(5,150,105,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            margin: '0 auto 18px', border: '1.5px solid rgba(5,150,105,0.3)',
+            boxShadow: '0 0 25px rgba(5,150,105,0.15)'
           }}>
-            <FileSpreadsheet size={34} color="#FACC15" />
+            <FileSpreadsheet size={34} color="#059669" />
           </div>
           
-          <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#F8FAFC', marginBottom: '8px' }}>
+          <h3 style={{ fontSize: '20px', fontWeight: 900, color: '#000000', marginBottom: '8px' }}>
             {file ? file.name : 'Drag & Drop CPSE ERP Export (.CSV)'}
           </h3>
-          <p style={{ fontSize: '14px', color: '#CBD5E1', marginBottom: '22px' }}>
+          <p style={{ fontSize: '14px', color: '#000000', fontWeight: 700, marginBottom: '22px' }}>
             {file 
               ? `${(file.size / 1024).toFixed(1)} KB — Ready for bulk parsing & vector cross-matching` 
               : 'Support for ONGC, BPCL, IOCL, GAIL, and NTPC material master dumps (UTF-8 CSV)'}
@@ -328,7 +337,7 @@ export const BulkUploadView: React.FC = () => {
               <button 
                 className="btn-primary animate-fadeInUp" 
                 onClick={(e) => { e.stopPropagation(); handleProcess(); }}
-                style={{ padding: '12px 36px', fontSize: '15px' }}
+                style={{ padding: '12px 36px', fontSize: '15px', fontWeight: 800 }}
               >
                 <Upload size={18} /> Run Bulk Deduplication Pipeline
               </button>
@@ -337,22 +346,22 @@ export const BulkUploadView: React.FC = () => {
 
           {isUploading && (
             <div style={{ maxWidth: '440px', margin: '0 auto' }} className="animate-fadeInUp">
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '13px', fontWeight: 700, color: '#FACC15' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '13px', fontWeight: 800, color: '#000000' }}>
                 <span>Processing & Vector Matching Records...</span>
                 <span>{Math.round(progress)}%</span>
               </div>
-              <div className="progress-bar-track" style={{ height: '10px', borderRadius: '5px' }}>
+              <div className="progress-bar-track" style={{ height: '10px', borderRadius: '5px', background: '#E2E8F0' }}>
                 <div 
                   className="progress-bar-fill" 
                   style={{ 
                     width: `${progress}%`, 
-                    background: 'linear-gradient(90deg, #FACC15, #22C55E)', 
-                    boxShadow: '0 0 15px rgba(34,197,94,0.6)',
+                    background: 'linear-gradient(90deg, #F59E0B, #10B981)', 
+                    boxShadow: '0 0 15px rgba(16,185,129,0.4)',
                     borderRadius: '5px'
                   }} 
                 />
               </div>
-              <div style={{ fontSize: '12px', color: '#CBD5E1', marginTop: '12px' }}>
+              <div style={{ fontSize: '12px', color: '#000000', fontWeight: 700, marginTop: '12px' }}>
                 Extracting engineering parameters • Validating dimension gates • Querying cross-CPSE FAISS index
               </div>
             </div>
@@ -360,8 +369,8 @@ export const BulkUploadView: React.FC = () => {
 
           {!file && !isUploading && (
             <div style={{ marginTop: '12px' }}>
-              <span style={{ fontSize: '13px', color: '#CBD5E1' }}>
-                Tip: Click <strong style={{ color: '#FACC15' }}>"⚡ 1-Click Demo CPSE Batch"</strong> at top-right to test with 12 real cross-enterprise items instantly.
+              <span style={{ fontSize: '13px', color: '#000000', fontWeight: 700 }}>
+                Tip: Click <strong style={{ color: '#047857', fontWeight: 900 }}>"⚡ 1-Click Demo CPSE Batch"</strong> at top-right to test with 12 real cross-enterprise items instantly.
               </span>
             </div>
           )}
@@ -376,47 +385,47 @@ export const BulkUploadView: React.FC = () => {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '24px' }}>
             
             {/* Card 1: Total Processed */}
-            <div className="glass-card" style={{ padding: '20px', borderLeft: '4px solid #3B82F6', background: 'rgba(15, 23, 42, 0.75)' }}>
+            <div className="glass-card" style={{ padding: '20px', background: '#FFFFFF', border: '1.5px solid rgba(203, 213, 225, 0.9)', borderLeftWidth: '4px', borderLeftColor: '#2563EB', boxShadow: '0 2px 10px rgba(0,0,0,0.04)' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-                <span style={{ fontSize: '13px', fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase' }}>Records Ingested</span>
-                <Layers size={20} color="#3B82F6" />
+                <span style={{ fontSize: '13px', fontWeight: 800, color: '#000000', textTransform: 'uppercase' }}>Records Ingested</span>
+                <Layers size={20} color="#2563EB" />
               </div>
-              <div style={{ fontSize: '32px', fontWeight: 900, color: '#F0F4FF' }}>{results.total_rows}</div>
-              <div style={{ fontSize: '12px', color: '#38BDF8', marginTop: '4px' }}>100% normalized & parsed</div>
+              <div style={{ fontSize: '32px', fontWeight: 900, color: '#000000' }}>{results.total_rows}</div>
+              <div style={{ fontSize: '12px', color: '#1D4ED8', fontWeight: 700, marginTop: '4px' }}>100% normalized & parsed</div>
             </div>
             
             {/* Card 2: Duplicates Found */}
-            <div className="glass-card" style={{ padding: '20px', borderLeft: '4px solid #22C55E', background: 'rgba(15, 23, 42, 0.75)' }}>
+            <div className="glass-card" style={{ padding: '20px', background: '#FFFFFF', border: '1.5px solid rgba(203, 213, 225, 0.9)', borderLeftWidth: '4px', borderLeftColor: '#059669', boxShadow: '0 2px 10px rgba(0,0,0,0.04)' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-                <span style={{ fontSize: '13px', fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase' }}>Duplicates Detected</span>
-                <CheckCircle2 size={20} color="#22C55E" />
+                <span style={{ fontSize: '13px', fontWeight: 800, color: '#000000', textTransform: 'uppercase' }}>Duplicates Detected</span>
+                <CheckCircle2 size={20} color="#059669" />
               </div>
-              <div style={{ fontSize: '32px', fontWeight: 900, color: '#22C55E' }}>{results.likely_duplicates}</div>
-              <div style={{ fontSize: '12px', color: '#4ADE80', marginTop: '4px' }}>
+              <div style={{ fontSize: '32px', fontWeight: 900, color: '#047857' }}>{results.likely_duplicates}</div>
+              <div style={{ fontSize: '12px', color: '#059669', fontWeight: 700, marginTop: '4px' }}>
                 {results.total_rows > 0 ? `${((results.likely_duplicates / results.total_rows) * 100).toFixed(0)}% duplicate rate prevented` : ''}
               </div>
             </div>
 
             {/* Card 3: New Materials */}
-            <div className="glass-card" style={{ padding: '20px', borderLeft: '4px solid #FACC15', background: 'rgba(15, 23, 42, 0.75)' }}>
+            <div className="glass-card" style={{ padding: '20px', background: '#FFFFFF', border: '1.5px solid rgba(203, 213, 225, 0.9)', borderLeftWidth: '4px', borderLeftColor: '#D97706', boxShadow: '0 2px 10px rgba(0,0,0,0.04)' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-                <span style={{ fontSize: '13px', fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase' }}>New Unique SKUs</span>
-                <Sparkles size={20} color="#FACC15" />
+                <span style={{ fontSize: '13px', fontWeight: 800, color: '#000000', textTransform: 'uppercase' }}>New Unique SKUs</span>
+                <Sparkles size={20} color="#D97706" />
               </div>
-              <div style={{ fontSize: '32px', fontWeight: 900, color: '#FACC15' }}>{results.new_materials}</div>
-              <div style={{ fontSize: '12px', color: '#FDE047', marginTop: '4px' }}>Approved for new cataloging</div>
+              <div style={{ fontSize: '32px', fontWeight: 900, color: '#B45309' }}>{results.new_materials}</div>
+              <div style={{ fontSize: '12px', color: '#B45309', fontWeight: 700, marginTop: '4px' }}>Approved for new cataloging</div>
             </div>
 
             {/* Card 4: Throughput & Speed */}
-            <div className="glass-card" style={{ padding: '20px', borderLeft: '4px solid #A855F7', background: 'rgba(15, 23, 42, 0.75)' }}>
+            <div className="glass-card" style={{ padding: '20px', background: '#FFFFFF', border: '1.5px solid rgba(203, 213, 225, 0.9)', borderLeftWidth: '4px', borderLeftColor: '#7C3AED', boxShadow: '0 2px 10px rgba(0,0,0,0.04)' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-                <span style={{ fontSize: '13px', fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase' }}>Pipeline Latency</span>
-                <Clock size={20} color="#A855F7" />
+                <span style={{ fontSize: '13px', fontWeight: 800, color: '#000000', textTransform: 'uppercase' }}>Pipeline Latency</span>
+                <Clock size={20} color="#7C3AED" />
               </div>
-              <div style={{ fontSize: '32px', fontWeight: 900, color: '#C084FC' }}>
-                {results.processing_time_ms} <span style={{ fontSize: '18px', fontWeight: 600 }}>ms</span>
+              <div style={{ fontSize: '32px', fontWeight: 900, color: '#6D28D9' }}>
+                {results.processing_time_ms} <span style={{ fontSize: '18px', fontWeight: 800 }}>ms</span>
               </div>
-              <div style={{ fontSize: '12px', color: '#E9D5FF', marginTop: '4px' }}>
+              <div style={{ fontSize: '12px', color: '#7C3AED', fontWeight: 700, marginTop: '4px' }}>
                 ~{results.total_rows > 0 ? Math.round((results.total_rows / (Math.max(results.processing_time_ms, 1) / 1000))) : 0} items/sec throughput
               </div>
             </div>
@@ -434,23 +443,25 @@ export const BulkUploadView: React.FC = () => {
               alignItems: 'center', 
               flexWrap: 'wrap', 
               gap: '16px',
-              background: 'rgba(15, 23, 42, 0.7)'
+              background: '#FFFFFF',
+              border: '1.5px solid rgba(203, 213, 225, 0.9)',
+              boxShadow: '0 2px 10px rgba(0,0,0,0.04)'
             }}
           >
             {/* Filter Pills */}
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-muted)', marginRight: '6px' }}>Filter:</span>
+              <span style={{ fontSize: '13px', fontWeight: 900, color: '#000000', marginRight: '6px' }}>Filter:</span>
               <button 
                 onClick={() => setActiveFilter('all')}
                 style={{
                   padding: '6px 14px',
                   borderRadius: '20px',
                   fontSize: '13px',
-                  fontWeight: 600,
+                  fontWeight: 800,
                   cursor: 'pointer',
-                  border: activeFilter === 'all' ? '1px solid #3B82F6' : '1px solid rgba(255,255,255,0.1)',
-                  background: activeFilter === 'all' ? 'rgba(59,130,246,0.2)' : 'rgba(255,255,255,0.04)',
-                  color: activeFilter === 'all' ? '#60A5FA' : 'var(--text-secondary)'
+                  border: activeFilter === 'all' ? '2px solid #2563EB' : '1.5px solid rgba(203,213,225,0.9)',
+                  background: activeFilter === 'all' ? 'rgba(37,99,235,0.12)' : '#F8FAFC',
+                  color: activeFilter === 'all' ? '#1D4ED8' : '#000000'
                 }}
               >
                 All Items ({results.total_rows})
@@ -461,11 +472,11 @@ export const BulkUploadView: React.FC = () => {
                   padding: '6px 14px',
                   borderRadius: '20px',
                   fontSize: '13px',
-                  fontWeight: 600,
+                  fontWeight: 800,
                   cursor: 'pointer',
-                  border: activeFilter === 'duplicates' ? '1px solid #22C55E' : '1px solid rgba(255,255,255,0.1)',
-                  background: activeFilter === 'duplicates' ? 'rgba(34,197,94,0.2)' : 'rgba(255,255,255,0.04)',
-                  color: activeFilter === 'duplicates' ? '#4ADE80' : 'var(--text-secondary)'
+                  border: activeFilter === 'duplicates' ? '2px solid #059669' : '1.5px solid rgba(203,213,225,0.9)',
+                  background: activeFilter === 'duplicates' ? 'rgba(5,150,105,0.12)' : '#F8FAFC',
+                  color: activeFilter === 'duplicates' ? '#047857' : '#000000'
                 }}
               >
                 Duplicates Detected ({results.likely_duplicates})
@@ -476,11 +487,11 @@ export const BulkUploadView: React.FC = () => {
                   padding: '6px 14px',
                   borderRadius: '20px',
                   fontSize: '13px',
-                  fontWeight: 600,
+                  fontWeight: 800,
                   cursor: 'pointer',
-                  border: activeFilter === 'new' ? '1px solid #FACC15' : '1px solid rgba(255,255,255,0.1)',
-                  background: activeFilter === 'new' ? 'rgba(250,204,21,0.2)' : 'rgba(255,255,255,0.04)',
-                  color: activeFilter === 'new' ? '#FDE047' : 'var(--text-secondary)'
+                  border: activeFilter === 'new' ? '2px solid #D97706' : '1.5px solid rgba(203,213,225,0.9)',
+                  background: activeFilter === 'new' ? 'rgba(217,119,6,0.12)' : '#F8FAFC',
+                  color: activeFilter === 'new' ? '#B45309' : '#000000'
                 }}
               >
                 New Unique SKUs ({results.new_materials})
@@ -490,7 +501,7 @@ export const BulkUploadView: React.FC = () => {
             {/* Search + Action Buttons */}
             <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
               <div style={{ position: 'relative', width: '220px' }}>
-                <Search size={14} color="#64748B" style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }} />
+                <Search size={14} color="#000000" style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }} />
                 <input 
                   type="text"
                   placeholder="Search item or code..."
@@ -498,11 +509,12 @@ export const BulkUploadView: React.FC = () => {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   style={{
                     width: '100%',
-                    padding: '6px 10px 6px 32px',
+                    padding: '8px 10px 8px 32px',
                     borderRadius: '8px',
-                    background: 'rgba(255,255,255,0.06)',
-                    border: '1px solid rgba(255,255,255,0.12)',
-                    color: '#F0F4FF',
+                    background: '#FFFFFF',
+                    border: '1.5px solid rgba(203, 213, 225, 0.9)',
+                    color: '#000000',
+                    fontWeight: 700,
                     fontSize: '13px',
                     outline: 'none'
                   }}
@@ -512,7 +524,7 @@ export const BulkUploadView: React.FC = () => {
               <button 
                 className="btn-success" 
                 onClick={handleDownloadHarmonizedReport}
-                style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '8px 18px', fontSize: '13px' }}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '8px 18px', fontSize: '13px', fontWeight: 800 }}
               >
                 <Download size={16} /> Export Cleaned CSV for SAP/GeM
               </button>
@@ -520,7 +532,7 @@ export const BulkUploadView: React.FC = () => {
               <button 
                 className="btn-secondary" 
                 onClick={() => { setResults(null); setFile(null); setProgress(0); setSearchQuery(''); }}
-                style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 14px', fontSize: '13px' }}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 14px', fontSize: '13px', fontWeight: 800, color: '#000000' }}
               >
                 <RefreshCw size={14} /> New Batch
               </button>
@@ -533,20 +545,21 @@ export const BulkUploadView: React.FC = () => {
             style={{ 
               overflowX: 'auto', 
               borderRadius: '16px', 
-              border: '1px solid rgba(255,255,255,0.08)',
-              background: 'rgba(15, 23, 42, 0.85)',
+              border: '1.5px solid rgba(203, 213, 225, 0.9)',
+              background: '#FFFFFF',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
               marginBottom: '32px'
             }}
           >
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
               <thead>
-                <tr style={{ background: 'rgba(30, 41, 59, 0.85)', borderBottom: '1px solid rgba(255,255,255,0.12)' }}>
-                  <th style={{ padding: '14px 16px', color: '#E2E8F0', fontWeight: 700, width: '50px' }}>#</th>
-                  <th style={{ padding: '14px 16px', color: '#E2E8F0', fontWeight: 700, minWidth: '320px' }}>Raw ERP Description</th>
-                  <th style={{ padding: '14px 16px', color: '#E2E8F0', fontWeight: 700, minWidth: '180px' }}>Extracted Attributes</th>
-                  <th style={{ padding: '14px 16px', color: '#E2E8F0', fontWeight: 700, minWidth: '140px' }}>Verdict</th>
-                  <th style={{ padding: '14px 16px', color: '#E2E8F0', fontWeight: 700, minWidth: '180px' }}>Cross-CPSE Match</th>
-                  <th style={{ padding: '14px 16px', color: '#E2E8F0', fontWeight: 700, minWidth: '220px' }}>System Recommendation</th>
+                <tr style={{ background: '#F1F5F9', borderBottom: '2px solid rgba(203, 213, 225, 0.9)' }}>
+                  <th style={{ padding: '14px 16px', color: '#000000', fontWeight: 900, width: '50px' }}>#</th>
+                  <th style={{ padding: '14px 16px', color: '#000000', fontWeight: 900, minWidth: '320px' }}>Raw ERP Description</th>
+                  <th style={{ padding: '14px 16px', color: '#000000', fontWeight: 900, minWidth: '180px' }}>Extracted Attributes</th>
+                  <th style={{ padding: '14px 16px', color: '#000000', fontWeight: 900, minWidth: '140px' }}>Verdict</th>
+                  <th style={{ padding: '14px 16px', color: '#000000', fontWeight: 900, minWidth: '180px' }}>Cross-CPSE Match</th>
+                  <th style={{ padding: '14px 16px', color: '#000000', fontWeight: 900, minWidth: '220px' }}>System Recommendation</th>
                 </tr>
               </thead>
               <tbody>
@@ -558,20 +571,20 @@ export const BulkUploadView: React.FC = () => {
                     <tr 
                       key={idx} 
                       style={{ 
-                        borderBottom: '1px solid rgba(255,255,255,0.05)',
+                        borderBottom: '1px solid rgba(226, 232, 240, 0.9)',
                         transition: 'background 0.2s ease',
                       }}
-                      onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.04)'}
+                      onMouseEnter={(e) => e.currentTarget.style.background = '#F8FAFC'}
                       onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                     >
                       {/* Row Index */}
-                      <td style={{ padding: '14px 16px', color: '#64748B', fontWeight: 600 }}>
+                      <td style={{ padding: '14px 16px', color: '#000000', fontWeight: 800 }}>
                         {item.row + 1}
                       </td>
 
                       {/* Raw Description */}
                       <td style={{ padding: '14px 16px' }}>
-                        <div style={{ color: '#F1F5F9', fontWeight: 600, lineHeight: '1.4', marginBottom: '4px' }}>
+                        <div style={{ color: '#000000', fontWeight: 800, lineHeight: '1.4', marginBottom: '4px' }}>
                           {item.description}
                         </div>
                       </td>
@@ -583,16 +596,16 @@ export const BulkUploadView: React.FC = () => {
                             <span style={{ 
                               display: 'inline-block', 
                               padding: '2px 8px', 
-                              background: 'rgba(59,130,246,0.15)', 
-                              color: '#60A5FA', 
+                              background: 'rgba(37,99,235,0.12)', 
+                              color: '#1D4ED8', 
                               borderRadius: '4px', 
                               fontSize: '11px', 
-                              fontWeight: 700,
+                              fontWeight: 800,
                               width: 'fit-content'
                             }}>
                               {item.extracted_type}
                             </span>
-                            <div style={{ fontSize: '12px', color: '#94A3B8' }}>
+                            <div style={{ fontSize: '12px', color: '#000000', fontWeight: 700 }}>
                               {item.extracted_dimension_mm != null && (
                                 <span style={{ marginRight: '6px' }}>📏 {item.extracted_dimension_mm} mm</span>
                               )}
@@ -602,7 +615,7 @@ export const BulkUploadView: React.FC = () => {
                             </div>
                           </div>
                         ) : (
-                          <span style={{ color: '#64748B', fontStyle: 'italic', fontSize: '12px' }}>Novel/Unstructured</span>
+                          <span style={{ color: '#64748B', fontStyle: 'italic', fontSize: '12px', fontWeight: 700 }}>Novel/Unstructured</span>
                         )}
                       </td>
 
@@ -616,10 +629,10 @@ export const BulkUploadView: React.FC = () => {
                             padding: '4px 10px',
                             borderRadius: '12px',
                             fontSize: '11px',
-                            fontWeight: 700,
-                            background: 'rgba(34,197,94,0.15)',
-                            color: '#4ADE80',
-                            border: '1px solid rgba(34,197,94,0.3)'
+                            fontWeight: 800,
+                            background: 'rgba(5,150,105,0.12)',
+                            color: '#047857',
+                            border: '1.5px solid rgba(5,150,105,0.3)'
                           }}>
                             <CheckCircle2 size={12} /> DUPLICATE
                           </span>
@@ -632,10 +645,10 @@ export const BulkUploadView: React.FC = () => {
                             padding: '4px 10px',
                             borderRadius: '12px',
                             fontSize: '11px',
-                            fontWeight: 700,
-                            background: 'rgba(247,183,49,0.15)',
-                            color: '#FACC15',
-                            border: '1px solid rgba(247,183,49,0.3)'
+                            fontWeight: 800,
+                            background: 'rgba(217,119,6,0.12)',
+                            color: '#B45309',
+                            border: '1.5px solid rgba(217,119,6,0.3)'
                           }}>
                             <AlertTriangle size={12} /> REVIEW REQ
                           </span>
@@ -648,10 +661,10 @@ export const BulkUploadView: React.FC = () => {
                             padding: '4px 10px',
                             borderRadius: '12px',
                             fontSize: '11px',
-                            fontWeight: 700,
-                            background: 'rgba(56,189,248,0.15)',
-                            color: '#38BDF8',
-                            border: '1px solid rgba(56,189,248,0.3)'
+                            fontWeight: 800,
+                            background: 'rgba(2,132,199,0.12)',
+                            color: '#0284C7',
+                            border: '1.5px solid rgba(2,132,199,0.3)'
                           }}>
                             <Sparkles size={12} /> NEW SKU
                           </span>
@@ -664,32 +677,32 @@ export const BulkUploadView: React.FC = () => {
                           <div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px' }}>
                               <span style={{ 
-                                padding: '1px 6px', 
+                                padding: '2px 8px', 
                                 borderRadius: '4px', 
-                                fontSize: '10px', 
+                                fontSize: '11px', 
                                 fontWeight: 800,
                                 background: `${getCpseBadgeColor(item.top_match_cpse)}22`,
                                 color: getCpseBadgeColor(item.top_match_cpse),
-                                border: `1px solid ${getCpseBadgeColor(item.top_match_cpse)}44`
+                                border: `1.5px solid ${getCpseBadgeColor(item.top_match_cpse)}66`
                               }}>
                                 {item.top_match_cpse}
                               </span>
-                              <span style={{ fontFamily: 'monospace', fontWeight: 700, color: '#F1F5F9', fontSize: '12px' }}>
+                              <span style={{ fontFamily: 'monospace', fontWeight: 800, color: '#000000', fontSize: '13px' }}>
                                 {item.top_match_code}
                               </span>
                             </div>
-                            <div style={{ fontSize: '11px', color: '#22C55E', fontWeight: 600 }}>
+                            <div style={{ fontSize: '11px', color: '#047857', fontWeight: 700 }}>
                               {item.top_confidence != null ? `${(item.top_confidence * 100).toFixed(1)}% match confidence` : ''}
                             </div>
                           </div>
                         ) : (
-                          <span style={{ color: '#64748B', fontSize: '12px' }}>None (Distinct Item)</span>
+                          <span style={{ color: '#64748B', fontSize: '12px', fontWeight: 700 }}>None (Distinct Item)</span>
                         )}
                       </td>
 
                       {/* System Recommendation */}
                       <td style={{ padding: '14px 16px' }}>
-                        <div style={{ fontSize: '12px', color: '#CBD5E1', lineHeight: '1.4' }}>
+                        <div style={{ fontSize: '12px', color: '#000000', fontWeight: 700, lineHeight: '1.4' }}>
                           {item.recommendation}
                         </div>
                       </td>
@@ -700,7 +713,7 @@ export const BulkUploadView: React.FC = () => {
             </table>
 
             {filteredRows.length === 0 && (
-              <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
+              <div style={{ padding: '40px', textAlign: 'center', color: '#000000', fontWeight: 700 }}>
                 No items match your selected filter or search query.
               </div>
             )}
@@ -711,8 +724,9 @@ export const BulkUploadView: React.FC = () => {
             className="glass-card" 
             style={{ 
               padding: '24px 28px', 
-              background: 'linear-gradient(135deg, rgba(34,197,94,0.08) 0%, rgba(15,23,42,0.85) 100%)',
-              border: '1px solid rgba(34,197,94,0.25)',
+              background: '#FFFFFF',
+              border: '1.5px solid rgba(203, 213, 225, 0.9)',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
@@ -721,17 +735,17 @@ export const BulkUploadView: React.FC = () => {
             }}
           >
             <div>
-              <h3 style={{ fontSize: '16px', fontWeight: 800, color: '#F0F4FF', marginBottom: '6px' }}>
+              <h3 style={{ fontSize: '16px', fontWeight: 900, color: '#000000', marginBottom: '6px' }}>
                 Ready for Enterprise ERP Synchronization
               </h3>
-              <p style={{ fontSize: '13px', color: 'var(--text-secondary)', maxWidth: '650px', lineHeight: '1.5' }}>
+              <p style={{ fontSize: '13px', color: '#000000', fontWeight: 700, maxWidth: '650px', lineHeight: '1.5' }}>
                 The cleaned dataset is ready to be exported back to SAP S/4HANA (BAPI / IDoc) or GeM Government e-Marketplace, instantly saving public sector procurement departments from issuing duplicate tenders.
               </p>
             </div>
             <button 
               className="btn-success" 
               onClick={handleDownloadHarmonizedReport}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '12px 24px', fontSize: '14px' }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '12px 24px', fontSize: '14px', fontWeight: 800 }}
             >
               <Download size={18} /> Download Master Catalog (.CSV)
             </button>

@@ -215,36 +215,26 @@ const CandidateCard: React.FC<{
         padding: '24px',
         borderRadius: '16px',
         border: isMatch && !isBlocked
-          ? '1px solid rgba(0, 214, 143, 0.45)'
+          ? '2px solid rgba(16, 185, 129, 0.6)'
           : isBlocked
-          ? '1px solid rgba(255, 71, 87, 0.45)'
-          : '1px solid rgba(250, 204, 21, 0.35)',
-        background: isMatch && !isBlocked
-          ? 'linear-gradient(145deg, rgba(6, 22, 22, 0.96), rgba(8, 16, 28, 0.98))'
-          : isBlocked
-          ? 'linear-gradient(145deg, rgba(28, 10, 16, 0.96), rgba(14, 8, 20, 0.98))'
-          : 'linear-gradient(145deg, rgba(20, 18, 12, 0.96), rgba(8, 14, 24, 0.98))',
-        backdropFilter: 'blur(28px)',
-        WebkitBackdropFilter: 'blur(28px)',
-        boxShadow: isMatch && !isBlocked
-          ? '0 16px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 214, 143, 0.12)'
-          : isBlocked
-          ? '0 16px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(255, 71, 87, 0.12)'
-          : '0 16px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(250, 204, 21, 0.1)',
+          ? '2px solid rgba(239, 68, 68, 0.6)'
+          : '2px solid rgba(217, 119, 6, 0.5)',
+        background: '#FFFFFF',
+        boxShadow: '0 10px 30px rgba(15, 23, 42, 0.06)',
       }}
     >
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '14px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           {isMatch && !isBlocked ? (
-            <CheckCircle2 size={20} color="#00D68F" />
+            <CheckCircle2 size={20} color="#059669" />
           ) : isBlocked ? (
-            <XCircle size={20} color="#FF4757" />
+            <XCircle size={20} color="#EF4444" />
           ) : (
-            <AlertTriangle size={20} color="#F7B731" />
+            <AlertTriangle size={20} color="#D97706" />
           )}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '15px', fontWeight: 800, color: '#F0F4FF', fontFamily: 'JetBrains Mono, monospace' }}>
+              <span style={{ fontSize: '16px', fontWeight: 900, color: '#000000', fontFamily: 'JetBrains Mono, monospace' }}>
                 {cand.material_code}
               </span>
               <span className={`badge-cpse badge-${getCpseBadgeClass(cand.source_cpse).replace('badge-', '')}`}>
@@ -255,7 +245,7 @@ const CandidateCard: React.FC<{
         </div>
         <div style={{ textAlign: 'right' }}>
           <div style={{ fontSize: '22px', fontWeight: 900, color: barColor, lineHeight: 1 }}>{pct}%</div>
-          <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 600 }}>confidence</div>
+          <div style={{ fontSize: '11px', color: '#0F172A', fontWeight: 800 }}>confidence</div>
         </div>
       </div>
 
@@ -273,29 +263,29 @@ const CandidateCard: React.FC<{
 
       {/* Raw Description Inset Box */}
       <div style={{
-        background: 'rgba(3, 7, 18, 0.85)',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
+        background: '#F1F5F9',
+        border: '1px solid rgba(203, 213, 225, 0.9)',
         borderRadius: '10px',
         padding: '12px 16px',
         marginBottom: '12px',
-        boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.5)'
       }}>
-        <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '5px' }}>
+        <div style={{ fontSize: '11px', color: '#0F172A', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '5px' }}>
           Raw Master Catalog Description
         </div>
-        <div style={{ fontSize: '13.5px', color: '#F8FAFC', fontWeight: 600, fontFamily: 'monospace', letterSpacing: '0.02em', lineHeight: 1.5 }}>
+        <div style={{ fontSize: '14px', color: '#000000', fontWeight: 800, fontFamily: 'monospace', letterSpacing: '0.02em', lineHeight: 1.5 }}>
           "{cand.raw_description}"
         </div>
       </div>
 
       {/* Explanation Box */}
       <div style={{
-        fontSize: '12.5px',
-        color: isBlocked ? '#FF6B78' : isMatch ? '#A7F3D0' : '#FEF08A',
+        fontSize: '13px',
+        color: '#000000',
+        fontWeight: 700,
         lineHeight: 1.55,
         marginBottom: '16px',
-        background: isBlocked ? 'rgba(255, 71, 87, 0.12)' : isMatch ? 'rgba(0, 214, 143, 0.1)' : 'rgba(250, 204, 21, 0.1)',
-        border: `1px solid ${isBlocked ? 'rgba(255, 71, 87, 0.25)' : isMatch ? 'rgba(0, 214, 143, 0.25)' : 'rgba(250, 204, 21, 0.25)'}`,
+        background: isBlocked ? 'rgba(239, 68, 68, 0.1)' : isMatch ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)',
+        border: `1px solid ${isBlocked ? 'rgba(239, 68, 68, 0.3)' : isMatch ? 'rgba(16, 185, 129, 0.3)' : 'rgba(245, 158, 11, 0.3)'}`,
         borderRadius: '10px',
         padding: '10px 14px'
       }}>
@@ -434,17 +424,16 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
     <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '36px 28px' }}>
       {/* ── Page Header ── */}
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: '32px' }}>
-        <h1 style={{ fontSize: '36px', fontWeight: 900, color: '#F8FAFC', letterSpacing: '-0.03em', marginBottom: '8px', lineHeight: 1.1 }}>
+        <h1 style={{ fontSize: '36px', fontWeight: 900, color: '#000000', letterSpacing: '-0.03em', marginBottom: '8px', lineHeight: 1.1 }}>
           Cross-CPSE{' '}
           <span className="shimmer-text">Material Harmonizer</span>
         </h1>
         <p style={{ 
           fontSize: '15px', 
-          color: '#E2E8F0', 
-          fontWeight: 500, 
+          color: '#000000', 
+          fontWeight: 700, 
           maxWidth: '680px', 
-          lineHeight: 1.6,
-          textShadow: '0 2px 10px rgba(0,0,0,0.85)'
+          lineHeight: 1.6
         }}>
           Paste any messy SAP/ERP material description. The AI pipeline cleans abbreviations,
           extracts physical attributes, and matches across IOCL, ONGC, BPCL and GAIL material masters.
@@ -479,12 +468,12 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
             value={sourceCpse}
             onChange={(e) => setSourceCpse(e.target.value)}
             style={{
-              background: 'rgba(255,255,255,0.05)',
-              color: '#F0F4FF',
-              border: '1px solid var(--border-bright)',
+              background: '#FFFFFF',
+              color: '#000000',
+              border: '1.5px solid var(--border-bright)',
               borderRadius: '12px',
               padding: '14px 16px',
-              fontWeight: 700,
+              fontWeight: 800,
               fontSize: '14px',
               cursor: 'pointer',
               outline: 'none',
@@ -493,7 +482,7 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
             }}
           >
             {['IOCL', 'ONGC', 'BPCL', 'GAIL', 'NTPC', 'SAIL', 'BHEL'].map(c => (
-              <option key={c} value={c} style={{ background: '#0C1120', color: '#F0F4FF' }}>{c}</option>
+              <option key={c} value={c} style={{ background: '#FFFFFF', color: '#000000', fontWeight: 700 }}>{c}</option>
             ))}
           </select>
 
@@ -506,16 +495,16 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               placeholder="e.g. SS PIPE ASTM A106 GR B 150 MM, GATE VALVE WCB 2 INCH 600#..."
               className="input-field"
-              style={{ paddingLeft: '46px', color: '#F8FAFC' }}
+              style={{ paddingLeft: '46px', color: '#000000', fontWeight: 800 }}
             />
-            <Search size={18} color="#94A3B8" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
+            <Search size={18} color="#059669" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
           </div>
 
           <button
             onClick={() => handleSearch()}
             disabled={loading || !query.trim()}
             className="btn-primary"
-            style={{ padding: '0 28px', fontSize: '14px', minWidth: '140px' }}
+            style={{ padding: '0 28px', fontSize: '14px', minWidth: '140px', color: '#000000', fontWeight: 800 }}
           >
             {loading ? (
               <><RefreshCw size={16} className="animate-spin" /> Verifying...</>
@@ -527,8 +516,8 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
 
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
-            <Star size={12} color="#F7B731" />
-            <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: '#CBD5E1', letterSpacing: '0.05em' }}>
+            <Star size={12} color="#D97706" />
+            <span style={{ fontSize: '11px', fontWeight: 900, textTransform: 'uppercase', color: '#000000', letterSpacing: '0.05em' }}>
               One-Click Demo Scenarios
             </span>
           </div>
@@ -538,23 +527,23 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
                 key={idx}
                 onClick={() => selectScenario(sc.text, sc.cpse)}
                 style={{
-                  background: 'rgba(255,255,255,0.07)',
-                  border: '1px solid rgba(255,255,255,0.18)',
-                  color: '#F1F5F9',
+                  background: '#FFFFFF',
+                  border: '1.5px solid rgba(203, 213, 225, 0.9)',
+                  color: '#000000',
                   padding: '7px 14px',
                   borderRadius: '20px',
                   fontSize: '12px',
-                  fontWeight: 600,
+                  fontWeight: 800,
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px',
                   transition: 'all 0.2s ease',
-                  boxShadow: '0 2px 6px rgba(0,0,0,0.4)'
+                  boxShadow: '0 2px 6px rgba(15, 23, 42, 0.05)'
                 }}
               >
                 <span>{sc.label}</span>
-                <ChevronRight size={12} />
+                <ChevronRight size={12} color="#059669" />
               </button>
             ))}
           </div>
@@ -593,41 +582,41 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
             transition={{ duration: 0.6 }}
             style={{ marginBottom: '32px' }}
           >
-            <div className="glass-panel" style={{ padding: '60px 40px', background: 'rgba(15,23,42,0.8)' }}>
+            <div className="glass-panel" style={{ padding: '60px 40px', background: '#FFFFFF', border: '1.5px solid rgba(203, 213, 225, 0.9)', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.05)' }}>
               <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-                <h3 style={{ fontSize: '24px', fontWeight: 900, color: '#F0F4FF', letterSpacing: '0.15em', textTransform: 'uppercase', textShadow: '0 0 20px rgba(255,255,255,0.2)' }}>
+                <h3 style={{ fontSize: '24px', fontWeight: 900, color: '#000000', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
                   {loadingSteps[scanStep]?.text || "Processing Data..."}
                 </h3>
               </div>
 
               <div className="responsive-timeline-container" style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0 50px' }}>
                 {/* Background Line */}
-                <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '6px', background: 'rgba(255,255,255,0.05)', transform: 'translateY(-50%)', borderRadius: '3px', zIndex: 0 }} />
+                <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '6px', background: '#E2E8F0', transform: 'translateY(-50%)', borderRadius: '3px', zIndex: 0 }} />
                 
                 {/* Progress Line */}
                 <motion.div 
                   initial={{ width: '0%' }}
                   animate={{ width: `${(scanStep / (loadingSteps.length - 1)) * 100}%` }}
                   transition={{ duration: 1.2, ease: 'easeInOut' }}
-                  style={{ position: 'absolute', top: '50%', left: 0, height: '6px', background: 'linear-gradient(90deg, #FACC15, #EAB308, #22C55E, #16A34A)', transform: 'translateY(-50%)', borderRadius: '3px', zIndex: 1, boxShadow: '0 0 15px rgba(34, 197, 94, 0.6)' }} 
+                  style={{ position: 'absolute', top: '50%', left: 0, height: '6px', background: 'linear-gradient(90deg, #D97706, #059669)', transform: 'translateY(-50%)', borderRadius: '3px', zIndex: 1, boxShadow: '0 0 15px rgba(5, 150, 105, 0.4)' }} 
                 />
 
                 {/* Nodes */}
                 {loadingSteps.map((step, idx) => {
                   const isActive = scanStep >= idx;
                   const isCurrent = scanStep === idx;
-                  const colors = ['#FACC15', '#EAB308', '#22C55E', '#16A34A', '#A3E635'];
+                  const colors = ['#D97706', '#EAB308', '#059669', '#10B981', '#15803D'];
                   const nodeColor = colors[idx];
                   
                   return (
                     <div key={idx} style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                       <motion.div
-                        initial={{ scale: 0.8, backgroundColor: '#1E293B', borderColor: 'rgba(255,255,255,0.1)' }}
+                        initial={{ scale: 0.8, backgroundColor: '#F1F5F9', borderColor: 'rgba(203, 213, 225, 0.9)' }}
                         animate={{ 
-                          scale: isCurrent ? 1.4 : isActive ? 1.15 : 0.8,
-                          backgroundColor: isActive ? '#0B1121' : '#1E293B',
-                          borderColor: isActive ? nodeColor : 'rgba(255,255,255,0.1)',
-                          boxShadow: isCurrent ? `0 0 30px ${nodeColor}80` : isActive ? `0 0 10px ${nodeColor}40` : 'none'
+                          scale: isCurrent ? 1.35 : isActive ? 1.15 : 0.8,
+                          backgroundColor: isActive ? '#FFFFFF' : '#F1F5F9',
+                          borderColor: isActive ? nodeColor : '#CBD5E1',
+                          boxShadow: isCurrent ? `0 0 25px ${nodeColor}60` : isActive ? `0 0 10px ${nodeColor}30` : 'none'
                         }}
                         transition={{ type: 'spring', stiffness: 200, damping: 15 }}
                         className="responsive-timeline-node"
@@ -635,7 +624,7 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
                           width: '46px', height: '46px', borderRadius: '50%',
                           border: '3px solid',
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          color: isActive ? nodeColor : 'var(--text-muted)'
+                          color: isActive ? nodeColor : '#64748B'
                         }}
                       >
                         {step.icon}
@@ -643,9 +632,9 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
                       {/* Node Label */}
                       <motion.div 
                         initial={{ opacity: 0, y: 15 }}
-                        animate={{ opacity: isActive ? 1 : 0.2, y: isActive ? 0 : 5, color: isCurrent ? '#F0F4FF' : isActive ? nodeColor : 'var(--text-muted)' }}
+                        animate={{ opacity: isActive ? 1 : 0.3, y: isActive ? 0 : 5, color: isCurrent ? '#000000' : isActive ? nodeColor : '#64748B' }}
                         className="responsive-timeline-text"
-                        style={{ position: 'absolute', top: '65px', whiteSpace: 'nowrap', fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', textShadow: isCurrent ? `0 0 10px ${nodeColor}60` : 'none' }}
+                        style={{ position: 'absolute', top: '65px', whiteSpace: 'nowrap', fontSize: '13px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.08em' }}
                       >
                         Step {idx + 1}
                       </motion.div>
@@ -686,7 +675,7 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
                 {/* Foreground Stats overlay */}
                 <div style={{ position: 'relative', zIndex: 1, padding: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <div>
-                    <span style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', color: '#F0F4FF', letterSpacing: '0.1em' }}>Canonical Standard</span>
+                    <span style={{ fontSize: '12px', fontWeight: 900, textTransform: 'uppercase', color: '#000000', letterSpacing: '0.1em' }}>Canonical Standard</span>
                     <div style={{ fontSize: '18px', fontWeight: 900, color: holoColor, marginTop: '4px' }}>
                       {result.extracted_attributes.material_type || 'UNKNOWN ITEM'}
                     </div>
@@ -694,8 +683,8 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
                   <ConfidenceGauge score={result.candidates[0]?.confidence_score || 0} verdict={topVerdict} />
                 </div>
                 
-                <div style={{ position: 'relative', zIndex: 1, marginTop: 'auto', padding: '24px', background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)' }}>
-                  <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0, maxWidth: '280px', lineHeight: 1.5 }}>
+                <div style={{ position: 'relative', zIndex: 1, marginTop: 'auto', padding: '24px', background: 'linear-gradient(to top, rgba(255,255,255,0.95), rgba(255,255,255,0.7))' }}>
+                  <p style={{ fontSize: '13px', color: '#000000', fontWeight: 700, margin: 0, maxWidth: '280px', lineHeight: 1.5 }}>
                     {result.recommendation}
                   </p>
                 </div>
@@ -703,20 +692,20 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
 
               {/* Attribute Grid */}
               <motion.div
-                className="glass-panel" style={{ padding: '24px' }}
+                className="glass-panel" style={{ padding: '24px', background: '#FFFFFF', border: '1.5px solid rgba(203, 213, 225, 0.9)', boxShadow: '0 8px 24px rgba(15, 23, 42, 0.05)' }}
                 whileHover={{ rotateX: 2, rotateY: 2 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 20 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-                  <Layers size={16} color="#FACC15" />
-                  <span style={{ fontSize: '13px', fontWeight: 700, color: '#FACC15', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  <Layers size={16} color="#059669" />
+                  <span style={{ fontSize: '14px', fontWeight: 900, color: '#000000', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                     Extracted Physical Attributes
                   </span>
                 </div>
                 
                 {result.candidates && result.candidates.length > 0 ? (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', paddingBottom: '8px', borderBottom: '1px solid rgba(255,255,255,0.1)', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', paddingBottom: '8px', borderBottom: '2px solid rgba(203, 213, 225, 0.9)', fontSize: '11px', fontWeight: 900, color: '#000000', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                       <div>Attribute</div>
                       <div>Input (Extracted)</div>
                       <div>Top Match (Database)</div>
@@ -729,10 +718,10 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
                       const isMatch = (extAttrStr !== '—' && extAttrStr === matchAttrStr);
                       
                       return (
-                        <div key={key} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', padding: '6px 0', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
-                          <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{key.replace('_', ' ').toUpperCase()}</div>
-                          <div style={{ fontSize: '13px', fontWeight: 600, color: '#F0F4FF' }}>{extAttrStr}</div>
-                          <div style={{ fontSize: '13px', fontWeight: 600, color: isMismatch ? '#EF4444' : isMatch ? '#10B981' : '#F0F4FF' }}>
+                        <div key={key} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', padding: '6px 0', alignItems: 'center', borderBottom: '1px solid rgba(226, 232, 240, 0.9)' }}>
+                          <div style={{ fontSize: '12px', color: '#0F172A', fontWeight: 800 }}>{key.replace('_', ' ').toUpperCase()}</div>
+                          <div style={{ fontSize: '13px', fontWeight: 800, color: '#000000' }}>{extAttrStr}</div>
+                          <div style={{ fontSize: '13px', fontWeight: 800, color: isMismatch ? '#DC2626' : isMatch ? '#059669' : '#000000' }}>
                             {matchAttrStr}
                           </div>
                         </div>
@@ -743,12 +732,12 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
                   <AttrGrid attrs={result.extracted_attributes} />
                 )}
                 <div style={{
-                  marginTop: '16px', background: 'rgba(250,204,21,0.06)', border: '1px solid rgba(250,204,21,0.2)',
+                  marginTop: '16px', background: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.3)',
                   borderRadius: '10px', padding: '12px 14px', display: 'flex', gap: '10px', alignItems: 'flex-start',
                 }}>
-                  <ShieldCheck size={16} color="#22C55E" style={{ flexShrink: 0, marginTop: '1px' }} />
-                  <div style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                    <strong style={{ color: '#FACC15' }}>Zero-Guessing Safety Gate:</strong> Missing attributes are never inferred. Dense vector similarity alone cannot merge items if metallurgy or pressure class conflicts.
+                  <ShieldCheck size={16} color="#059669" style={{ flexShrink: 0, marginTop: '1px' }} />
+                  <div style={{ fontSize: '12px', color: '#000000', fontWeight: 700, lineHeight: 1.5 }}>
+                    <strong style={{ color: '#D97706' }}>Zero-Guessing Safety Gate:</strong> Missing attributes are never inferred. Dense vector similarity alone cannot merge items if metallurgy or pressure class conflicts.
                   </div>
                 </div>
                 
@@ -784,17 +773,17 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
                   alignItems: 'center', 
                   gap: '10px', 
                   marginBottom: '18px',
-                  background: 'rgba(8, 14, 26, 0.94)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  background: '#FFFFFF',
+                  border: '1.5px solid rgba(203, 213, 225, 0.9)',
                   borderRadius: '20px',
-                  padding: '6px 16px',
+                  padding: '7px 18px',
                   backdropFilter: 'blur(20px)',
-                  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.5)'
+                  boxShadow: '0 4px 15px rgba(15, 23, 42, 0.05)'
                 }}>
-                  <span style={{ fontSize: '12px', fontWeight: 800, color: '#F0F4FF', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                  <span style={{ fontSize: '13px', fontWeight: 900, color: '#000000', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                     Top Candidate Matches
                   </span>
-                  <span style={{ background: 'rgba(250, 204, 21, 0.15)', border: '1px solid rgba(250, 204, 21, 0.3)', padding: '2px 10px', borderRadius: '20px', fontSize: '11px', color: '#FACC15', fontWeight: 800 }}>
+                  <span style={{ background: 'rgba(217, 119, 6, 0.12)', border: '1px solid rgba(217, 119, 6, 0.35)', padding: '3px 12px', borderRadius: '20px', fontSize: '11px', color: '#B45309', fontWeight: 900 }}>
                     {result.candidates.length} found
                   </span>
                 </div>
@@ -826,19 +815,19 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
         {actionSuccessModal && (
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200, padding: '20px' }}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.65)', backdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200, padding: '20px' }}
           >
             <motion.div
               initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }}
-              className="glass-panel" style={{ maxWidth: '500px', width: '100%', padding: '32px', border: '1px solid rgba(0,214,143,0.3)' }}
+              className="glass-panel" style={{ maxWidth: '500px', width: '100%', padding: '32px', background: '#FFFFFF', border: '1.5px solid rgba(16, 185, 129, 0.5)', boxShadow: '0 25px 60px rgba(15, 23, 42, 0.18)' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '16px' }}>
-                <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: 'rgba(0,214,143,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 20px rgba(0,214,143,0.3)' }}>
-                  <CheckCircle2 size={28} color="#00D68F" />
+                <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: 'rgba(5, 150, 105, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 20px rgba(5, 150, 105, 0.2)' }}>
+                  <CheckCircle2 size={28} color="#059669" />
                 </div>
-                <h3 style={{ fontSize: '18px', fontWeight: 900, color: '#F0F4FF' }}>{actionSuccessModal.title}</h3>
+                <h3 style={{ fontSize: '18px', fontWeight: 900, color: '#000000' }}>{actionSuccessModal.title}</h3>
               </div>
-              <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: '24px' }}>
+              <p style={{ fontSize: '14px', color: '#000000', fontWeight: 700, lineHeight: 1.7, marginBottom: '24px' }}>
                 {actionSuccessModal.desc}
               </p>
               <button

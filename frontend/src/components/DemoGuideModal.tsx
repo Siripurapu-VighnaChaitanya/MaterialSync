@@ -95,26 +95,27 @@ export const DemoGuideModal: React.FC<DemoGuideModalProps> = ({ onClose, onSelec
           maxHeight: '90vh',
           display: 'flex',
           flexDirection: 'column',
-          background: '#111827',
-          border: '1px solid rgba(250, 204, 21, 0.35)',
+          background: '#FFFFFF',
+          border: '1.5px solid rgba(203, 213, 225, 0.9)',
+          boxShadow: '0 10px 40px rgba(0,0,0,0.15)',
         }}
       >
         {/* Modal Header */}
-        <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ padding: '20px 24px', borderBottom: '1.5px solid rgba(203, 213, 225, 0.9)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <BookOpen size={20} color="#FACC15" />
-            <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#FFFFFF' }}>
+            <BookOpen size={20} color="#D97706" />
+            <h3 style={{ fontSize: '18px', fontWeight: 900, color: '#000000' }}>
               SIH 2026 Judge Presentation Playbook
             </h3>
           </div>
-          <button onClick={onClose} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
+          <button onClick={onClose} style={{ background: 'transparent', border: 'none', color: '#000000', fontWeight: 800, cursor: 'pointer' }}>
             <X size={20} />
           </button>
         </div>
 
         {/* Modal Body: Steps List */}
         <div style={{ padding: '24px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '14px' }}>
-          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+          <p style={{ fontSize: '13px', color: '#000000', fontWeight: 700, marginBottom: '8px' }}>
             Follow this recommended chronological demonstration to showcase the complete AI/ML pipeline to hackathon judges:
           </p>
 
@@ -126,8 +127,8 @@ export const DemoGuideModal: React.FC<DemoGuideModalProps> = ({ onClose, onSelec
                 onClose();
               }}
               style={{
-                background: '#0B0F19',
-                border: '1px solid var(--border-subtle)',
+                background: '#F8FAFC',
+                border: '1.5px solid rgba(203, 213, 225, 0.9)',
                 borderRadius: '8px',
                 padding: '14px',
                 cursor: 'pointer',
@@ -142,13 +143,13 @@ export const DemoGuideModal: React.FC<DemoGuideModalProps> = ({ onClose, onSelec
                   width: '28px',
                   height: '28px',
                   borderRadius: '50%',
-                  background: 'rgba(34, 197, 94, 0.15)',
-                  color: '#22C55E',
-                  border: '1px solid rgba(34, 197, 94, 0.3)',
+                  background: 'rgba(5, 150, 105, 0.12)',
+                  color: '#047857',
+                  border: '1.5px solid rgba(5, 150, 105, 0.3)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontWeight: 800,
+                  fontWeight: 900,
                   fontSize: '12px',
                   flexShrink: 0,
                   marginTop: '2px',
@@ -157,21 +158,21 @@ export const DemoGuideModal: React.FC<DemoGuideModalProps> = ({ onClose, onSelec
                 {s.step}
               </div>
               <div style={{ flex: 1 }}>
-                <h4 style={{ fontSize: '14px', fontWeight: 700, color: '#FFFFFF', marginBottom: '2px' }}>
+                <h4 style={{ fontSize: '14px', fontWeight: 900, color: '#000000', marginBottom: '2px' }}>
                   {s.title}
                 </h4>
-                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+                <p style={{ fontSize: '12px', color: '#000000', fontWeight: 700, lineHeight: 1.4 }}>
                   {s.action}
                 </p>
               </div>
-              <ChevronRight size={18} color="var(--text-muted)" style={{ marginTop: '6px' }} />
+              <ChevronRight size={18} color="#000000" style={{ marginTop: '6px' }} />
             </div>
           ))}
         </div>
 
         {/* Modal Footer */}
-        <div style={{ padding: '16px 24px', borderTop: '1px solid var(--border-subtle)', textAlign: 'right' }}>
-          <button onClick={onClose} className="btn-primary" style={{ padding: '8px 20px', fontSize: '13px' }}>
+        <div style={{ padding: '16px 24px', borderTop: '1.5px solid rgba(203, 213, 225, 0.9)', textAlign: 'right' }}>
+          <button onClick={onClose} className="btn-primary" style={{ padding: '8px 20px', fontSize: '13px', fontWeight: 800 }}>
             Close Guide
           </button>
         </div>

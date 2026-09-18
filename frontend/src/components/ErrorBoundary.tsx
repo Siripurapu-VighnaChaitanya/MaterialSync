@@ -56,9 +56,9 @@ export class ErrorBoundary extends Component<Props, State> {
               width: '100%',
               padding: '32px',
               borderRadius: '20px',
-              border: '1px solid rgba(239, 68, 68, 0.3)',
-              background: 'rgba(15, 23, 42, 0.9)',
-              boxShadow: '0 10px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(239, 68, 68, 0.1)',
+              border: '1.5px solid rgba(239, 68, 68, 0.3)',
+              background: '#FFFFFF',
+              boxShadow: '0 10px 40px rgba(0, 0, 0, 0.08), 0 0 30px rgba(239, 68, 68, 0.06)',
               textAlign: 'center',
             }}
           >
@@ -67,37 +67,38 @@ export class ErrorBoundary extends Component<Props, State> {
                 width: '56px',
                 height: '56px',
                 borderRadius: '16px',
-                background: 'rgba(239, 68, 68, 0.15)',
+                background: 'rgba(239, 68, 68, 0.12)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 margin: '0 auto 20px',
-                color: '#EF4444',
+                color: '#DC2626',
               }}
             >
               <AlertTriangle size={28} />
             </div>
 
-            <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#F8FAFC', marginBottom: '8px' }}>
+            <h3 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#000000', marginBottom: '8px' }}>
               Component Render Paused
             </h3>
-            <p style={{ color: '#94A3B8', fontSize: '0.95rem', marginBottom: '24px', lineHeight: 1.5 }}>
+            <p style={{ color: '#000000', fontWeight: 700, fontSize: '0.95rem', marginBottom: '24px', lineHeight: 1.5 }}>
               An unexpected display issue occurred in this section. The application prevented a crash.
             </p>
 
             {this.state.error?.message && (
               <div
                 style={{
-                  background: 'rgba(0,0,0,0.4)',
+                  background: '#FEF2F2',
                   padding: '12px 16px',
                   borderRadius: '10px',
-                  fontSize: '0.8rem',
+                  fontSize: '0.85rem',
                   fontFamily: 'monospace',
-                  color: '#F87171',
+                  color: '#DC2626',
+                  fontWeight: 700,
                   textAlign: 'left',
                   marginBottom: '24px',
                   overflowX: 'auto',
-                  border: '1px solid rgba(239, 68, 68, 0.2)',
+                  border: '1.5px solid rgba(239, 68, 68, 0.2)',
                 }}
               >
                 {this.state.error.message}
@@ -113,10 +114,10 @@ export class ErrorBoundary extends Component<Props, State> {
                   gap: '8px',
                   padding: '10px 20px',
                   borderRadius: '10px',
-                  background: 'linear-gradient(135deg, #FACC15 0%, #22C55E 100%)',
+                  background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
                   border: 'none',
-                  color: '#050810',
-                  fontWeight: 800,
+                  color: '#FFFFFF',
+                  fontWeight: 900,
                   fontSize: '0.9rem',
                   cursor: 'pointer',
                 }}
@@ -131,10 +132,10 @@ export class ErrorBoundary extends Component<Props, State> {
                   gap: '8px',
                   padding: '10px 20px',
                   borderRadius: '10px',
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  border: '1px solid rgba(255, 255, 255, 0.15)',
-                  color: '#E2E8F0',
-                  fontWeight: 600,
+                  background: '#F1F5F9',
+                  border: '1.5px solid #CBD5E1',
+                  color: '#000000',
+                  fontWeight: 800,
                   fontSize: '0.9rem',
                   cursor: 'pointer',
                 }}

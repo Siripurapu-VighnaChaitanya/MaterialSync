@@ -111,12 +111,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={() => setActiveTab(item.id)}
                 style={{
                   background: isActive ? 'rgba(5, 150, 105, 0.12)' : 'transparent',
-                  color: isActive ? '#059669' : '#64748B',
-                  border: isActive ? '1px solid rgba(5, 150, 105, 0.3)' : '1px solid transparent',
+                  color: isActive ? '#059669' : '#000000',
+                  border: isActive ? '1.5px solid rgba(5, 150, 105, 0.4)' : '1.5px solid transparent',
                   borderRadius: '20px',
                   padding: '7px 14px',
                   fontSize: '13px',
-                  fontWeight: isActive ? 700 : 500,
+                  fontWeight: isActive ? 900 : 700,
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -144,13 +144,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                 alignItems: 'center',
                 gap: '6px',
                 background: '#FFFFFF',
-                border: '1px solid rgba(226, 232, 240, 0.9)',
+                border: '1.5px solid rgba(203, 213, 225, 0.9)',
                 borderRadius: '20px',
                 padding: '7px 14px',
                 cursor: 'pointer',
                 fontSize: '12px',
-                fontWeight: 600,
-                color: '#0F172A',
+                fontWeight: 800,
+                color: '#000000',
                 boxShadow: '0 2px 6px rgba(15, 23, 42, 0.04)',
                 transition: 'all 0.2s ease',
               }}
@@ -166,7 +166,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   top: '110%',
                   right: 0,
                   background: '#FFFFFF',
-                  border: '1px solid rgba(226, 232, 240, 0.9)',
+                  border: '1.5px solid rgba(203, 213, 225, 0.9)',
                   borderRadius: '12px',
                   overflow: 'hidden',
                   minWidth: '180px',
@@ -186,10 +186,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                       gap: '10px',
                       padding: '11px 16px',
                       background: activeRole === r.id ? 'rgba(5, 150, 105, 0.1)' : 'transparent',
-                      color: activeRole === r.id ? '#059669' : '#334155',
+                      color: activeRole === r.id ? '#059669' : '#000000',
                       border: 'none',
                       fontSize: '13px',
-                      fontWeight: activeRole === r.id ? 700 : 500,
+                      fontWeight: 800,
                       cursor: 'pointer',
                       textAlign: 'left',
                       transition: 'background 0.15s',
@@ -220,7 +220,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               background: '#FFFFFF',
               padding: '7px 14px',
               borderRadius: '20px',
-              border: '1px solid rgba(226, 232, 240, 0.9)',
+              border: '1.5px solid rgba(203, 213, 225, 0.9)',
               fontSize: '12px',
               boxShadow: '0 2px 6px rgba(15, 23, 42, 0.04)',
             }}
@@ -235,11 +235,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                 animation: isBackendOnline ? 'glow-pulse 2.5s infinite' : 'none',
               }}
             />
-            <span style={{ color: isBackendOnline ? '#059669' : '#EF4444', fontWeight: 700 }}>
+            <span style={{ color: isBackendOnline ? '#059669' : '#EF4444', fontWeight: 900 }}>
               {isBackendOnline ? 'Live' : 'Offline'}
             </span>
             <span style={{ color: 'rgba(203, 213, 225, 0.8)' }}>|</span>
-            <span style={{ color: '#475569', fontWeight: 600 }}>
+            <span style={{ color: '#000000', fontWeight: 800 }}>
               {indexedMaterials.toLocaleString()} SKUs
             </span>
           </div>
