@@ -153,16 +153,18 @@ const TerminalWindow: React.FC = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.25 }}
             style={{ 
-              color: isSuccess ? '#34D399' : '#CBD5E1', 
-              fontWeight: isSuccess ? 800 : 600,
+              color: isSuccess ? '#34D399' : '#FACC15', 
+              fontWeight: isSuccess ? 800 : 700,
               fontSize: '0.92rem',
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
-              textShadow: isSuccess ? '0 0 12px rgba(52, 211, 153, 0.45)' : 'none'
+              textShadow: isSuccess 
+                ? '0 0 12px rgba(52, 211, 153, 0.45)' 
+                : '0 0 10px rgba(250, 204, 21, 0.25)'
             }}
           >
-            <span style={{ color: isSuccess ? '#34D399' : '#FACC15', fontWeight: 800 }}>{'>'}</span>
+            <span style={{ color: isSuccess ? '#34D399' : '#FACC15', fontWeight: 900 }}>{'>'}</span>
             <span>{line.replace(/^>\s*/, '')}</span>
             {isSuccess && (
               <span style={{ 
@@ -185,7 +187,15 @@ const TerminalWindow: React.FC = () => {
       <motion.div 
         animate={{ opacity: [1, 0, 1] }} 
         transition={{ repeat: Infinity, duration: 0.75 }}
-        style={{ width: '8px', height: '16px', background: '#34D399', display: 'inline-block', marginTop: '4px', borderRadius: '1px' }}
+        style={{ 
+          width: '8px', 
+          height: '16px', 
+          background: visibleCount >= TERMINAL_SEQUENCE.length ? '#34D399' : '#FACC15', 
+          boxShadow: visibleCount >= TERMINAL_SEQUENCE.length ? '0 0 8px #34D399' : '0 0 8px #FACC15',
+          display: 'inline-block', 
+          marginTop: '4px', 
+          borderRadius: '1px' 
+        }}
       />
     </motion.div>
   );
