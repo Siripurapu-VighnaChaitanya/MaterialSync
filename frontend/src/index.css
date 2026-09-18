@@ -69,8 +69,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .canvas-container.soft-blur-canvas {
-  filter: blur(6px);
-  opacity: 0.55; /* Soft ambient glow so text in foreground is 100% crisp without interference */
+  filter: blur(2.5px);
+  opacity: 0.75; /* Gentle subtle softening so 3D animation is clearly visible without text clash */
 }
 
 .canvas-container.clusters-canvas {
