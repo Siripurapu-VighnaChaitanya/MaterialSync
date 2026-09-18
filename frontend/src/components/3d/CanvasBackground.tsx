@@ -284,46 +284,90 @@ const NeuralPlexusLandscape: React.FC = () => {
 };
 
 // ─── 2. FLOATING HOLOGRAPHIC SQUARE DATA BOXES (THE CUBE LAYER) ───
+interface CubeConfig {
+  pos: [number, number, number];
+  size: number;
+  rotSpeed: [number, number];
+  color: string;
+  edgeColor: string;
+  innerColor: string;
+  speed: number;
+}
+
+const DataCubeItem: React.FC<{ cube: CubeConfig; idx: number }> = ({ cube }) => {
+  const meshRef = useRef<THREE.Mesh>(null);
+  const innerRef = useRef<THREE.Mesh>(null);
+
+  useFrame((_, delta) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.x += delta * cube.rotSpeed[0];
+      meshRef.current.rotation.y += delta * cube.rotSpeed[1];
+    }
+    if (innerRef.current) {
+      innerRef.current.rotation.x -= delta * cube.rotSpeed[0] * 1.6;
+      innerRef.current.rotation.y -= delta * cube.rotSpeed[1] * 1.6;
+    }
+  });
+
+  return (
+    <Float
+      speed={1.6 * cube.speed}
+      rotationIntensity={1.3}
+      floatIntensity={1.8}
+      position={cube.pos}
+    >
+      <group>
+        {/* Outer Crystalline Colored Glass Cube */}
+        <mesh ref={meshRef}>
+          <boxGeometry args={[cube.size, cube.size, cube.size]} />
+          <meshStandardMaterial
+            color={cube.color}
+            emissive={cube.color}
+            emissiveIntensity={0.32}
+            roughness={0.1}
+            metalness={0.28}
+            transparent
+            opacity={0.72}
+          />
+          {/* Glowing Outer Wireframe Highlight Edges */}
+          <Edges
+            scale={1.015}
+            threshold={15}
+            color={cube.edgeColor}
+          />
+        </mesh>
+
+        {/* Inner Holographic Lattice / Core */}
+        <mesh ref={innerRef}>
+          <boxGeometry args={[cube.size * 0.54, cube.size * 0.54, cube.size * 0.54]} />
+          <meshBasicMaterial
+            wireframe
+            color={cube.innerColor}
+            transparent
+            opacity={0.75}
+          />
+        </mesh>
+      </group>
+    </Float>
+  );
+};
+
 const FloatingDataCubes: React.FC = () => {
-  const cubeConfigs = useMemo(() => [
-    { pos: [-9.5, -3.2, -6.5], size: 1.1, rotSpeed: [0.3, 0.4], color: '#10B981' },
-    { pos: [-5.8, -2.6, -8.0], size: 0.85, rotSpeed: [-0.25, 0.35], color: '#F59E0B' },
-    { pos: [-2.2, -3.4, -6.0], size: 1.25, rotSpeed: [0.2, -0.3], color: '#059669' },
-    { pos: [1.2, -3.4, -7.5], size: 0.95, rotSpeed: [-0.3, -0.2], color: '#0284C7' },
-    { pos: [7.2, -4.7, -5.2], size: 1.3, rotSpeed: [0.35, 0.25], color: '#10B981' },
-    { pos: [13.2, -2.8, -7.2], size: 1.15, rotSpeed: [-0.2, 0.4], color: '#D97706' },
-    { pos: [-8.0, -1.8, -12.0], size: 1.4, rotSpeed: [0.15, 0.2], color: '#059669' },
-    { pos: [3.6, -4.6, -6.2], size: 1.35, rotSpeed: [-0.18, -0.22], color: '#0284C7' }
+  const cubeConfigs: CubeConfig[] = useMemo(() => [
+    { pos: [-9.5, -2.8, -6.5], size: 1.15, rotSpeed: [0.35, 0.45], color: '#10B981', edgeColor: '#34D399', innerColor: '#A7F3D0', speed: 1.1 },
+    { pos: [-5.8, -2.2, -8.0], size: 0.95, rotSpeed: [-0.3, 0.38], color: '#F59E0B', edgeColor: '#FBBF24', innerColor: '#FDE68A', speed: 0.95 },
+    { pos: [-2.2, -3.2, -6.0], size: 1.3, rotSpeed: [0.22, -0.32], color: '#0284C7', edgeColor: '#38BDF8', innerColor: '#BAE6FD', speed: 1.2 },
+    { pos: [1.2, -3.2, -7.5], size: 1.0, rotSpeed: [-0.32, -0.22], color: '#8B5CF6', edgeColor: '#A78BFA', innerColor: '#DDD6FE', speed: 0.85 },
+    { pos: [7.2, -4.2, -5.2], size: 1.35, rotSpeed: [0.38, 0.28], color: '#059669', edgeColor: '#34D399', innerColor: '#6EE7B7', speed: 1.15 },
+    { pos: [13.0, -2.5, -7.2], size: 1.2, rotSpeed: [-0.25, 0.42], color: '#F43F5E', edgeColor: '#FB7185', innerColor: '#FECDD3', speed: 1.0 },
+    { pos: [-8.2, -1.5, -11.5], size: 1.45, rotSpeed: [0.18, 0.24], color: '#06B6D4', edgeColor: '#22D3EE', innerColor: '#A5F3FC', speed: 0.9 },
+    { pos: [3.8, -4.2, -6.2], size: 1.4, rotSpeed: [-0.2, -0.25], color: '#D97706', edgeColor: '#F59E0B', innerColor: '#FCD34D', speed: 1.05 }
   ], []);
 
   return (
     <group>
       {cubeConfigs.map((cube, idx) => (
-        <Float
-          key={`data-cube-${idx}`}
-          speed={1.5}
-          rotationIntensity={1.2}
-          floatIntensity={1.8}
-          position={cube.pos as [number, number, number]}
-        >
-          <mesh>
-            <boxGeometry args={[cube.size, cube.size, cube.size]} />
-            {/* Frosted Crystalline Glass Faces */}
-            <meshStandardMaterial
-              color="#FFFFFF"
-              roughness={0.15}
-              metalness={0.1}
-              transparent
-              opacity={0.35}
-            />
-            {/* Glowing Wireframe Square Edges */}
-            <Edges
-              scale={1.01}
-              threshold={15}
-              color={cube.color}
-            />
-          </mesh>
-        </Float>
+        <DataCubeItem key={`data-cube-${idx}`} cube={cube} idx={idx} />
       ))}
     </group>
   );

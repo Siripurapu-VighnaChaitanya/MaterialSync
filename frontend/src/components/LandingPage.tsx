@@ -88,20 +88,34 @@ const TERMINAL_SEQUENCE: readonly string[] = [
 ];
 
 const TerminalWindow: React.FC = () => {
-  const [visibleCount, setVisibleCount] = useState<number>(0);
+  const [visibleCount, setVisibleCount] = useState<number>(1);
+  const [cycle, setCycle] = useState<number>(0);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setVisibleCount((prev) => {
-        if (prev < TERMINAL_SEQUENCE.length) {
-          return prev + 1;
-        }
-        clearInterval(interval);
-        return prev;
-      });
-    }, 750);
-    return () => clearInterval(interval);
-  }, []);
+    let timeoutId: any;
+    let intervalId: any;
+
+    setVisibleCount(1);
+    let count = 1;
+
+    intervalId = setInterval(() => {
+      count += 1;
+      if (count <= TERMINAL_SEQUENCE.length) {
+        setVisibleCount(count);
+      } else {
+        clearInterval(intervalId);
+        // Hold SYSTEM READY status for 2.4 seconds, then repeat cycle
+        timeoutId = setTimeout(() => {
+          setCycle((c) => c + 1);
+        }, 2400);
+      }
+    }, 650);
+
+    return () => {
+      clearInterval(intervalId);
+      clearTimeout(timeoutId);
+    };
+  }, [cycle]);
 
   const displayedLines = TERMINAL_SEQUENCE.slice(0, visibleCount);
 
@@ -134,23 +148,44 @@ const TerminalWindow: React.FC = () => {
         const isSuccess = Boolean(line && line.includes("READY"));
         return (
           <motion.div 
-            key={idx}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
+            key={`${cycle}-${idx}`}
+            initial={{ opacity: 0, x: -6 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.25 }}
             style={{ 
               color: isSuccess ? '#34D399' : '#CBD5E1', 
-              fontWeight: 600,
-              fontSize: '0.9rem'
+              fontWeight: isSuccess ? 800 : 600,
+              fontSize: '0.92rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              textShadow: isSuccess ? '0 0 12px rgba(52, 211, 153, 0.45)' : 'none'
             }}
           >
-            {line}
+            <span style={{ color: isSuccess ? '#34D399' : '#FACC15', fontWeight: 800 }}>{'>'}</span>
+            <span>{line.replace(/^>\s*/, '')}</span>
+            {isSuccess && (
+              <span style={{ 
+                fontSize: '10px', 
+                background: 'rgba(16, 185, 129, 0.25)', 
+                border: '1px solid #10B981', 
+                color: '#34D399', 
+                padding: '2px 8px', 
+                borderRadius: '6px',
+                fontWeight: 800,
+                marginLeft: '8px',
+                letterSpacing: '0.04em'
+              }}>
+                ONLINE
+              </span>
+            )}
           </motion.div>
         );
       })}
       <motion.div 
-        animate={visibleCount < TERMINAL_SEQUENCE.length ? { opacity: [1, 0, 1] } : { opacity: 0 }} 
-        transition={visibleCount < TERMINAL_SEQUENCE.length ? { repeat: Infinity, duration: 0.8 } : { duration: 0.3 }}
-        style={{ width: '8px', height: '16px', background: '#34D399', display: 'inline-block', marginTop: '4px' }}
+        animate={{ opacity: [1, 0, 1] }} 
+        transition={{ repeat: Infinity, duration: 0.75 }}
+        style={{ width: '8px', height: '16px', background: '#34D399', display: 'inline-block', marginTop: '4px', borderRadius: '1px' }}
       />
     </motion.div>
   );
