@@ -212,17 +212,25 @@ const CandidateCard: React.FC<{
       whileHover={{ scale: 1.02 }}
       className="glass-card"
       style={{
-        padding: '20px',
+        padding: '24px',
+        borderRadius: '16px',
         border: isMatch && !isBlocked
-          ? '1px solid rgba(0,214,143,0.3)'
+          ? '1px solid rgba(0, 214, 143, 0.45)'
           : isBlocked
-          ? '1px solid rgba(255,71,87,0.3)'
-          : '1px solid rgba(255,255,255,0.07)',
+          ? '1px solid rgba(255, 71, 87, 0.45)'
+          : '1px solid rgba(250, 204, 21, 0.35)',
         background: isMatch && !isBlocked
-          ? 'rgba(0,214,143,0.04)'
+          ? 'linear-gradient(145deg, rgba(6, 22, 22, 0.96), rgba(8, 16, 28, 0.98))'
           : isBlocked
-          ? 'rgba(255,71,87,0.04)'
-          : 'rgba(255,255,255,0.02)',
+          ? 'linear-gradient(145deg, rgba(28, 10, 16, 0.96), rgba(14, 8, 20, 0.98))'
+          : 'linear-gradient(145deg, rgba(20, 18, 12, 0.96), rgba(8, 14, 24, 0.98))',
+        backdropFilter: 'blur(28px)',
+        WebkitBackdropFilter: 'blur(28px)',
+        boxShadow: isMatch && !isBlocked
+          ? '0 16px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 214, 143, 0.12)'
+          : isBlocked
+          ? '0 16px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(255, 71, 87, 0.12)'
+          : '0 16px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(250, 204, 21, 0.1)',
       }}
     >
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '14px' }}>
@@ -252,7 +260,7 @@ const CandidateCard: React.FC<{
       </div>
 
       {/* Confidence Bar */}
-      <div className="progress-bar-track" style={{ marginBottom: '12px' }}>
+      <div className="progress-bar-track" style={{ marginBottom: '14px' }}>
         <motion.div
           variants={{
             hidden: { width: 0 },
@@ -263,13 +271,36 @@ const CandidateCard: React.FC<{
         />
       </div>
 
-      <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '10px', fontStyle: 'italic' }}>
-        "{cand.raw_description}"
-      </p>
+      {/* Raw Description Inset Box */}
+      <div style={{
+        background: 'rgba(3, 7, 18, 0.85)',
+        border: '1px solid rgba(255, 255, 255, 0.08)',
+        borderRadius: '10px',
+        padding: '12px 16px',
+        marginBottom: '12px',
+        boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.5)'
+      }}>
+        <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '5px' }}>
+          Raw Master Catalog Description
+        </div>
+        <div style={{ fontSize: '13.5px', color: '#F8FAFC', fontWeight: 600, fontFamily: 'monospace', letterSpacing: '0.02em', lineHeight: 1.5 }}>
+          "{cand.raw_description}"
+        </div>
+      </div>
 
-      <p style={{ fontSize: '12px', color: isBlocked ? '#FF6B78' : '#A7F3D0', lineHeight: 1.5, marginBottom: '14px' }}>
+      {/* Explanation Box */}
+      <div style={{
+        fontSize: '12.5px',
+        color: isBlocked ? '#FF6B78' : isMatch ? '#A7F3D0' : '#FEF08A',
+        lineHeight: 1.55,
+        marginBottom: '16px',
+        background: isBlocked ? 'rgba(255, 71, 87, 0.12)' : isMatch ? 'rgba(0, 214, 143, 0.1)' : 'rgba(250, 204, 21, 0.1)',
+        border: `1px solid ${isBlocked ? 'rgba(255, 71, 87, 0.25)' : isMatch ? 'rgba(0, 214, 143, 0.25)' : 'rgba(250, 204, 21, 0.25)'}`,
+        borderRadius: '10px',
+        padding: '10px 14px'
+      }}>
         {cand.explanation}
-      </p>
+      </div>
 
       {isBlocked && (
         <div style={{
@@ -740,11 +771,22 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
                 animate={{ opacity: 1 }} 
                 transition={{ delay: 0.2 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-                  <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                <div style={{ 
+                  display: 'inline-flex', 
+                  alignItems: 'center', 
+                  gap: '10px', 
+                  marginBottom: '18px',
+                  background: 'rgba(8, 14, 26, 0.94)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '20px',
+                  padding: '6px 16px',
+                  backdropFilter: 'blur(20px)',
+                  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.5)'
+                }}>
+                  <span style={{ fontSize: '12px', fontWeight: 800, color: '#F0F4FF', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                     Top Candidate Matches
                   </span>
-                  <span style={{ background: 'rgba(255,255,255,0.07)', padding: '2px 8px', borderRadius: '20px', fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 700 }}>
+                  <span style={{ background: 'rgba(250, 204, 21, 0.15)', border: '1px solid rgba(250, 204, 21, 0.3)', padding: '2px 10px', borderRadius: '20px', fontSize: '11px', color: '#FACC15', fontWeight: 800 }}>
                     {result.candidates.length} found
                   </span>
                 </div>

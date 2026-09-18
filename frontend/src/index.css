@@ -91,33 +91,37 @@ code, pre, .font-mono {
    GLASSMORPHISM PANELS
 ═══════════════════════════════════════════ */
 .glass-panel {
-  background: rgba(12, 17, 32, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(8, 14, 26, 0.94);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border: 1px solid var(--border-subtle);
   border-radius: 16px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
 }
 
 .glass-panel-glow {
-  background: rgba(12, 17, 32, 0.8);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  background: rgba(8, 14, 26, 0.95);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
   border: 1px solid rgba(250, 204, 21, 0.25);
-  box-shadow: 0 0 40px rgba(34, 197, 94, 0.1), 0 20px 60px rgba(0,0,0,0.5);
+  box-shadow: 0 0 40px rgba(34, 197, 94, 0.1), 0 20px 60px rgba(0,0,0,0.6);
   border-radius: 20px;
 }
 
 .glass-card {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 12px;
+  background: rgba(8, 14, 26, 0.95);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
   transition: all 0.3s ease;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
 }
 .glass-card:hover {
-  background: rgba(255,255,255,0.05);
-  border-color: rgba(250, 204, 21, 0.25);
+  background: rgba(12, 20, 36, 0.97);
+  border-color: rgba(250, 204, 21, 0.35);
   transform: translateY(-2px);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.75);
 }
 
 /* ═══════════════════════════════════════════
