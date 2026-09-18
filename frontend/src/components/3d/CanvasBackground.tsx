@@ -227,55 +227,56 @@ const NeuralPlexusLandscape: React.FC = () => {
   return (
     // Elevated wave network positioned across the upper-mid space
     <group position={[0, 0.8, -4.8]} rotation={[-0.22, 0, 0]}>
-      {/* ─── Glowing Plexus Filaments (Electric Cyan/Azure) ─── */}
+      {/* ─── Glowing Plexus Filaments (Rich Teal/Emerald for high contrast on light bg) ─── */}
       <lineSegments ref={meshLinesRef} geometry={lineGeometry}>
         <lineBasicMaterial
-          color="#00D2FF"
+          color="#0D9488"
           transparent
-          opacity={0.42}
-          blending={THREE.AdditiveBlending}
+          opacity={0.45}
+          blending={THREE.NormalBlending}
           depthWrite={false}
         />
       </lineSegments>
 
-      {/* ─── Standard Cyan Network Nodes (Exact capacity, 0 stray instances) ─── */}
+      {/* ─── Standard Network Nodes (Cyan-Emerald) ─── */}
       <instancedMesh
         ref={nodesInstancedRef}
         args={[undefined, undefined, standardNodeIndices.length]}
       >
         <sphereGeometry args={[1, 10, 10]} />
         <meshBasicMaterial
-          color="#38BDF8"
+          color="#0284C7"
           transparent
-          opacity={0.88}
+          opacity={0.85}
+          blending={THREE.NormalBlending}
         />
       </instancedMesh>
 
-      {/* ─── Glowing Golden-White Super Nodes (Exact capacity, 0 stray instances) ─── */}
+      {/* ─── Glowing Super Nodes (Emerald Accent) ─── */}
       <instancedMesh
         ref={hotNodesInstancedRef}
         args={[undefined, undefined, hotNodeIndices.length]}
       >
         <sphereGeometry args={[1, 12, 12]} />
         <meshBasicMaterial
-          color="#FEF08A"
+          color="#059669"
           transparent
-          opacity={0.98}
-          blending={THREE.AdditiveBlending}
+          opacity={0.92}
+          blending={THREE.NormalBlending}
         />
       </instancedMesh>
 
-      {/* ─── Luminous Traveling Data Signals ─── */}
+      {/* ─── Traveling Data Signals ─── */}
       <instancedMesh
         ref={pulsesInstancedRef}
         args={[undefined, undefined, pulses.length]}
       >
         <sphereGeometry args={[1, 12, 12]} />
         <meshBasicMaterial
-          color="#FFFFFF"
+          color="#10B981"
           transparent
           opacity={0.95}
-          blending={THREE.AdditiveBlending}
+          blending={THREE.NormalBlending}
         />
       </instancedMesh>
     </group>
@@ -286,13 +287,13 @@ const NeuralPlexusLandscape: React.FC = () => {
 const FloatingDataCubes: React.FC = () => {
   const cubeConfigs = useMemo(() => [
     { pos: [-9.5, -3.2, -6.5], size: 1.1, rotSpeed: [0.3, 0.4], color: '#10B981' },
-    { pos: [-5.8, -2.6, -8.0], size: 0.85, rotSpeed: [-0.25, 0.35], color: '#FACC15' },
-    { pos: [-2.2, -3.4, -6.0], size: 1.25, rotSpeed: [0.2, -0.3], color: '#22C55E' },
-    { pos: [1.2, -3.4, -7.5], size: 0.95, rotSpeed: [-0.3, -0.2], color: '#38BDF8' },
-    { pos: [7.2, -4.7, -5.2], size: 1.3, rotSpeed: [0.35, 0.25], color: '#10B981' }, // Moved DOWN below the spherical ball
-    { pos: [13.2, -2.8, -7.2], size: 1.15, rotSpeed: [-0.2, 0.4], color: '#FACC15' }, // Moved to the far RIGHT side
-    { pos: [-8.0, -1.8, -12.0], size: 1.4, rotSpeed: [0.15, 0.2], color: '#22C55E' },
-    { pos: [3.6, -4.6, -6.2], size: 1.35, rotSpeed: [-0.18, -0.22], color: '#38BDF8' } // Moved DOWN-LEFT below the spherical ball
+    { pos: [-5.8, -2.6, -8.0], size: 0.85, rotSpeed: [-0.25, 0.35], color: '#F59E0B' },
+    { pos: [-2.2, -3.4, -6.0], size: 1.25, rotSpeed: [0.2, -0.3], color: '#059669' },
+    { pos: [1.2, -3.4, -7.5], size: 0.95, rotSpeed: [-0.3, -0.2], color: '#0284C7' },
+    { pos: [7.2, -4.7, -5.2], size: 1.3, rotSpeed: [0.35, 0.25], color: '#10B981' },
+    { pos: [13.2, -2.8, -7.2], size: 1.15, rotSpeed: [-0.2, 0.4], color: '#D97706' },
+    { pos: [-8.0, -1.8, -12.0], size: 1.4, rotSpeed: [0.15, 0.2], color: '#059669' },
+    { pos: [3.6, -4.6, -6.2], size: 1.35, rotSpeed: [-0.18, -0.22], color: '#0284C7' }
   ], []);
 
   return (
@@ -307,13 +308,13 @@ const FloatingDataCubes: React.FC = () => {
         >
           <mesh>
             <boxGeometry args={[cube.size, cube.size, cube.size]} />
-            {/* Translucent Cyber Glass Faces */}
+            {/* Frosted Crystalline Glass Faces */}
             <meshStandardMaterial
-              color="#02121e"
-              roughness={0.2}
-              metalness={0.8}
+              color="#FFFFFF"
+              roughness={0.15}
+              metalness={0.1}
               transparent
-              opacity={0.45}
+              opacity={0.35}
             />
             {/* Glowing Wireframe Square Edges */}
             <Edges
@@ -389,29 +390,29 @@ export const CanvasBackground: React.FC<CanvasBackgroundProps> = ({ activeTab = 
 
   // When on clusters page, remove cyber grid square boxes, floating cubes, and wave network
   if (activeTab === 'clusters') {
-    return <color attach="background" args={['#020612']} />;
+    return <color attach="background" args={['#F4F7FB']} />;
   }
 
   return (
     <>
-      {/* ─── DEEP CINEMATIC SPACE ATMOSPHERE ─── */}
-      <color attach="background" args={['#020612']} />
-      <fog attach="fog" args={['#020612', 12, 38]} />
+      {/* ─── SOFT FROST WHITE CYBER ATMOSPHERE ─── */}
+      <color attach="background" args={['#F4F7FB']} />
+      <fog attach="fog" args={['#F4F7FB', 14, 42]} />
 
-      {/* Cybernetic Yellow & Green Ambient/Direct Lighting */}
-      <ambientLight intensity={0.45} color="#061a28" />
-      <directionalLight position={[10, 14, 6]} intensity={1.8} color="#FACC15" />
-      <directionalLight position={[-12, -8, -5]} intensity={2.2} color="#00D2FF" />
-      <pointLight position={[0, -2, -6]} intensity={3.0} color="#10B981" distance={15} />
+      {/* Daylight & Emerald Ambient/Direct Lighting */}
+      <ambientLight intensity={1.1} color="#ffffff" />
+      <directionalLight position={[10, 14, 6]} intensity={1.2} color="#D97706" />
+      <directionalLight position={[-12, -8, -5]} intensity={1.0} color="#0D9488" />
+      <pointLight position={[0, -2, -6]} intensity={1.6} color="#10B981" distance={15} />
 
-      {/* Floating Bokeh Dust Field (Depth of Field in Reference Image) */}
+      {/* Floating Subtle Ambient Particles */}
       <points geometry={bokehField}>
         <pointsMaterial
-          size={0.12}
+          size={0.10}
           vertexColors
           transparent
-          opacity={0.55}
-          blending={THREE.AdditiveBlending}
+          opacity={0.35}
+          blending={THREE.NormalBlending}
           depthWrite={false}
         />
       </points>
@@ -419,7 +420,7 @@ export const CanvasBackground: React.FC<CanvasBackgroundProps> = ({ activeTab = 
       {/* Master 3D Transform Group */}
       <group ref={masterGroupRef}>
         
-        {/* ─── LOWER BASE LAYER: 3D CYBER GRID (SQUARE BOXES/CELLS) ─── */}
+        {/* ─── LOWER BASE LAYER: 3D CYBER CERAMIC GRID ─── */}
         <group ref={gridRef} position={[0, -4.5, -9]}>
           <Grid
             renderOrder={-1}
@@ -427,8 +428,8 @@ export const CanvasBackground: React.FC<CanvasBackgroundProps> = ({ activeTab = 
             infiniteGrid
             fadeDistance={34}
             fadeStrength={4.5}
-            cellColor="#10B981"
-            sectionColor="#EAB308"
+            cellColor="#CBD5E1"
+            sectionColor="#10B981"
             sectionSize={3.5}
             cellSize={0.7}
           />

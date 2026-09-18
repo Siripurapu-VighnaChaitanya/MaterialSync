@@ -110,13 +110,13 @@ const TerminalWindow: React.FC = () => {
       initial={{ opacity: 0, x: -30 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.6 }}
-      className="glass-panel"
       style={{
-        padding: '20px',
-        borderRadius: '12px',
-        background: 'rgba(9, 18, 16, 0.88)',
-        border: '1px solid rgba(34, 197, 94, 0.3)',
-        boxShadow: '0 0 35px rgba(34, 197, 94, 0.1)',
+        padding: '22px 24px',
+        borderRadius: '16px',
+        background: 'rgba(51, 65, 85, 0.92)',
+        backdropFilter: 'blur(20px)',
+        border: '1px solid rgba(148, 163, 184, 0.35)',
+        boxShadow: '0 15px 35px rgba(15, 23, 42, 0.12)',
         fontFamily: 'monospace',
         minHeight: '260px',
         display: 'flex',
@@ -124,11 +124,11 @@ const TerminalWindow: React.FC = () => {
         gap: '8px'
       }}
     >
-      <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '10px', marginBottom: '10px' }}>
+      <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid rgba(255,255,255,0.12)', paddingBottom: '12px', marginBottom: '10px', alignItems: 'center' }}>
         <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#EF4444' }} />
         <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#F59E0B' }} />
-        <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#22C55E' }} />
-        <span style={{ fontSize: '11px', color: '#A3E635', marginLeft: 'auto', letterSpacing: '0.05em' }}>neural-engine.sh</span>
+        <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#10B981' }} />
+        <span style={{ fontSize: '11px', color: '#CBD5E1', marginLeft: 'auto', letterSpacing: '0.05em' }}>neural-engine.sh</span>
       </div>
       {displayedLines.map((line, idx) => {
         const isSuccess = Boolean(line && line.includes("READY"));
@@ -138,7 +138,7 @@ const TerminalWindow: React.FC = () => {
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             style={{ 
-              color: isSuccess ? '#22C55E' : '#FACC15', 
+              color: isSuccess ? '#34D399' : '#CBD5E1', 
               fontWeight: 600,
               fontSize: '0.9rem'
             }}
@@ -150,7 +150,7 @@ const TerminalWindow: React.FC = () => {
       <motion.div 
         animate={visibleCount < TERMINAL_SEQUENCE.length ? { opacity: [1, 0, 1] } : { opacity: 0 }} 
         transition={visibleCount < TERMINAL_SEQUENCE.length ? { repeat: Infinity, duration: 0.8 } : { duration: 0.3 }}
-        style={{ width: '8px', height: '16px', background: '#22C55E', display: 'inline-block', marginTop: '4px' }}
+        style={{ width: '8px', height: '16px', background: '#34D399', display: 'inline-block', marginTop: '4px' }}
       />
     </motion.div>
   );
@@ -166,26 +166,26 @@ interface TickerItem {
 }
 
 const GENUINE_CPSE_TICKERS: readonly TickerItem[] = [
-  { icon: '🏭', entity: 'IOCL & ONGC', action: '3" SS Gate Valves Cross-Matched', result: 'Saved ₹14.8 Lakhs', color: '#FACC15' },
-  { icon: '📦', entity: 'GAIL Pipeline', action: '420 Duplicate Flange Orders Prevented', result: 'GeM Portal Sync', color: '#4ADE80' },
-  { icon: '⚙️', entity: 'BPCL & HPCL', action: 'SKF Spherical Roller Bearings Sourced', result: 'Surplus Allocated', color: '#38BDF8' },
-  { icon: '💰', entity: 'Cross-CPSE Pool', action: 'Dead Inventory Identified', result: '₹18.6 Crores Unlocked', color: '#FACC15' },
-  { icon: '🏷️', entity: 'Standardization', action: '12,500+ Legacy Part Numbers Mapped', result: 'UNSPSC Certified', color: '#4ADE80' },
-  { icon: '🔄', entity: 'NTPC to IOCL', action: '85 Excess Pump Impellers Transferred', result: 'Mathura Refinery', color: '#A3E635' },
-  { icon: '🛡️', entity: 'Compliance Guard', action: '100% GFR (General Financial Rules) & CVC Audit Ready', result: 'Active Protection', color: '#22C55E' },
-  { icon: '⚡', entity: 'FAISS Semantic Index', action: '384D Vector Cosine Embeddings', result: '12ms Match Latency', color: '#38BDF8' },
+  { icon: '🏭', entity: 'IOCL & ONGC', action: '3" SS Gate Valves Cross-Matched', result: 'Saved ₹14.8 Lakhs', color: '#059669' },
+  { icon: '📦', entity: 'GAIL Pipeline', action: '420 Duplicate Flange Orders Prevented', result: 'GeM Portal Sync', color: '#0284C7' },
+  { icon: '⚙️', entity: 'BPCL & HPCL', action: 'SKF Spherical Roller Bearings Sourced', result: 'Surplus Allocated', color: '#0D9488' },
+  { icon: '💰', entity: 'Cross-CPSE Pool', action: 'Dead Inventory Identified', result: '₹18.6 Crores Unlocked', color: '#D97706' },
+  { icon: '🏷️', entity: 'Standardization', action: '12,500+ Legacy Part Numbers Mapped', result: 'UNSPSC Certified', color: '#059669' },
+  { icon: '🔄', entity: 'NTPC to IOCL', action: '85 Excess Pump Impellers Transferred', result: 'Mathura Refinery', color: '#0284C7' },
+  { icon: '🛡️', entity: 'Compliance Guard', action: '100% GFR (General Financial Rules) & CVC Audit Ready', result: 'Active Protection', color: '#059669' },
+  { icon: '⚡', entity: 'FAISS Semantic Index', action: '384D Vector Cosine Embeddings', result: '12ms Match Latency', color: '#0D9488' },
 ];
 
 /* ─── MAIN COMPONENT ─── */
 export const LandingPage: React.FC<{ onNavigate: (tab: string) => void }> = ({ onNavigate }) => {
   return (
-    <div style={{ width: '100%', minHeight: '100vh', color: '#F8FAFC', overflowX: 'hidden' }}>
+    <div style={{ width: '100%', minHeight: '100vh', color: '#0F172A', overflowX: 'hidden' }}>
       
       {/* 1. HERO SECTION */}
       <section style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh', padding: '20px 5% 15px 5%', position: 'relative' }}>
         <div style={{ flex: 1, zIndex: 10, maxWidth: '600px' }}>
           
-          {/* Yellow + Green Mix Gradient Title with Intense Luminous Glow */}
+          {/* Brand Title with High Contrast Gradient */}
           <motion.h1 
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -195,10 +195,11 @@ export const LandingPage: React.FC<{ onNavigate: (tab: string) => void }> = ({ o
               fontWeight: 900, 
               lineHeight: 1.1, 
               marginBottom: '20px', 
-              background: 'linear-gradient(135deg, #FDE047 0%, #EAB308 30%, #4ADE80 70%, #22C55E 100%)', 
+              background: 'linear-gradient(135deg, #0F172A 0%, #0F172A 40%, #059669 85%, #10B981 100%)', 
               WebkitBackgroundClip: 'text', 
               WebkitTextFillColor: 'transparent',
-              filter: 'drop-shadow(0 0 30px rgba(250, 204, 21, 0.55)) drop-shadow(0 0 60px rgba(34, 197, 94, 0.35))'
+              letterSpacing: '-0.02em',
+              filter: 'drop-shadow(0 4px 14px rgba(5, 150, 105, 0.12))'
             }}
           >
             MaterialSync AI
@@ -210,60 +211,60 @@ export const LandingPage: React.FC<{ onNavigate: (tab: string) => void }> = ({ o
             transition={{ duration: 0.8, delay: 0.2 }}
             style={{ 
               fontSize: '1.25rem', 
-              color: '#CBD5E1', 
+              color: '#334155', 
               marginBottom: '40px', 
-              lineHeight: 1.6,
-              textShadow: '0 2px 14px rgba(0, 0, 0, 0.95), 0 0 25px rgba(250, 204, 21, 0.12)'
+              lineHeight: 1.6
             }}
           >
-            A smart AI platform to <span style={{ color: '#FACC15', fontWeight: 600, textShadow: '0 0 16px rgba(250, 204, 21, 0.65)' }}>find duplicate materials across CPSEs</span> (IOCL, ONGC, BPCL). 
-            We automatically match identical items in seconds to <span style={{ color: '#4ADE80', fontWeight: 600, textShadow: '0 0 16px rgba(74, 222, 128, 0.65)' }}>stop duplicate buying and save public funds</span>.
+            A smart AI platform to <span style={{ color: '#D97706', fontWeight: 700 }}>find duplicate materials across CPSEs</span> (IOCL, ONGC, BPCL). 
+            We automatically match identical items in seconds to <span style={{ color: '#059669', fontWeight: 700 }}>stop duplicate buying and save public funds</span>.
           </motion.p>
           
           <div style={{ display: 'flex', gap: '20px', marginBottom: '50px' }}>
-            {/* Primary Action: High-contrast Yellow-Green Button */}
+            {/* Primary Action: High-contrast Emerald Button */}
             <motion.button 
-              whileHover={{ scale: 1.05, boxShadow: '0 0 25px rgba(34, 197, 94, 0.45)' }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.04, boxShadow: '0 8px 25px rgba(5, 150, 105, 0.35)' }}
+              whileTap={{ scale: 0.96 }}
               onClick={() => onNavigate('checker')}
               style={{ 
                 padding: '15px 30px', 
-                background: 'linear-gradient(90deg, #EAB308, #22C55E)', 
+                background: 'linear-gradient(90deg, #059669, #10B981)', 
                 border: 'none', 
-                borderRadius: '10px', 
-                color: '#050810', 
+                borderRadius: '12px', 
+                color: '#FFFFFF', 
                 fontWeight: 800, 
                 fontSize: '1.05rem', 
                 cursor: 'pointer', 
                 display: 'flex', 
                 alignItems: 'center', 
                 gap: '10px',
-                boxShadow: '0 4px 20px rgba(234, 179, 8, 0.25)'
+                boxShadow: '0 4px 20px rgba(5, 150, 105, 0.22)'
               }}
             >
-              <Search size={20} color="#050810" strokeWidth={2.5} /> Launch AI Checker
+              <Search size={20} color="#FFFFFF" strokeWidth={2.5} /> Launch AI Checker
             </motion.button>
 
-            {/* Secondary Action: Yellow/Gold Outline */}
+            {/* Secondary Action: Frosted Card Button */}
             <motion.button 
-              whileHover={{ scale: 1.05, backgroundColor: 'rgba(250, 204, 21, 0.08)' }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.04, backgroundColor: '#FFFFFF', borderColor: '#059669' }}
+              whileTap={{ scale: 0.96 }}
               onClick={() => onNavigate('analytics')}
               style={{ 
                 padding: '15px 30px', 
-                background: 'transparent', 
-                border: '1px solid rgba(250, 204, 21, 0.5)', 
-                borderRadius: '10px', 
-                color: '#FACC15', 
+                background: '#FFFFFF', 
+                border: '1px solid rgba(226, 232, 240, 0.95)', 
+                borderRadius: '12px', 
+                color: '#0F172A', 
                 fontWeight: 700, 
                 fontSize: '1.05rem', 
                 cursor: 'pointer', 
                 display: 'flex', 
                 alignItems: 'center', 
-                gap: '10px' 
+                gap: '10px',
+                boxShadow: '0 2px 8px rgba(15, 23, 42, 0.04)' 
               }}
             >
-              <Database size={20} color="#FACC15" /> View Analytics
+              <Database size={20} color="#059669" /> View Analytics
             </motion.button>
           </div>
 
@@ -294,12 +295,12 @@ export const LandingPage: React.FC<{ onNavigate: (tab: string) => void }> = ({ o
       {/* 2. LIVE SAVINGS TICKER (MARQUEE with Real Genuine CPSE Matter & Glowing Badges) */}
       <div 
         style={{ 
-          background: 'linear-gradient(90deg, rgba(6, 18, 30, 0.95), rgba(10, 24, 20, 0.95))', 
-          borderTop: '1px solid rgba(250, 204, 21, 0.25)', 
-          borderBottom: '1px solid rgba(34, 197, 94, 0.25)', 
+          background: 'rgba(255, 255, 255, 0.92)', 
+          borderTop: '1px solid rgba(226, 232, 240, 0.9)', 
+          borderBottom: '1px solid rgba(226, 232, 240, 0.9)', 
           padding: '14px 0', 
           marginTop: '0px',
-          boxShadow: '0 0 30px rgba(250, 204, 21, 0.08), inset 0 0 25px rgba(34, 197, 94, 0.05)',
+          boxShadow: '0 4px 20px rgba(15, 23, 42, 0.03)',
           position: 'relative',
           zIndex: 10,
           overflow: 'hidden'
@@ -326,17 +327,17 @@ export const LandingPage: React.FC<{ onNavigate: (tab: string) => void }> = ({ o
               margin: 0 16px;
               padding: 8px 22px;
               border-radius: 30px;
-              background: rgba(15, 23, 42, 0.7);
-              border: 1px solid rgba(250, 204, 21, 0.2);
+              background: #FFFFFF;
+              border: 1px solid rgba(226, 232, 240, 0.95);
               backdrop-filter: blur(12px);
               -webkit-backdrop-filter: blur(12px);
-              box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(250, 204, 21, 0.06);
+              box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
               transition: all 0.25s ease;
               white-space: nowrap;
             }
             .marquee-pill:hover {
-              border-color: #FACC15;
-              box-shadow: 0 0 25px rgba(250, 204, 21, 0.35);
+              border-color: #10B981;
+              box-shadow: 0 4px 15px rgba(16, 185, 129, 0.15);
               transform: translateY(-2px);
             }
           `}
@@ -348,7 +349,7 @@ export const LandingPage: React.FC<{ onNavigate: (tab: string) => void }> = ({ o
                 key={idx} 
                 className="marquee-pill"
               >
-                <span style={{ fontSize: '1.2rem', filter: 'drop-shadow(0 0 6px rgba(250, 204, 21, 0.4))' }}>
+                <span style={{ fontSize: '1.2rem' }}>
                   {item.icon}
                 </span>
                 <span style={{ 
@@ -356,16 +357,14 @@ export const LandingPage: React.FC<{ onNavigate: (tab: string) => void }> = ({ o
                   fontWeight: 800, 
                   color: item.color,
                   letterSpacing: '0.04em',
-                  textTransform: 'uppercase',
-                  textShadow: `0 0 10px ${item.color}80`
+                  textTransform: 'uppercase'
                 }}>
                   {item.entity}:
                 </span>
                 <span style={{ 
                   fontSize: '0.95rem', 
                   fontWeight: 600, 
-                  color: '#F1F5F9',
-                  textShadow: '0 0 12px rgba(255, 255, 255, 0.25)'
+                  color: '#334155'
                 }}>
                   {item.action}
                 </span>
@@ -374,10 +373,9 @@ export const LandingPage: React.FC<{ onNavigate: (tab: string) => void }> = ({ o
                   fontWeight: 800, 
                   padding: '3px 12px',
                   borderRadius: '12px',
-                  background: `${item.color}18`,
-                  border: `1px solid ${item.color}55`,
-                  color: item.color,
-                  boxShadow: `0 0 14px ${item.color}35`
+                  background: `${item.color}15`,
+                  border: `1px solid ${item.color}40`,
+                  color: item.color
                 }}>
                   {item.result}
                 </span>
@@ -400,7 +398,7 @@ export const LandingPage: React.FC<{ onNavigate: (tab: string) => void }> = ({ o
               transform: 'translate(-50%, -50%)',
               width: '750px',
               height: '170px',
-              background: 'radial-gradient(ellipse at center, rgba(250, 204, 21, 0.16) 0%, rgba(34, 197, 94, 0.12) 42%, transparent 72%)',
+              background: 'radial-gradient(ellipse at center, rgba(16, 185, 129, 0.12) 0%, rgba(14, 165, 233, 0.08) 42%, transparent 72%)',
               filter: 'blur(35px)',
               pointerEvents: 'none',
               zIndex: 0
@@ -419,16 +417,16 @@ export const LandingPage: React.FC<{ onNavigate: (tab: string) => void }> = ({ o
               gap: '8px',
               padding: '6px 20px',
               borderRadius: '20px',
-              background: 'rgba(250, 204, 21, 0.08)',
-              border: '1px solid rgba(250, 204, 21, 0.35)',
+              background: 'rgba(5, 150, 105, 0.1)',
+              border: '1px solid rgba(5, 150, 105, 0.25)',
               marginBottom: '22px',
-              boxShadow: '0 0 25px rgba(250, 204, 21, 0.18)',
+              boxShadow: '0 2px 10px rgba(5, 150, 105, 0.1)',
               position: 'relative',
               zIndex: 1
             }}
           >
-            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#FACC15', boxShadow: '0 0 10px #FACC15, 0 0 20px #FACC15' }} />
-            <span style={{ fontSize: '0.82rem', fontWeight: 800, letterSpacing: '0.12em', color: '#FACC15', textTransform: 'uppercase', textShadow: '0 0 10px rgba(250, 204, 21, 0.6)' }}>
+            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#059669' }} />
+            <span style={{ fontSize: '0.82rem', fontWeight: 800, letterSpacing: '0.12em', color: '#059669', textTransform: 'uppercase' }}>
               Next-Gen CPSE Intelligence
             </span>
           </motion.div>
@@ -445,21 +443,14 @@ export const LandingPage: React.FC<{ onNavigate: (tab: string) => void }> = ({ o
               marginBottom: '22px', 
               position: 'relative', 
               zIndex: 1,
-              lineHeight: 1.2
+              lineHeight: 1.2,
+              color: '#0F172A'
             }}
           >
-            <span style={{ 
-              color: '#FFFFFF', 
-              textShadow: '0 0 25px rgba(255, 255, 255, 0.5), 0 0 50px rgba(250, 204, 21, 0.3), 0 0 85px rgba(56, 189, 248, 0.25)' 
-            }}>
+            <span>
               Smarter Procurement.
             </span>{' '}
-            <span style={{ 
-              background: 'linear-gradient(135deg, #FDE047 0%, #FACC15 35%, #4ADE80 70%, #22C55E 100%)', 
-              WebkitBackgroundClip: 'text', 
-              WebkitTextFillColor: 'transparent',
-              filter: 'drop-shadow(0 0 25px rgba(250, 204, 21, 0.75)) drop-shadow(0 0 50px rgba(34, 197, 94, 0.55))'
-            }}>
+            <span style={{ color: '#059669' }}>
               Zero Effort.
             </span>
           </motion.h2>
@@ -470,17 +461,16 @@ export const LandingPage: React.FC<{ onNavigate: (tab: string) => void }> = ({ o
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.6, delay: 0.2 }}
             style={{ 
-              color: '#E2E8F0', 
+              color: '#475569', 
               fontSize: '1.25rem', 
               maxWidth: '840px', 
               margin: '0 auto', 
               lineHeight: 1.7,
               position: 'relative', 
-              zIndex: 1,
-              textShadow: '0 2px 14px rgba(0, 0, 0, 0.95), 0 0 20px rgba(34, 197, 94, 0.15)'
+              zIndex: 1
             }}
           >
-            Experience the world's most advanced <span style={{ color: '#FACC15', fontWeight: 700, textShadow: '0 0 16px rgba(250, 204, 21, 0.6)' }}>NLP and Vector architecture</span> built exclusively for the <span style={{ color: '#4ADE80', fontWeight: 700, textShadow: '0 0 16px rgba(34, 197, 94, 0.6)' }}>Indian CPSE ecosystem</span>.
+            Experience the world's most advanced <span style={{ color: '#0F172A', fontWeight: 700 }}>NLP and Vector architecture</span> built exclusively for the <span style={{ color: '#059669', fontWeight: 700 }}>Indian CPSE ecosystem</span>.
           </motion.p>
         </div>
 
@@ -491,53 +481,53 @@ export const LandingPage: React.FC<{ onNavigate: (tab: string) => void }> = ({ o
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
-            whileHover={{ y: -10, boxShadow: '0 20px 45px rgba(34, 197, 94, 0.25), 0 0 30px rgba(34, 197, 94, 0.15)' }}
-            transition={{ duration: 0.5 }}
+            whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(15, 23, 42, 0.08)' }}
+            transition={{ duration: 0.4 }}
             className="glass-panel"
-            style={{ padding: '40px', borderRadius: '24px', background: 'rgba(20, 30, 26, 0.65)', border: '1px solid rgba(34, 197, 94, 0.25)', cursor: 'pointer', backdropFilter: 'blur(16px)' }}
+            style={{ padding: '40px', borderRadius: '24px', background: 'rgba(255, 255, 255, 0.92)', border: '1px solid rgba(226, 232, 240, 0.9)', cursor: 'pointer', backdropFilter: 'blur(16px)' }}
             onClick={() => onNavigate('checker')}
           >
-            <div style={{ width: '60px', height: '60px', borderRadius: '16px', background: 'rgba(34, 197, 94, 0.15)', border: '1px solid rgba(34, 197, 94, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#22C55E', marginBottom: '20px', boxShadow: '0 0 20px rgba(34, 197, 94, 0.25)' }}>
+            <div style={{ width: '60px', height: '60px', borderRadius: '16px', background: 'rgba(5, 150, 105, 0.12)', border: '1px solid rgba(5, 150, 105, 0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#059669', marginBottom: '20px' }}>
               <Zap size={30} />
             </div>
-            <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '15px', color: '#F1F5F9', textShadow: '0 0 16px rgba(34, 197, 94, 0.45)' }}>Live AI Checker</h3>
-            <p style={{ color: '#94A3B8', lineHeight: 1.6 }}>Instantly validate incoming material requests against the global catalogue. Explainable AI highlights exact attribute mismatches instantly.</p>
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '15px', color: '#0F172A' }}>Live AI Checker</h3>
+            <p style={{ color: '#64748B', lineHeight: 1.6 }}>Instantly validate incoming material requests against the global catalogue. Explainable AI highlights exact attribute mismatches instantly.</p>
           </motion.div>
 
-          {/* Feature Card 2: Golden Amber */}
+          {/* Feature Card 2: Sky Blue */}
           <motion.div 
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
-            whileHover={{ y: -10, boxShadow: '0 20px 45px rgba(234, 179, 8, 0.25), 0 0 30px rgba(234, 179, 8, 0.15)' }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(15, 23, 42, 0.08)' }}
+            transition={{ duration: 0.4, delay: 0.15 }}
             className="glass-panel"
-            style={{ padding: '40px', borderRadius: '24px', background: 'rgba(30, 32, 22, 0.65)', border: '1px solid rgba(234, 179, 8, 0.25)', cursor: 'pointer', backdropFilter: 'blur(16px)' }}
+            style={{ padding: '40px', borderRadius: '24px', background: 'rgba(255, 255, 255, 0.92)', border: '1px solid rgba(226, 232, 240, 0.9)', cursor: 'pointer', backdropFilter: 'blur(16px)' }}
             onClick={() => onNavigate('analytics')}
           >
-            <div style={{ width: '60px', height: '60px', borderRadius: '16px', background: 'rgba(234, 179, 8, 0.15)', border: '1px solid rgba(234, 179, 8, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FACC15', marginBottom: '20px', boxShadow: '0 0 20px rgba(234, 179, 8, 0.25)' }}>
+            <div style={{ width: '60px', height: '60px', borderRadius: '16px', background: 'rgba(14, 165, 233, 0.12)', border: '1px solid rgba(14, 165, 233, 0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0284C7', marginBottom: '20px' }}>
               <Database size={30} />
             </div>
-            <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '15px', color: '#F1F5F9', textShadow: '0 0 16px rgba(250, 204, 21, 0.45)' }}>Executive Analytics</h3>
-            <p style={{ color: '#94A3B8', lineHeight: 1.6 }}>Track total capital unlocked, unified clusters, and AI performance metrics in real-time. Make data-driven procurement decisions.</p>
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '15px', color: '#0F172A' }}>Executive Analytics</h3>
+            <p style={{ color: '#64748B', lineHeight: 1.6 }}>Track total capital unlocked, unified clusters, and AI performance metrics in real-time. Make data-driven procurement decisions.</p>
           </motion.div>
 
-          {/* Feature Card 3: Cyber Lime */}
+          {/* Feature Card 3: Emerald */}
           <motion.div 
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
-            whileHover={{ y: -10, boxShadow: '0 20px 45px rgba(132, 204, 22, 0.25), 0 0 30px rgba(132, 204, 22, 0.15)' }}
-            transition={{ duration: 0.5, delay: 0.4 }}
+            whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(15, 23, 42, 0.08)' }}
+            transition={{ duration: 0.4, delay: 0.3 }}
             className="glass-panel"
-            style={{ padding: '40px', borderRadius: '24px', background: 'rgba(25, 34, 20, 0.65)', border: '1px solid rgba(132, 204, 22, 0.25)', cursor: 'pointer', backdropFilter: 'blur(16px)' }}
+            style={{ padding: '40px', borderRadius: '24px', background: 'rgba(255, 255, 255, 0.92)', border: '1px solid rgba(226, 232, 240, 0.9)', cursor: 'pointer', backdropFilter: 'blur(16px)' }}
             onClick={() => onNavigate('clusters')}
           >
-            <div style={{ width: '60px', height: '60px', borderRadius: '16px', background: 'rgba(132, 204, 22, 0.15)', border: '1px solid rgba(132, 204, 22, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#A3E635', marginBottom: '20px', boxShadow: '0 0 20px rgba(132, 204, 22, 0.25)' }}>
+            <div style={{ width: '60px', height: '60px', borderRadius: '16px', background: 'rgba(5, 150, 105, 0.12)', border: '1px solid rgba(5, 150, 105, 0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#059669', marginBottom: '20px' }}>
               <Layers size={30} />
             </div>
-            <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '15px', color: '#F1F5F9', textShadow: '0 0 16px rgba(163, 230, 53, 0.45)' }}>3D Cluster Explorer</h3>
-            <p style={{ color: '#94A3B8', lineHeight: 1.6 }}>Visualize the multi-dimensional vector space. Watch as the AI groups similar materials together across different CPSEs.</p>
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '15px', color: '#0F172A' }}>3D Cluster Explorer</h3>
+            <p style={{ color: '#64748B', lineHeight: 1.6 }}>Visualize the multi-dimensional vector space. Watch as the AI groups similar materials together across different CPSEs.</p>
           </motion.div>
 
         </div>

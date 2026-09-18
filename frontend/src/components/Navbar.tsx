@@ -56,13 +56,14 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <header
       style={{
-        background: 'rgba(5, 8, 16, 0.88)',
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        background: 'rgba(255, 255, 255, 0.92)',
+        borderBottom: '1px solid rgba(226, 232, 240, 0.9)',
         position: 'sticky',
         top: 0,
         zIndex: 100,
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
+        boxShadow: '0 4px 20px rgba(15, 23, 42, 0.03)',
       }}
     >
       <div
@@ -90,7 +91,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             fontSize: '20px', 
             fontWeight: 900, 
             letterSpacing: '-0.03em', 
-            background: 'linear-gradient(90deg, #FACC15, #22C55E)',
+            background: 'linear-gradient(90deg, #D97706, #059669)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent'
           }}>
@@ -99,7 +100,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
 
         {/* ── Nav Tabs ── */}
-        <nav className="responsive-nav-tabs" style={{ display: 'flex', gap: '2px', flex: 1, justifyContent: 'center' }}>
+        <nav className="responsive-nav-tabs" style={{ display: 'flex', gap: '4px', flex: 1, justifyContent: 'center' }}>
           {visibleTabs.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
@@ -109,23 +110,21 @@ export const Navbar: React.FC<NavbarProps> = ({
                 id={`nav-tab-${item.id}`}
                 onClick={() => setActiveTab(item.id)}
                 style={{
-                  background: isActive ? 'rgba(250, 204, 21, 0.12)' : 'transparent',
-                  color: isActive ? '#FACC15' : 'var(--text-muted)',
-                  border: isActive ? '1px solid rgba(250, 204, 21, 0.3)' : '1px solid transparent',
-                  boxShadow: isActive ? '0 0 15px rgba(250, 204, 21, 0.08)' : 'none',
+                  background: isActive ? 'rgba(5, 150, 105, 0.12)' : 'transparent',
+                  color: isActive ? '#059669' : '#64748B',
+                  border: isActive ? '1px solid rgba(5, 150, 105, 0.3)' : '1px solid transparent',
+                  borderRadius: '20px',
                   padding: '7px 14px',
-                  borderRadius: '10px',
                   fontSize: '13px',
                   fontWeight: isActive ? 700 : 500,
+                  cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '7px',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  whiteSpace: 'nowrap',
+                  transition: 'all 0.18s ease',
                 }}
               >
-                <Icon size={14} color={isActive ? '#FACC15' : 'currentColor'} />
+                <Icon size={14} />
                 <span>{item.label}</span>
               </button>
             );
@@ -144,18 +143,19 @@ export const Navbar: React.FC<NavbarProps> = ({
                 display: 'flex',
                 alignItems: 'center',
                 gap: '6px',
-                background: 'rgba(255,255,255,0.04)',
-                border: `1px solid ${ROLE_COLORS[activeRole]}40`,
-                borderRadius: '10px',
-                padding: '7px 12px',
+                background: '#FFFFFF',
+                border: '1px solid rgba(226, 232, 240, 0.9)',
+                borderRadius: '20px',
+                padding: '7px 14px',
                 cursor: 'pointer',
                 fontSize: '12px',
                 fontWeight: 600,
-                color: ROLE_COLORS[activeRole],
+                color: '#0F172A',
+                boxShadow: '0 2px 6px rgba(15, 23, 42, 0.04)',
                 transition: 'all 0.2s ease',
               }}
             >
-              <Cpu size={13} />
+              <Cpu size={13} color="#059669" />
               <span>{activeRoleObj.label}</span>
               <ChevronDown size={12} style={{ transition: 'transform 0.2s', transform: roleOpen ? 'rotate(180deg)' : 'rotate(0)' }} />
             </button>
@@ -165,12 +165,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                   position: 'absolute',
                   top: '110%',
                   right: 0,
-                  background: '#0C1120',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: '#FFFFFF',
+                  border: '1px solid rgba(226, 232, 240, 0.9)',
                   borderRadius: '12px',
                   overflow: 'hidden',
                   minWidth: '180px',
-                  boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+                  boxShadow: '0 20px 50px rgba(15, 23, 42, 0.12)',
                   zIndex: 200,
                 }}
               >
@@ -185,8 +185,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                       alignItems: 'center',
                       gap: '10px',
                       padding: '11px 16px',
-                      background: activeRole === r.id ? `${ROLE_COLORS[r.id]}15` : 'transparent',
-                      color: activeRole === r.id ? ROLE_COLORS[r.id] : 'var(--text-secondary)',
+                      background: activeRole === r.id ? 'rgba(5, 150, 105, 0.1)' : 'transparent',
+                      color: activeRole === r.id ? '#059669' : '#334155',
                       border: 'none',
                       fontSize: '13px',
                       fontWeight: activeRole === r.id ? 700 : 500,
@@ -200,7 +200,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                         width: '8px',
                         height: '8px',
                         borderRadius: '50%',
-                        backgroundColor: ROLE_COLORS[r.id],
+                        backgroundColor: '#059669',
                         flexShrink: 0,
                       }}
                     />
@@ -217,11 +217,12 @@ export const Navbar: React.FC<NavbarProps> = ({
               display: 'flex',
               alignItems: 'center',
               gap: '7px',
-              background: 'rgba(255,255,255,0.04)',
-              padding: '7px 12px',
+              background: '#FFFFFF',
+              padding: '7px 14px',
               borderRadius: '20px',
-              border: '1px solid rgba(255,255,255,0.07)',
+              border: '1px solid rgba(226, 232, 240, 0.9)',
               fontSize: '12px',
+              boxShadow: '0 2px 6px rgba(15, 23, 42, 0.04)',
             }}
           >
             <span
@@ -229,16 +230,16 @@ export const Navbar: React.FC<NavbarProps> = ({
                 width: '7px',
                 height: '7px',
                 borderRadius: '50%',
-                backgroundColor: isBackendOnline ? '#00D68F' : '#FF4757',
-                boxShadow: isBackendOnline ? '0 0 8px #00D68F' : '0 0 8px #FF4757',
+                backgroundColor: isBackendOnline ? '#10B981' : '#EF4444',
+                boxShadow: isBackendOnline ? '0 0 8px #10B981' : '0 0 8px #EF4444',
                 animation: isBackendOnline ? 'glow-pulse 2.5s infinite' : 'none',
               }}
             />
-            <span style={{ color: isBackendOnline ? '#00D68F' : '#FF4757', fontWeight: 700 }}>
+            <span style={{ color: isBackendOnline ? '#059669' : '#EF4444', fontWeight: 700 }}>
               {isBackendOnline ? 'Live' : 'Offline'}
             </span>
-            <span style={{ color: 'rgba(255,255,255,0.15)' }}>|</span>
-            <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>
+            <span style={{ color: 'rgba(203, 213, 225, 0.8)' }}>|</span>
+            <span style={{ color: '#475569', fontWeight: 600 }}>
               {indexedMaterials.toLocaleString()} SKUs
             </span>
           </div>

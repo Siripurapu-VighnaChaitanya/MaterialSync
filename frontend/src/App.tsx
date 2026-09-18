@@ -51,7 +51,7 @@ export const App: React.FC = () => {
     <>
       {/* 3D WebGL Canvas Layer (Background) */}
       <div className="canvas-container">
-        <ErrorBoundary fallback={<div style={{ position: 'fixed', inset: 0, background: '#050810' }} />}>
+        <ErrorBoundary fallback={<div style={{ position: 'fixed', inset: 0, background: '#F4F7FB' }} />}>
           <Canvas 
             camera={{ position: [0, 0.5, 9.5], fov: 48 }}
             dpr={[1, 2]}
