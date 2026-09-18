@@ -388,9 +388,33 @@ export const CanvasBackground: React.FC<CanvasBackgroundProps> = ({ activeTab = 
     }
   });
 
-  // When on clusters page, remove cyber grid square boxes, floating cubes, and wave network
+  // When on clusters page, restore deep space background atmosphere with celestial stars & nebula lighting
   if (activeTab === 'clusters') {
-    return <color attach="background" args={['#F4F7FB']} />;
+    return (
+      <>
+        {/* ─── DEEP CINEMATIC SPACE ATMOSPHERE FOR CLUSTERS PAGE ─── */}
+        <color attach="background" args={['#020612']} />
+        <fog attach="fog" args={['#020612', 12, 45]} />
+
+        {/* Ambient & Directed Celestial Space Lighting */}
+        <ambientLight intensity={0.5} color="#061a28" />
+        <directionalLight position={[10, 14, 6]} intensity={1.8} color="#FACC15" />
+        <directionalLight position={[-12, -8, -5]} intensity={2.2} color="#00D2FF" />
+        <pointLight position={[0, -2, -6]} intensity={3.0} color="#10B981" distance={20} />
+
+        {/* Floating Space Bokeh Stars / Cosmic Dust */}
+        <points geometry={bokehField}>
+          <pointsMaterial
+            size={0.12}
+            vertexColors
+            transparent
+            opacity={0.65}
+            blending={THREE.AdditiveBlending}
+            depthWrite={false}
+          />
+        </points>
+      </>
+    );
   }
 
   return (

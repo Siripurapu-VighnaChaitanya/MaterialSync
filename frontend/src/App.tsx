@@ -51,7 +51,7 @@ export const App: React.FC = () => {
     <>
       {/* 3D WebGL Canvas Layer (Background) */}
       <div className="canvas-container">
-        <ErrorBoundary fallback={<div style={{ position: 'fixed', inset: 0, background: '#F4F7FB' }} />}>
+        <ErrorBoundary fallback={<div style={{ position: 'fixed', inset: 0, background: activeTab === 'clusters' ? '#020612' : '#F4F7FB' }} />}>
           <Canvas 
             camera={{ position: [0, 0.5, 9.5], fov: 48 }}
             dpr={[1, 2]}
@@ -76,7 +76,7 @@ export const App: React.FC = () => {
         />
 
         {/* Main Content Sections */}
-        <main style={{ flex: 1, paddingBottom: '40px', position: 'relative' }}>
+        <main style={{ flex: 1, paddingBottom: activeTab === 'clusters' ? 0 : '40px', position: 'relative' }}>
           <ErrorBoundary onReset={() => setActiveTab('home')}>
             <AnimatePresence mode="wait">
               <motion.div
@@ -114,48 +114,49 @@ export const App: React.FC = () => {
         )}
 
         {/* Footer */}
-        <footer
-          style={{
-            background: 'rgba(255, 255, 255, 0.9)',
-            backdropFilter: 'blur(10px)',
-            borderTop: '1.5px solid rgba(203, 213, 225, 0.9)',
-            padding: '24px 28px',
-            marginTop: 'auto',
-          }}
-        >
-          <div style={{ maxWidth: '1440px', margin: '0 auto', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '20px' }}>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                <span style={{ fontSize: '15px', fontWeight: 900, color: '#000000' }}>MaterialSync</span>
-                <span style={{ fontSize: '12px', fontWeight: 700, color: '#000000' }}>— Smart India Hackathon 2026 Prototype (SIH26099)</span>
+        {activeTab !== 'clusters' && (
+          <footer
+            style={{
+              background: 'rgba(255, 255, 255, 0.9)',
+              backdropFilter: 'blur(10px)',
+              borderTop: '1.5px solid rgba(203, 213, 225, 0.9)',
+              padding: '24px 28px',
+              marginTop: 'auto',
+            }}
+          >
+            <div style={{ maxWidth: '1440px', margin: '0 auto', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '20px' }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                  <span style={{ fontSize: '15px', fontWeight: 900, color: '#000000' }}>MaterialSync</span>
+                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#000000' }}>— Smart India Hackathon 2026 Prototype (SIH26099)</span>
+                </div>
+                <p style={{ fontSize: '12px', fontWeight: 700, color: '#000000' }}>
+                  AI-Driven Standardization and Harmonization of Material Codes Across Indian CPSEs.
+                </p>
               </div>
-              <p style={{ fontSize: '12px', fontWeight: 700, color: '#000000' }}>
-                AI-Driven Standardization and Harmonization of Material Codes Across Indian CPSEs.
-              </p>
-            </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-              <span style={{ fontSize: '11px', color: '#000000', textTransform: 'uppercase', fontWeight: 900, letterSpacing: '0.05em' }}>Participating CPSEs:</span>
-              {['IOCL', 'ONGC', 'BPCL', 'GAIL', 'NTPC', 'SAIL'].map((cpse) => (
-                <span
-                  key={cpse}
-                  style={{
-                    fontSize: '11px',
-                    fontWeight: 800,
-                    padding: '4px 10px',
-                    borderRadius: '6px',
-                    background: '#FFFFFF',
-                    border: '1.5px solid rgba(203, 213, 225, 0.9)',
-                    color: '#000000',
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-                  }}
-                >
-                  {cpse}
-                </span>
-              ))}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                <span style={{ fontSize: '11px', color: '#000000', textTransform: 'uppercase', fontWeight: 900, letterSpacing: '0.05em' }}>Participating CPSEs:</span>
+                {['IOCL', 'ONGC', 'BPCL', 'GAIL', 'NTPC', 'SAIL'].map((cpse) => (
+                  <span
+                    key={cpse}
+                    style={{
+                      fontSize: '11px',
+                      fontWeight: 800,
+                      padding: '4px 10px',
+                      borderRadius: '6px',
+                      background: '#FFFFFF',
+                      border: '1.5px solid rgba(203, 213, 225, 0.9)',
+                      color: '#000000',
+                    }}
+                  >
+                    {cpse}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
-        </footer>
+          </footer>
+        )}
       </div>
     </>
   );

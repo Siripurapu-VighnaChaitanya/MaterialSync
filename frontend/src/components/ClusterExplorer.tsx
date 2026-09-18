@@ -147,7 +147,7 @@ export const ClusterExplorer: React.FC = () => {
   };
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: 'calc(100vh - 70px)' }}>
+    <div style={{ position: 'relative', width: '100%', height: 'calc(100vh - 70px)', background: '#020612' }}>
       {/* 3D Force Graph Container */}
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1 }}>
         {data && (
@@ -162,7 +162,7 @@ export const ClusterExplorer: React.FC = () => {
             linkDirectionalParticles={2}
             linkDirectionalParticleWidth={2}
             onNodeClick={handleNodeClick}
-            backgroundColor="rgba(0,0,0,0)" // Transparent to see global canvas background
+            backgroundColor="rgba(0,0,0,0)" // Transparent to reveal global 3D space canvas
             showNavInfo={false}
           />
         )}
@@ -170,25 +170,33 @@ export const ClusterExplorer: React.FC = () => {
 
       {/* Floating UI Panel (Left) */}
       <div className="cluster-panel-left">
-        <div className="glass-panel-glow" style={{ padding: '24px', background: '#FFFFFF', border: '1.5px solid rgba(203, 213, 225, 0.9)', boxShadow: '0 4px 20px rgba(0,0,0,0.06)' }}>
+        <div style={{
+          padding: '24px',
+          background: 'rgba(6, 15, 30, 0.88)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid rgba(250, 204, 21, 0.25)',
+          borderRadius: '20px',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(250, 204, 21, 0.08)'
+        }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-            <div style={{ background: 'rgba(217,119,6,0.12)', padding: '8px', borderRadius: '10px' }}>
-              <GitMerge size={20} color="#D97706" />
+            <div style={{ background: 'rgba(250,204,21,0.12)', padding: '8px', borderRadius: '10px' }}>
+              <GitMerge size={20} color="#FACC15" />
             </div>
-            <h2 style={{ fontSize: '18px', fontWeight: 900, color: '#000000' }}>3D Cluster Matrix</h2>
+            <h2 style={{ fontSize: '18px', fontWeight: 800, color: '#F0F4FF' }}>3D Cluster Matrix</h2>
           </div>
-          <p style={{ fontSize: '13px', color: '#000000', fontWeight: 700, marginBottom: '20px' }}>
+          <p style={{ fontSize: '13px', color: '#94A3B8', fontWeight: 600, marginBottom: '20px', lineHeight: 1.5 }}>
             Navigate the multi-CPSE material catalog in 3D space. Spheres represent materials, grouped by AI semantic similarity.
           </p>
           
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '20px' }}>
-            <div style={{ background: '#F8FAFC', padding: '12px', borderRadius: '10px', border: '1.5px solid rgba(203, 213, 225, 0.9)' }}>
-              <div style={{ fontSize: '20px', fontWeight: 900, color: '#047857' }}>{data?.total_clusters || 0}</div>
-              <div style={{ fontSize: '11px', color: '#000000', fontWeight: 800 }}>UNIQUE CLUSTERS</div>
+            <div style={{ background: 'rgba(255,255,255,0.05)', padding: '12px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <div style={{ fontSize: '20px', fontWeight: 800, color: '#00D68F' }}>{data?.total_clusters || 0}</div>
+              <div style={{ fontSize: '11px', color: '#94A3B8', fontWeight: 700 }}>UNIQUE CLUSTERS</div>
             </div>
-            <div style={{ background: '#F8FAFC', padding: '12px', borderRadius: '10px', border: '1.5px solid rgba(203, 213, 225, 0.9)' }}>
-              <div style={{ fontSize: '20px', fontWeight: 900, color: '#000000' }}>{data?.graph.nodes.length || 0}</div>
-              <div style={{ fontSize: '11px', color: '#000000', fontWeight: 800 }}>TOTAL MATERIALS</div>
+            <div style={{ background: 'rgba(255,255,255,0.05)', padding: '12px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <div style={{ fontSize: '20px', fontWeight: 800, color: '#F0F4FF' }}>{data?.graph.nodes.length || 0}</div>
+              <div style={{ fontSize: '11px', color: '#94A3B8', fontWeight: 700 }}>TOTAL MATERIALS</div>
             </div>
           </div>
           
@@ -199,10 +207,10 @@ export const ClusterExplorer: React.FC = () => {
               width: '100%',
               padding: '12px',
               borderRadius: '8px',
-              border: isEmbeddingMode ? '2px solid #059669' : '1.5px solid #D97706',
-              background: isEmbeddingMode ? 'rgba(5,150,105,0.12)' : '#F8FAFC',
-              color: isEmbeddingMode ? '#047857' : '#B45309',
-              fontWeight: 800,
+              border: isEmbeddingMode ? '1px solid #10B981' : '1px solid rgba(250,204,21,0.3)',
+              background: isEmbeddingMode ? 'rgba(16,185,129,0.15)' : 'rgba(255,255,255,0.05)',
+              color: isEmbeddingMode ? '#10B981' : '#FACC15',
+              fontWeight: 700,
               fontSize: '13px',
               cursor: loading ? 'not-allowed' : 'pointer',
               display: 'flex',
@@ -221,33 +229,41 @@ export const ClusterExplorer: React.FC = () => {
       {/* Node Detail Inspector (Right) */}
       {selectedNode && (
         <div className="animate-slide-right cluster-panel-right">
-          <div className="glass-panel" style={{ padding: '24px', background: '#FFFFFF', border: '1.5px solid rgba(203, 213, 225, 0.9)', boxShadow: '0 4px 20px rgba(0,0,0,0.06)' }}>
+          <div style={{
+            padding: '24px',
+            background: 'rgba(6, 15, 30, 0.88)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            border: '1px solid rgba(250,204,21,0.35)',
+            borderRadius: '20px',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(250, 204, 21, 0.08)'
+          }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Layers size={18} color="#059669" />
-                <span style={{ fontSize: '14px', fontWeight: 900, color: '#000000', letterSpacing: '0.05em' }}>Node Inspector</span>
+                <Layers size={18} color="#22C55E" />
+                <span style={{ fontSize: '14px', fontWeight: 700, color: '#FACC15', letterSpacing: '0.05em' }}>Node Inspector</span>
               </div>
-              <button onClick={() => setSelectedNode(null)} style={{ background: 'transparent', border: 'none', color: '#000000', fontWeight: 800, cursor: 'pointer' }}>
+              <button onClick={() => setSelectedNode(null)} style={{ background: 'transparent', border: 'none', color: '#94A3B8', cursor: 'pointer', fontSize: '16px' }}>
                 ✕
               </button>
             </div>
             
-            <div style={{ fontSize: '22px', fontWeight: 900, color: '#000000', marginBottom: '8px', fontFamily: 'JetBrains Mono, monospace' }}>
+            <div style={{ fontSize: '22px', fontWeight: 900, color: '#F0F4FF', marginBottom: '8px', fontFamily: 'JetBrains Mono, monospace' }}>
               {selectedNode.material_code}
             </div>
             
-            <div style={{ display: 'inline-block', padding: '4px 10px', borderRadius: '20px', background: getNodeColor(selectedNode) + '30', border: `1.5px solid ${getNodeColor(selectedNode)}`, color: '#000000', fontSize: '12px', fontWeight: 900, marginBottom: '16px' }}>
+            <div style={{ display: 'inline-block', padding: '4px 10px', borderRadius: '20px', background: getNodeColor(selectedNode) + '30', border: `1px solid ${getNodeColor(selectedNode)}`, color: getNodeColor(selectedNode), fontSize: '12px', fontWeight: 700, marginBottom: '16px' }}>
               {selectedNode.source_cpse}
             </div>
 
-            <div style={{ background: '#F8FAFC', padding: '12px', borderRadius: '8px', border: '1.5px solid rgba(203, 213, 225, 0.9)', marginBottom: '16px' }}>
-              <div style={{ fontSize: '10px', color: '#000000', fontWeight: 900, marginBottom: '4px' }}>RAW DESCRIPTION</div>
-              <div style={{ fontSize: '13px', color: '#000000', fontWeight: 700 }}>{selectedNode.raw_description}</div>
+            <div style={{ background: '#050810', padding: '12px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', marginBottom: '16px' }}>
+              <div style={{ fontSize: '10px', color: '#94A3B8', fontWeight: 700, marginBottom: '4px' }}>RAW DESCRIPTION</div>
+              <div style={{ fontSize: '13px', color: '#F0F4FF', fontWeight: 600 }}>{selectedNode.raw_description}</div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(5, 150, 105, 0.12)', border: '1px solid rgba(5, 150, 105, 0.3)', padding: '10px 14px', borderRadius: '8px' }}>
-              <GitMerge size={16} color="#059669" />
-              <span style={{ fontSize: '12px', color: '#047857', fontWeight: 800 }}>Cluster ID: {selectedNode.cluster_id}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(0,214,143,0.1)', border: '1px solid rgba(0,214,143,0.3)', padding: '10px 14px', borderRadius: '8px' }}>
+              <GitMerge size={16} color="#00D68F" />
+              <span style={{ fontSize: '12px', color: '#00D68F', fontWeight: 600 }}>Cluster ID: {selectedNode.cluster_id}</span>
             </div>
           </div>
         </div>
@@ -255,9 +271,9 @@ export const ClusterExplorer: React.FC = () => {
 
       {/* 3D Controls Hint */}
       <div className="responsive-cluster-hint" style={{ position: 'absolute', bottom: '24px', left: '50%', transform: 'translateX(-50%)', zIndex: 10, pointerEvents: 'none' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(10px)', padding: '8px 16px', borderRadius: '30px', border: '1.5px solid rgba(203, 213, 225, 0.9)', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
-          <ZoomIn size={14} color="#000000" />
-          <span style={{ fontSize: '12px', color: '#000000', fontWeight: 800 }}>Scroll to Zoom · Click & Drag to Rotate · Click Node to Inspect</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(6, 15, 30, 0.85)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', padding: '8px 16px', borderRadius: '30px', border: '1px solid rgba(255,255,255,0.15)', boxShadow: '0 4px 20px rgba(0,0,0,0.4)' }}>
+          <ZoomIn size={14} color="#94A3B8" />
+          <span style={{ fontSize: '12px', color: '#F0F4FF', fontWeight: 600 }}>Scroll to Zoom · Click & Drag to Rotate · Click Node to Inspect</span>
         </div>
       </div>
 
