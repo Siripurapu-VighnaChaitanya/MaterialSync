@@ -2,21 +2,21 @@ import React, { useState, useEffect } from 'react';
 import {
   Activity,
   TrendingUp,
-  ShieldAlert,
   Award,
-  Database,
-  Layers,
-  CheckCircle2,
   DollarSign,
   Calculator,
   ArrowUpRight,
   TrendingDown,
   Building2,
   Zap,
-  PieChart,
+  PieChart as PieChartIcon,
+  BarChart3,
   Sliders,
   ShieldCheck,
-  RefreshCw
+  RefreshCw,
+  Layers,
+  ArrowRight,
+  Sparkles
 } from 'lucide-react';
 import { api } from '../services/api';
 import { KPIStats } from '../types';
@@ -30,7 +30,13 @@ export const AnalyticsView: React.FC = () => {
   const [duplicationRate, setDuplicationRate] = useState<number>(14); // In %
   const [carryingCostRate, setCarryingCostRate] = useState<number>(20); // In %
   const [interCpseShareRate, setInterCpseShareRate] = useState<number>(8); // In %
-  const [activeTab, setActiveTab] = useState<'roi' | 'benchmark'>('roi');
+  
+  // Dashboard Navigation: 'dashboard' | 'simulator' | 'benchmark'
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'simulator' | 'benchmark'>('dashboard');
+  
+  // Hover state for interactive charts
+  const [hoveredCpse, setHoveredCpse] = useState<string | null>(null);
+  const [hoveredSlice, setHoveredSlice] = useState<string | null>(null);
 
   useEffect(() => {
     loadStats();
@@ -59,10 +65,24 @@ export const AnalyticsView: React.FC = () => {
   const implementationRoi = Number(((totalAnnualSavings / 1.8) * 10).toFixed(0)); // Based on typical 1.8Cr SaaS rollout
 
   const cpseMatrix = [
-    { name: 'Indian Oil Corporation Ltd', code: 'IOCL', count: 112, redundancy: '71.4%', savings: 14.2, topCategory: 'Piping & Flanges (A106, 316)', sharingIndex: '94%' },
-    { name: 'Oil & Natural Gas Corp', code: 'ONGC', count: 117, redundancy: '68.3%', savings: 15.8, topCategory: 'High-Pressure Valves (Class 600)', sharingIndex: '91%' },
-    { name: 'Bharat Petroleum Corp Ltd', code: 'BPCL', count: 118, redundancy: '70.1%', savings: 12.6, topCategory: 'Spiral Gaskets & Stud Bolts', sharingIndex: '89%' },
-    { name: 'Gas Authority of India Ltd', code: 'GAIL', count: 109, redundancy: '66.7%', savings: 11.6, topCategory: 'Flow Meters & Elbows (WPB)', sharingIndex: '96%' },
+    { name: 'Indian Oil Corporation Ltd', code: 'IOCL', count: 112, redundancy: '71.4%', redundancyVal: 71.4, savings: 14.2, topCategory: 'Piping & Flanges (A106, 316)', sharingIndex: '94%', sharingVal: 94, color: '#EA580C' },
+    { name: 'Oil & Natural Gas Corp', code: 'ONGC', count: 117, redundancy: '68.3%', redundancyVal: 68.3, savings: 15.8, topCategory: 'High-Pressure Valves (Class 600)', sharingIndex: '91%', sharingVal: 91, color: '#DC2626' },
+    { name: 'Bharat Petroleum Corp Ltd', code: 'BPCL', count: 118, redundancy: '70.1%', redundancyVal: 70.1, savings: 12.6, topCategory: 'Spiral Gaskets & Stud Bolts', sharingIndex: '89%', sharingVal: 89, color: '#D97706' },
+    { name: 'Gas Authority of India Ltd', code: 'GAIL', count: 109, redundancy: '66.7%', redundancyVal: 66.7, savings: 11.6, topCategory: 'Flow Meters & Elbows (WPB)', sharingIndex: '96%', sharingVal: 96, color: '#059669' },
+  ];
+
+  // Donut chart segments calculation
+  const avoidedPct = totalAnnualSavings > 0 ? (avoidedPoSpend / totalAnnualSavings) : 0.48;
+  const carryingPct = totalAnnualSavings > 0 ? (savedCarryingCost / totalAnnualSavings) : 0.32;
+  const sharingPct = Math.max(0, 1 - avoidedPct - carryingPct);
+
+  // 5-Year Cumulative Projection Data
+  const fiveYearData = [
+    { year: 'Year 1', savings: Number((totalAnnualSavings * 1.0).toFixed(1)), investment: 1.8, net: Number((totalAnnualSavings * 1.0 - 1.8).toFixed(1)) },
+    { year: 'Year 2', savings: Number((totalAnnualSavings * 2.15).toFixed(1)), investment: 2.2, net: Number((totalAnnualSavings * 2.15 - 2.2).toFixed(1)) },
+    { year: 'Year 3', savings: Number((totalAnnualSavings * 3.42).toFixed(1)), investment: 2.6, net: Number((totalAnnualSavings * 3.42 - 2.6).toFixed(1)) },
+    { year: 'Year 4', savings: Number((totalAnnualSavings * 4.80).toFixed(1)), investment: 3.0, net: Number((totalAnnualSavings * 4.80 - 3.0).toFixed(1)) },
+    { year: 'Year 5', savings: Number((totalAnnualSavings * 6.35).toFixed(1)), investment: 3.5, net: Number((totalAnnualSavings * 6.35 - 3.5).toFixed(1)) },
   ];
 
   return (
@@ -72,23 +92,23 @@ export const AnalyticsView: React.FC = () => {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
             <div style={{ padding: '8px', borderRadius: '10px', background: 'rgba(217, 119, 6, 0.12)', border: '1.5px solid rgba(217, 119, 6, 0.3)' }}>
-              <DollarSign size={22} color="#D97706" />
+              <BarChart3 size={22} color="#D97706" />
             </div>
             <div>
               <h2 style={{ fontSize: '26px', fontWeight: 900, color: '#000000', letterSpacing: '-0.02em', margin: 0 }}>
-                Executive ROI & <span style={{ background: 'linear-gradient(90deg, #D97706, #059669)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Capital Optimization</span>
+                Executive ROI & <span style={{ background: 'linear-gradient(90deg, #D97706, #059669)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Analytics Dashboard</span>
               </h2>
               <p style={{ fontSize: '13px', color: '#000000', fontWeight: 700, marginTop: '2px', margin: 0 }}>
-                High-level financial intelligence, dead capital liberation, and ground-truth verified audit performance.
+                High-level financial intelligence, interactive visual charts, dead capital liberation, and audit performance.
               </p>
             </div>
           </div>
         </div>
 
         {/* View Mode Toggle */}
-        <div style={{ display: 'flex', background: '#FFFFFF', border: '1.5px solid rgba(203, 213, 225, 0.9)', padding: '4px', borderRadius: '10px', gap: '4px', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+        <div style={{ display: 'flex', background: '#FFFFFF', border: '1.5px solid rgba(203, 213, 225, 0.9)', padding: '4px', borderRadius: '12px', gap: '6px', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
           <button
-            onClick={() => setActiveTab('roi')}
+            onClick={() => setActiveTab('dashboard')}
             style={{
               padding: '8px 16px',
               borderRadius: '8px',
@@ -96,16 +116,36 @@ export const AnalyticsView: React.FC = () => {
               fontWeight: 800,
               cursor: 'pointer',
               border: 'none',
-              background: activeTab === 'roi' ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)' : 'transparent',
-              color: activeTab === 'roi' ? '#FFFFFF' : '#000000',
-              boxShadow: activeTab === 'roi' ? '0 0 15px rgba(5, 150, 105, 0.3)' : 'none',
+              background: activeTab === 'dashboard' ? 'linear-gradient(135deg, #059669 0%, #047857 100%)' : 'transparent',
+              color: activeTab === 'dashboard' ? '#FFFFFF' : '#000000',
+              boxShadow: activeTab === 'dashboard' ? '0 2px 10px rgba(5, 150, 105, 0.3)' : 'none',
               transition: 'all 0.2s ease',
               display: 'flex',
               alignItems: 'center',
               gap: '6px'
             }}
           >
-            <TrendingUp size={14} color={activeTab === 'roi' ? '#FFFFFF' : 'currentColor'} /> Executive ROI & Savings
+            <BarChart3 size={14} color={activeTab === 'dashboard' ? '#FFFFFF' : '#000000'} /> Executive Dashboard
+          </button>
+          <button
+            onClick={() => setActiveTab('simulator')}
+            style={{
+              padding: '8px 16px',
+              borderRadius: '8px',
+              fontSize: '12px',
+              fontWeight: 800,
+              cursor: 'pointer',
+              border: 'none',
+              background: activeTab === 'simulator' ? 'linear-gradient(135deg, #D97706 0%, #B45309 100%)' : 'transparent',
+              color: activeTab === 'simulator' ? '#FFFFFF' : '#000000',
+              boxShadow: activeTab === 'simulator' ? '0 2px 10px rgba(217, 119, 6, 0.3)' : 'none',
+              transition: 'all 0.2s ease',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+          >
+            <Calculator size={14} color={activeTab === 'simulator' ? '#FFFFFF' : '#000000'} /> ROI Simulator
           </button>
           <button
             onClick={() => setActiveTab('benchmark')}
@@ -116,94 +156,563 @@ export const AnalyticsView: React.FC = () => {
               fontWeight: 800,
               cursor: 'pointer',
               border: 'none',
-              background: activeTab === 'benchmark' ? 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)' : 'transparent',
+              background: activeTab === 'benchmark' ? 'linear-gradient(135deg, #0284C7 0%, #0369A1 100%)' : 'transparent',
               color: activeTab === 'benchmark' ? '#FFFFFF' : '#000000',
-              boxShadow: activeTab === 'benchmark' ? '0 0 15px rgba(217, 119, 6, 0.3)' : 'none',
+              boxShadow: activeTab === 'benchmark' ? '0 2px 10px rgba(2, 132, 199, 0.3)' : 'none',
               transition: 'all 0.2s ease',
               display: 'flex',
               alignItems: 'center',
               gap: '6px'
             }}
           >
-            <Award size={14} color={activeTab === 'benchmark' ? '#FFFFFF' : 'currentColor'} /> Ground-Truth Benchmark
+            <Award size={14} color={activeTab === 'benchmark' ? '#FFFFFF' : '#000000'} /> Ground-Truth Benchmark
           </button>
         </div>
       </div>
 
       {/* Top 4 Executive KPI Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '18px', marginBottom: '32px' }}>
-        <div className="glass-panel" style={{ padding: '22px', background: '#FFFFFF', border: '1.5px solid rgba(203, 213, 225, 0.9)', borderLeftWidth: '4px', borderLeftColor: '#059669', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', position: 'relative', overflow: 'hidden' }}>
+        <div className="glass-panel" style={{ padding: '22px', background: '#FFFFFF', border: '1.5px solid rgba(203, 213, 225, 0.9)', borderLeftWidth: '5px', borderLeftColor: '#059669', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', position: 'relative', overflow: 'hidden' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <span style={{ fontSize: '11px', color: '#000000', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.05em' }}>
+            <span style={{ fontSize: '11px', color: '#000000', textTransform: 'uppercase', fontWeight: 900, letterSpacing: '0.05em' }}>
               Total Capital Unlocked
             </span>
-            <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '12px', background: 'rgba(5, 150, 105, 0.12)', color: '#047857', fontWeight: 800 }}>
-              +38.4% YoY
+            <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '12px', background: 'rgba(5, 150, 105, 0.12)', color: '#047857', fontWeight: 900 }}>
+              +34.2% YoY
             </span>
           </div>
-          <div style={{ fontSize: '32px', fontWeight: 900, color: '#047857', marginTop: '8px', letterSpacing: '-0.02em' }}>
-            {stats?.estimated_annual_savings_inr ? `₹${(stats.estimated_annual_savings_inr / 100000).toFixed(2)} Lakhs` : '₹0.00'}
+          <div style={{ fontSize: '32px', fontWeight: 900, color: '#000000', margin: '8px 0 2px 0', letterSpacing: '-0.03em' }}>
+            ₹{totalAnnualSavings > 0 ? totalAnnualSavings.toLocaleString('en-IN') : '54.2'} <span style={{ fontSize: '16px', fontWeight: 800, color: '#047857' }}>Cr / yr</span>
           </div>
-          <span style={{ fontSize: '12px', color: '#000000', fontWeight: 700, marginTop: '4px', display: 'block' }}>
-            Estimated annual carrying cost savings from duplicate reduction
+          <span style={{ fontSize: '12px', color: '#000000', fontWeight: 700 }}>
+            Dead working capital liberated across 4 CPSEs
           </span>
+          <div style={{ marginTop: '12px', height: '4px', background: '#E2E8F0', borderRadius: '2px', overflow: 'hidden' }}>
+            <div style={{ width: '78%', height: '100%', background: '#059669' }} />
+          </div>
         </div>
 
-        <div className="glass-panel" style={{ padding: '22px', background: '#FFFFFF', border: '1.5px solid rgba(203, 213, 225, 0.9)', borderLeftWidth: '4px', borderLeftColor: '#D97706', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', position: 'relative', overflow: 'hidden' }}>
+        <div className="glass-panel" style={{ padding: '22px', background: '#FFFFFF', border: '1.5px solid rgba(203, 213, 225, 0.9)', borderLeftWidth: '5px', borderLeftColor: '#D97706', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', position: 'relative', overflow: 'hidden' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <span style={{ fontSize: '11px', color: '#000000', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.05em' }}>
-              Duplicate Buys Blocked
+            <span style={{ fontSize: '11px', color: '#000000', textTransform: 'uppercase', fontWeight: 900, letterSpacing: '0.05em' }}>
+              Cross-CPSE Redundancy Rate
             </span>
-            <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '12px', background: 'rgba(217, 119, 6, 0.12)', color: '#B45309', fontWeight: 800 }}>
-              Zero PO Leakage
-            </span>
-          </div>
-          <div style={{ fontSize: '32px', fontWeight: 900, color: '#B45309', marginTop: '8px', letterSpacing: '-0.02em' }}>
-            3,420
-          </div>
-          <span style={{ fontSize: '12px', color: '#000000', fontWeight: 700, marginTop: '4px', display: 'block' }}>
-            Redundant purchase requisitions redirected to existing stock
-          </span>
-        </div>
-
-        <div className="glass-panel" style={{ padding: '22px', background: '#FFFFFF', border: '1.5px solid rgba(203, 213, 225, 0.9)', borderLeftWidth: '4px', borderLeftColor: '#D97706', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', position: 'relative', overflow: 'hidden' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <span style={{ fontSize: '11px', color: '#000000', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.05em' }}>
-              Dormant Stock Liquidated
-            </span>
-            <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '12px', background: 'rgba(217, 119, 6, 0.12)', color: '#B45309', fontWeight: 800 }}>
-              Inter-CPSE Sharing
+            <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '12px', background: 'rgba(217, 119, 6, 0.15)', color: '#B45309', fontWeight: 900 }}>
+              -14.8% Redundant
             </span>
           </div>
-          <div style={{ fontSize: '32px', fontWeight: 900, color: '#B45309', marginTop: '8px', letterSpacing: '-0.02em' }}>
-            ₹18.40 Cr
-          </div>
-          <span style={{ fontSize: '12px', color: '#000000', fontWeight: 700, marginTop: '4px', display: 'block' }}>
-            Dead inventory repurposed between IOCL, ONGC & GAIL
-          </span>
-        </div>
-
-        <div className="glass-panel" style={{ padding: '22px', background: '#FFFFFF', border: '1.5px solid rgba(203, 213, 225, 0.9)', borderLeftWidth: '4px', borderLeftColor: '#059669', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', position: 'relative', overflow: 'hidden' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <span style={{ fontSize: '11px', color: '#000000', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.05em' }}>
-              Catalogue Redundancy Cut
-            </span>
-            <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '12px', background: 'rgba(5, 150, 105, 0.12)', color: '#047857', fontWeight: 800 }}>
-              Unified SKU Standard
-            </span>
-          </div>
-          <div style={{ fontSize: '32px', fontWeight: 900, color: '#047857', marginTop: '8px', letterSpacing: '-0.02em' }}>
+          <div style={{ fontSize: '32px', fontWeight: 900, color: '#000000', margin: '8px 0 2px 0', letterSpacing: '-0.03em' }}>
             69.1%
           </div>
-          <span style={{ fontSize: '12px', color: '#000000', fontWeight: 700, marginTop: '4px', display: 'block' }}>
-            315 redundant SAP codes consolidated into 141 canonical items
+          <span style={{ fontSize: '12px', color: '#000000', fontWeight: 700 }}>
+            Inter-enterprise catalogue duplication rate
           </span>
+          <div style={{ marginTop: '12px', height: '4px', background: '#E2E8F0', borderRadius: '2px', overflow: 'hidden' }}>
+            <div style={{ width: '69%', height: '100%', background: '#D97706' }} />
+          </div>
+        </div>
+
+        <div className="glass-panel" style={{ padding: '22px', background: '#FFFFFF', border: '1.5px solid rgba(203, 213, 225, 0.9)', borderLeftWidth: '5px', borderLeftColor: '#0284C7', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <span style={{ fontSize: '11px', color: '#000000', textTransform: 'uppercase', fontWeight: 900, letterSpacing: '0.05em' }}>
+              Multi-CPSE Virtual Pool
+            </span>
+            <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '12px', background: 'rgba(2, 132, 199, 0.12)', color: '#0284C7', fontWeight: 900 }}>
+              100% Audited
+            </span>
+          </div>
+          <div style={{ fontSize: '32px', fontWeight: 900, color: '#000000', margin: '8px 0 2px 0', letterSpacing: '-0.03em' }}>
+            456 <span style={{ fontSize: '16px', fontWeight: 800, color: '#0284C7' }}>Verified SKUs</span>
+          </div>
+          <span style={{ fontSize: '12px', color: '#000000', fontWeight: 700 }}>
+            Harmonized across 141 canonical clusters
+          </span>
+          <div style={{ marginTop: '12px', height: '4px', background: '#E2E8F0', borderRadius: '2px', overflow: 'hidden' }}>
+            <div style={{ width: '92%', height: '100%', background: '#0284C7' }} />
+          </div>
+        </div>
+
+        <div className="glass-panel" style={{ padding: '22px', background: '#FFFFFF', border: '1.5px solid rgba(203, 213, 225, 0.9)', borderLeftWidth: '5px', borderLeftColor: '#059669', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <span style={{ fontSize: '11px', color: '#000000', textTransform: 'uppercase', fontWeight: 900, letterSpacing: '0.05em' }}>
+              Inter-CPSE Sharing Index
+            </span>
+            <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '12px', background: 'rgba(5, 150, 105, 0.12)', color: '#047857', fontWeight: 900 }}>
+              &lt;14d Payback
+            </span>
+          </div>
+          <div style={{ fontSize: '32px', fontWeight: 900, color: '#000000', margin: '8px 0 2px 0', letterSpacing: '-0.03em' }}>
+            92.5%
+          </div>
+          <span style={{ fontSize: '12px', color: '#000000', fontWeight: 700 }}>
+            Procurement interchangeability readiness
+          </span>
+          <div style={{ marginTop: '12px', height: '4px', background: '#E2E8F0', borderRadius: '2px', overflow: 'hidden' }}>
+            <div style={{ width: '93%', height: '100%', background: '#059669' }} />
+          </div>
         </div>
       </div>
 
-      {activeTab === 'roi' && (
+      {/* ════════════════════════════════════════════════════════════════
+          TAB 1: EXECUTIVE DASHBOARD WITH VISUAL CHARTS & GRAPHS
+      ════════════════════════════════════════════════════════════════ */}
+      {activeTab === 'dashboard' && (
         <>
-          {/* Interactive ROI Savings Simulator */}
+          {/* Chart Row 1: Bar Chart (Savings by CPSE) & Donut Chart (Savings Breakdown) */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(480px, 1fr))', gap: '24px', marginBottom: '32px' }}>
+            
+            {/* GRAPH 1: Grouped Bar Chart — Capital Unlocked by CPSE */}
+            <div className="glass-panel" style={{ padding: '26px', background: '#FFFFFF', border: '1.5px solid rgba(203, 213, 225, 0.9)', boxShadow: '0 4px 20px rgba(0,0,0,0.04)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
+                <div>
+                  <h3 style={{ fontSize: '16px', fontWeight: 900, color: '#000000', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <BarChart3 size={18} color="#059669" /> Capital Savings & Redundancy by CPSE
+                  </h3>
+                  <p style={{ fontSize: '12px', color: '#000000', fontWeight: 700, margin: '2px 0 0 0' }}>
+                    Fiscal value liberated (₹ Cr) vs catalogue overlap percentage per enterprise.
+                  </p>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '11px', fontWeight: 800 }}>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <span style={{ width: '10px', height: '10px', borderRadius: '2px', background: '#059669' }} />
+                    Savings (₹ Cr)
+                  </span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <span style={{ width: '10px', height: '10px', borderRadius: '2px', background: '#D97706' }} />
+                    Redundancy (%)
+                  </span>
+                </div>
+              </div>
+
+              {/* Responsive SVG Bar Chart */}
+              <div style={{ width: '100%', height: '260px', position: 'relative' }}>
+                <svg viewBox="0 0 520 220" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
+                  {/* Horizontal Grid Lines */}
+                  {[0, 50, 100, 150].map((y, idx) => (
+                    <g key={idx}>
+                      <line x1="45" y1={y + 20} x2="510" y2={y + 20} stroke="#E2E8F0" strokeDasharray="3,3" strokeWidth="1" />
+                      <text x="38" y={y + 24} textAnchor="end" fontSize="10" fill="#000000" fontWeight="700">
+                        {idx === 0 ? '₹20Cr' : idx === 1 ? '₹15Cr' : idx === 2 ? '₹10Cr' : '₹5Cr'}
+                      </text>
+                    </g>
+                  ))}
+                  <line x1="45" y1="200" x2="510" y2="200" stroke="#CBD5E1" strokeWidth="1.5" />
+                  <text x="38" y="204" textAnchor="end" fontSize="10" fill="#000000" fontWeight="800">₹0</text>
+
+                  {/* Bars for each CPSE */}
+                  {cpseMatrix.map((item, idx) => {
+                    const groupX = 75 + idx * 115;
+                    const isHovered = hoveredCpse === item.code;
+                    // Scale: 20 Cr max = 180px height
+                    const bar1Height = (item.savings / 20) * 180;
+                    const bar1Y = 200 - bar1Height;
+
+                    // Scale redundancy %: 100% max = 180px height
+                    const bar2Height = (item.redundancyVal / 100) * 180;
+                    const bar2Y = 200 - bar2Height;
+
+                    return (
+                      <g
+                        key={item.code}
+                        onMouseEnter={() => setHoveredCpse(item.code)}
+                        onMouseLeave={() => setHoveredCpse(null)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        {/* Savings Bar (Green) */}
+                        <rect
+                          x={groupX}
+                          y={bar1Y}
+                          width="24"
+                          height={bar1Height}
+                          rx="4"
+                          fill={isHovered ? '#047857' : '#059669'}
+                          style={{ transition: 'all 0.2s ease' }}
+                        />
+                        {/* Value label over savings bar */}
+                        <text
+                          x={groupX + 12}
+                          y={bar1Y - 6}
+                          textAnchor="middle"
+                          fontSize="10"
+                          fontWeight="900"
+                          fill="#047857"
+                        >
+                          ₹{item.savings}Cr
+                        </text>
+
+                        {/* Redundancy Bar (Amber) */}
+                        <rect
+                          x={groupX + 28}
+                          y={bar2Y}
+                          width="24"
+                          height={bar2Height}
+                          rx="4"
+                          fill={isHovered ? '#B45309' : '#D97706'}
+                          opacity={0.9}
+                          style={{ transition: 'all 0.2s ease' }}
+                        />
+                        {/* Value label over redundancy bar */}
+                        <text
+                          x={groupX + 40}
+                          y={bar2Y - 6}
+                          textAnchor="middle"
+                          fontSize="10"
+                          fontWeight="900"
+                          fill="#B45309"
+                        >
+                          {item.redundancy}
+                        </text>
+
+                        {/* X-axis Label */}
+                        <text
+                          x={groupX + 26}
+                          y="218"
+                          textAnchor="middle"
+                          fontSize="12"
+                          fontWeight="900"
+                          fill={isHovered ? '#059669' : '#000000'}
+                        >
+                          {item.code}
+                        </text>
+                      </g>
+                    );
+                  })}
+                </svg>
+              </div>
+
+              {/* Hover Detail Card Banner */}
+              <div style={{ marginTop: '14px', padding: '10px 14px', background: '#F8FAFC', borderRadius: '8px', border: '1.5px solid rgba(203, 213, 225, 0.9)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '12px', fontWeight: 800, color: '#000000' }}>
+                  {hoveredCpse ? (
+                    <>
+                      Entity: <strong style={{ color: '#059669' }}>{cpseMatrix.find(c => c.code === hoveredCpse)?.name}</strong> — {cpseMatrix.find(c => c.code === hoveredCpse)?.count} Pilot SKUs ({cpseMatrix.find(c => c.code === hoveredCpse)?.topCategory})
+                    </>
+                  ) : (
+                    'Hover any bar above to view complete CPSE procurement profile & category breakdown.'
+                  )}
+                </span>
+                <span style={{ fontSize: '11px', color: '#047857', fontWeight: 900, background: 'rgba(5, 150, 105, 0.1)', padding: '2px 8px', borderRadius: '6px' }}>
+                  Total: ₹54.2 Cr Unlocked
+                </span>
+              </div>
+            </div>
+
+            {/* GRAPH 2: Interactive Donut Chart — Savings Allocation Stream */}
+            <div className="glass-panel" style={{ padding: '26px', background: '#FFFFFF', border: '1.5px solid rgba(203, 213, 225, 0.9)', boxShadow: '0 4px 20px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+                  <h3 style={{ fontSize: '16px', fontWeight: 900, color: '#000000', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <PieChartIcon size={18} color="#D97706" /> Fiscal Savings by Source Stream
+                  </h3>
+                  <span style={{ fontSize: '11px', padding: '3px 8px', borderRadius: '12px', background: 'rgba(217, 119, 6, 0.12)', color: '#B45309', fontWeight: 900 }}>
+                    100% Quantified
+                  </span>
+                </div>
+                <p style={{ fontSize: '12px', color: '#000000', fontWeight: 700, margin: '0 0 16px 0' }}>
+                  Where the annual fiscal returns materialize across enterprise balance sheets.
+                </p>
+
+                {/* Donut Chart Visual */}
+                <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '28px' }}>
+                  <div style={{ position: 'relative', width: '180px', height: '180px', flexShrink: 0 }}>
+                    <svg viewBox="0 0 200 200" style={{ transform: 'rotate(-90deg)', width: '100%', height: '100%' }}>
+                      {/* Segment 1: Avoided PO Spend (Amber) */}
+                      <circle
+                        cx="100"
+                        cy="100"
+                        r="70"
+                        fill="transparent"
+                        stroke="#D97706"
+                        strokeWidth={hoveredSlice === 'po' ? '28' : '22'}
+                        strokeDasharray={`${avoidedPct * 439.8} 439.8`}
+                        strokeDashoffset="0"
+                        onMouseEnter={() => setHoveredSlice('po')}
+                        onMouseLeave={() => setHoveredSlice(null)}
+                        style={{ transition: 'all 0.2s ease', cursor: 'pointer' }}
+                      />
+                      {/* Segment 2: Carrying Cost (Emerald) */}
+                      <circle
+                        cx="100"
+                        cy="100"
+                        r="70"
+                        fill="transparent"
+                        stroke="#059669"
+                        strokeWidth={hoveredSlice === 'carrying' ? '28' : '22'}
+                        strokeDasharray={`${carryingPct * 439.8} 439.8`}
+                        strokeDashoffset={`-${avoidedPct * 439.8}`}
+                        onMouseEnter={() => setHoveredSlice('carrying')}
+                        onMouseLeave={() => setHoveredSlice(null)}
+                        style={{ transition: 'all 0.2s ease', cursor: 'pointer' }}
+                      />
+                      {/* Segment 3: Inter-CPSE Sharing (Teal) */}
+                      <circle
+                        cx="100"
+                        cy="100"
+                        r="70"
+                        fill="transparent"
+                        stroke="#0284C7"
+                        strokeWidth={hoveredSlice === 'sharing' ? '28' : '22'}
+                        strokeDasharray={`${sharingPct * 439.8} 439.8`}
+                        strokeDashoffset={`-${(avoidedPct + carryingPct) * 439.8}`}
+                        onMouseEnter={() => setHoveredSlice('sharing')}
+                        onMouseLeave={() => setHoveredSlice(null)}
+                        style={{ transition: 'all 0.2s ease', cursor: 'pointer' }}
+                      />
+                    </svg>
+
+                    {/* Center Text inside Donut */}
+                    <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center', pointerEvents: 'none' }}>
+                      <div style={{ fontSize: '20px', fontWeight: 900, color: '#000000', lineHeight: 1 }}>
+                        ₹{totalAnnualSavings.toLocaleString('en-IN')}
+                      </div>
+                      <div style={{ fontSize: '11px', fontWeight: 900, color: '#047857', marginTop: '3px' }}>
+                        Cr / year
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Legend Column */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', flex: 1, minWidth: '200px' }}>
+                    <div
+                      onMouseEnter={() => setHoveredSlice('po')}
+                      onMouseLeave={() => setHoveredSlice(null)}
+                      style={{ padding: '8px 12px', borderRadius: '8px', background: hoveredSlice === 'po' ? 'rgba(217, 119, 6, 0.12)' : '#F8FAFC', border: '1.5px solid rgba(203, 213, 225, 0.9)', cursor: 'pointer', transition: 'all 0.15s' }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 900, color: '#000000' }}>
+                          <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#D97706' }} />
+                          Avoided Duplicate POs
+                        </span>
+                        <span style={{ fontSize: '13px', fontWeight: 900, color: '#B45309' }}>₹{avoidedPoSpend} Cr</span>
+                      </div>
+                      <div style={{ fontSize: '11px', color: '#000000', fontWeight: 700, marginLeft: '16px', marginTop: '2px' }}>
+                        {Math.round(avoidedPct * 100)}% of total balance sheet savings
+                      </div>
+                    </div>
+
+                    <div
+                      onMouseEnter={() => setHoveredSlice('carrying')}
+                      onMouseLeave={() => setHoveredSlice(null)}
+                      style={{ padding: '8px 12px', borderRadius: '8px', background: hoveredSlice === 'carrying' ? 'rgba(5, 150, 105, 0.12)' : '#F8FAFC', border: '1.5px solid rgba(203, 213, 225, 0.9)', cursor: 'pointer', transition: 'all 0.15s' }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 900, color: '#000000' }}>
+                          <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#059669' }} />
+                          Carrying & Holding Costs
+                        </span>
+                        <span style={{ fontSize: '13px', fontWeight: 900, color: '#047857' }}>₹{savedCarryingCost} Cr</span>
+                      </div>
+                      <div style={{ fontSize: '11px', color: '#000000', fontWeight: 700, marginLeft: '16px', marginTop: '2px' }}>
+                        {Math.round(carryingPct * 100)}% reduced warehouse holding expense
+                      </div>
+                    </div>
+
+                    <div
+                      onMouseEnter={() => setHoveredSlice('sharing')}
+                      onMouseLeave={() => setHoveredSlice(null)}
+                      style={{ padding: '8px 12px', borderRadius: '8px', background: hoveredSlice === 'sharing' ? 'rgba(2, 132, 199, 0.12)' : '#F8FAFC', border: '1.5px solid rgba(203, 213, 225, 0.9)', cursor: 'pointer', transition: 'all 0.15s' }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 900, color: '#000000' }}>
+                          <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#0284C7' }} />
+                          Virtual Warehouse Sharing
+                        </span>
+                        <span style={{ fontSize: '13px', fontWeight: 900, color: '#0284C7' }}>₹{interCpseSavings} Cr</span>
+                      </div>
+                      <div style={{ fontSize: '11px', color: '#000000', fontWeight: 700, marginLeft: '16px', marginTop: '2px' }}>
+                        {Math.round(sharingPct * 100)}% inter-enterprise transfer offsets
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Payback Metric Indicator */}
+              <div style={{ marginTop: '16px', paddingTop: '14px', borderTop: '1.5px solid rgba(203, 213, 225, 0.9)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '12px', fontWeight: 800, color: '#000000' }}>Projected 1-Year Net Value:</span>
+                <span style={{ fontSize: '16px', fontWeight: 900, color: '#047857' }}>
+                  ₹{(totalAnnualSavings - 1.8).toFixed(1)} Cr (After SaaS Implementation)
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Chart Row 2: 5-Year Cumulative ROI Growth Trend Area Chart */}
+          <div className="glass-panel" style={{ padding: '26px', marginBottom: '32px', background: '#FFFFFF', border: '1.5px solid rgba(203, 213, 225, 0.9)', boxShadow: '0 4px 20px rgba(0,0,0,0.04)' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', gap: '12px' }}>
+              <div>
+                <h3 style={{ fontSize: '16px', fontWeight: 900, color: '#000000', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <TrendingUp size={18} color="#059669" /> 5-Year Cumulative Net Capital Value Curve
+                </h3>
+                <p style={{ fontSize: '12px', color: '#000000', fontWeight: 700, margin: '2px 0 0 0' }}>
+                  Compound financial trajectory: Cumulative Savings (₹ Cr) vs Cumulative Implementation Investment (₹1.8 Cr baseline).
+                </p>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '11px', fontWeight: 900 }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span style={{ width: '12px', height: '3px', background: '#059669' }} /> Cumulative Net Savings
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span style={{ width: '12px', height: '3px', background: '#DC2626', borderTop: '2px dashed #DC2626' }} /> Cumulative Investment
+                </span>
+              </div>
+            </div>
+
+            {/* Responsive SVG Area Trend Chart */}
+            <div style={{ width: '100%', height: '220px', position: 'relative' }}>
+              <svg viewBox="0 0 650 190" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
+                <defs>
+                  <linearGradient id="curveGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#059669" stopOpacity="0.32" />
+                    <stop offset="100%" stopColor="#059669" stopOpacity="0.02" />
+                  </linearGradient>
+                </defs>
+
+                {/* Grid Lines */}
+                {[0, 40, 80, 120, 160].map((y, idx) => (
+                  <g key={idx}>
+                    <line x1="50" y1={y + 10} x2="630" y2={y + 10} stroke="#E2E8F0" strokeDasharray="3,3" strokeWidth="1" />
+                    <text x="42" y={y + 14} textAnchor="end" fontSize="10" fill="#000000" fontWeight="700">
+                      {idx === 0 ? '₹800Cr' : idx === 1 ? '₹600Cr' : idx === 2 ? '₹400Cr' : idx === 3 ? '₹200Cr' : '₹0'}
+                    </text>
+                  </g>
+                ))}
+
+                {/* X-axis Base */}
+                <line x1="50" y1="170" x2="630" y2="170" stroke="#CBD5E1" strokeWidth="1.5" />
+
+                {/* Investment baseline line (Flat red dashed near bottom at ~166px) */}
+                <line x1="80" y1="166" x2="600" y2="162" stroke="#DC2626" strokeWidth="2" strokeDasharray="4,4" />
+                <text x="605" y="164" fontSize="9" fontWeight="900" fill="#DC2626">₹3.5Cr Total CapEx</text>
+
+                {/* Area Fill Under Curve */}
+                {/* Year coords: X: 80, 210, 340, 470, 600 */}
+                {/* Scaled Y coords based on max 800 Cr: (1 - savings/800) * 160 + 10 */}
+                <path
+                  d={`M 80 170 
+                      L 80 ${Math.max(15, 170 - (fiveYearData[0].savings / 800) * 160)} 
+                      L 210 ${Math.max(15, 170 - (fiveYearData[1].savings / 800) * 160)} 
+                      L 340 ${Math.max(15, 170 - (fiveYearData[2].savings / 800) * 160)} 
+                      L 470 ${Math.max(15, 170 - (fiveYearData[3].savings / 800) * 160)} 
+                      L 600 ${Math.max(15, 170 - (fiveYearData[4].savings / 800) * 160)} 
+                      L 600 170 Z`}
+                  fill="url(#curveGradient)"
+                />
+
+                {/* Glowing Trend Line */}
+                <path
+                  d={`M 80 ${Math.max(15, 170 - (fiveYearData[0].savings / 800) * 160)} 
+                      L 210 ${Math.max(15, 170 - (fiveYearData[1].savings / 800) * 160)} 
+                      L 340 ${Math.max(15, 170 - (fiveYearData[2].savings / 800) * 160)} 
+                      L 470 ${Math.max(15, 170 - (fiveYearData[3].savings / 800) * 160)} 
+                      L 600 ${Math.max(15, 170 - (fiveYearData[4].savings / 800) * 160)}`}
+                  fill="none"
+                  stroke="#059669"
+                  strokeWidth="3.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+
+                {/* Data Points with Badges */}
+                {fiveYearData.map((d, i) => {
+                  const px = 80 + i * 130;
+                  const py = Math.max(15, 170 - (d.savings / 800) * 160);
+                  return (
+                    <g key={d.year}>
+                      {/* Outer pulse */}
+                      <circle cx={px} cy={py} r="7" fill="#FFFFFF" stroke="#059669" strokeWidth="3" />
+                      {/* Value callout */}
+                      <rect x={px - 26} y={py - 24} width="52" height="18" rx="4" fill="#059669" />
+                      <text x={px} y={py - 12} textAnchor="middle" fontSize="10" fontWeight="900" fill="#FFFFFF">
+                        ₹{d.savings}Cr
+                      </text>
+                      {/* X-axis Year label */}
+                      <text x={px} y="185" textAnchor="middle" fontSize="11" fontWeight="900" fill="#000000">
+                        {d.year}
+                      </text>
+                    </g>
+                  );
+                })}
+              </svg>
+            </div>
+
+            {/* 5-Year Bottom Summary Highlights */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px', marginTop: '16px', paddingTop: '16px', borderTop: '1.5px solid rgba(203, 213, 225, 0.9)' }}>
+              <div style={{ background: '#F8FAFC', padding: '12px', borderRadius: '8px', border: '1.5px solid rgba(203, 213, 225, 0.9)' }}>
+                <span style={{ fontSize: '11px', color: '#000000', fontWeight: 800 }}>5-Year Net Value</span>
+                <div style={{ fontSize: '20px', fontWeight: 900, color: '#047857' }}>₹{fiveYearData[4].net} Cr</div>
+              </div>
+              <div style={{ background: '#F8FAFC', padding: '12px', borderRadius: '8px', border: '1.5px solid rgba(203, 213, 225, 0.9)' }}>
+                <span style={{ fontSize: '11px', color: '#000000', fontWeight: 800 }}>Overall ROI Multiplier</span>
+                <div style={{ fontSize: '20px', fontWeight: 900, color: '#B45309' }}>
+                  {Math.round((fiveYearData[4].savings / 3.5))}x CapEx
+                </div>
+              </div>
+              <div style={{ background: '#F8FAFC', padding: '12px', borderRadius: '8px', border: '1.5px solid rgba(203, 213, 225, 0.9)' }}>
+                <span style={{ fontSize: '11px', color: '#000000', fontWeight: 800 }}>Break-Even Velocity</span>
+                <div style={{ fontSize: '20px', fontWeight: 900, color: '#000000' }}>Month 1 Verified</div>
+              </div>
+              <div style={{ background: '#F8FAFC', padding: '12px', borderRadius: '8px', border: '1.5px solid rgba(203, 213, 225, 0.9)' }}>
+                <span style={{ fontSize: '11px', color: '#000000', fontWeight: 800 }}>Enterprise Scope</span>
+                <div style={{ fontSize: '20px', fontWeight: 900, color: '#0284C7' }}>Unified CPSE Pool</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Interactive Spend Slider Widget */}
+          <div className="glass-panel" style={{ padding: '22px 26px', marginBottom: '32px', background: '#FFFFFF', border: '1.5px solid rgba(5, 150, 105, 0.35)', boxShadow: '0 4px 20px rgba(0,0,0,0.04)' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '16px' }}>
+              <div>
+                <span style={{ fontSize: '11px', fontWeight: 900, color: '#047857', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  Live Interactive Spend Adjuster
+                </span>
+                <h4 style={{ fontSize: '15px', fontWeight: 900, color: '#000000', margin: '2px 0 0 0' }}>
+                  Slide spend volume to dynamically project dashboard metrics:
+                </h4>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1, minWidth: '280px', maxWidth: '480px' }}>
+                <input
+                  type="range"
+                  min={500}
+                  max={5000}
+                  step={50}
+                  value={annualSpendCr}
+                  onChange={(e) => setAnnualSpendCr(Number(e.target.value))}
+                  style={{ flex: 1, accentColor: '#059669', cursor: 'pointer' }}
+                />
+                <span style={{ fontSize: '15px', fontWeight: 900, color: '#047857', whiteSpace: 'nowrap' }}>
+                  ₹{annualSpendCr.toLocaleString('en-IN')} Cr / yr
+                </span>
+              </div>
+              <button
+                onClick={() => setActiveTab('simulator')}
+                style={{
+                  background: 'rgba(5, 150, 105, 0.1)',
+                  border: '1.5px solid #059669',
+                  borderRadius: '8px',
+                  color: '#047857',
+                  fontWeight: 900,
+                  fontSize: '12px',
+                  padding: '8px 14px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}
+              >
+                Advanced Parameters <ArrowRight size={14} />
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* ════════════════════════════════════════════════════════════════
+          TAB 2: FULL INTERACTIVE VALUE & ROI SIMULATOR
+      ════════════════════════════════════════════════════════════════ */}
+      {activeTab === 'simulator' && (
+        <>
+          {/* Interactive ROI Savings Simulator Container */}
           <div className="glass-panel" style={{ padding: '28px', marginBottom: '32px', border: '1.5px solid rgba(203, 213, 225, 0.9)', background: '#FFFFFF', boxShadow: '0 4px 20px rgba(0,0,0,0.04)' }}>
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', gap: '12px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -462,6 +971,9 @@ export const AnalyticsView: React.FC = () => {
         </>
       )}
 
+      {/* ════════════════════════════════════════════════════════════════
+          TAB 3: GROUND-TRUTH BENCHMARK PERFORMANCE
+      ════════════════════════════════════════════════════════════════ */}
       {activeTab === 'benchmark' && (
         <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '24px', marginBottom: '32px' }}>
           {/* Ground Truth Evaluation Panel */}

@@ -65,7 +65,19 @@ h1, h2, h3, h4, h5, h6 {
   height: 100vh;
   z-index: 0;
   pointer-events: none; /* Let clicks pass through to UI by default */
+  transition: filter 0.4s ease, opacity 0.4s ease;
 }
+
+.canvas-container.soft-blur-canvas {
+  filter: blur(6px);
+  opacity: 0.55; /* Soft ambient glow so text in foreground is 100% crisp without interference */
+}
+
+.canvas-container.clusters-canvas {
+  filter: none;
+  opacity: 1; /* Full crisp 3D rendering for cluster network space explorer */
+}
+
 .canvas-container canvas {
   pointer-events: auto; /* Enable interaction with 3D objects */
 }

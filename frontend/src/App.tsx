@@ -50,7 +50,7 @@ export const App: React.FC = () => {
   return (
     <>
       {/* 3D WebGL Canvas Layer (Background) */}
-      <div className="canvas-container">
+      <div className={`canvas-container ${activeTab === 'clusters' ? 'clusters-canvas' : 'soft-blur-canvas'}`}>
         <ErrorBoundary fallback={<div style={{ position: 'fixed', inset: 0, background: activeTab === 'clusters' ? '#020612' : '#F4F7FB' }} />}>
           <Canvas 
             camera={{ position: [0, 0.5, 9.5], fov: 48 }}
