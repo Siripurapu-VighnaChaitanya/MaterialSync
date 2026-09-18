@@ -434,11 +434,18 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
     <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '36px 28px' }}>
       {/* ── Page Header ── */}
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: '32px' }}>
-        <h1 style={{ fontSize: '36px', fontWeight: 900, color: '#F0F4FF', letterSpacing: '-0.03em', marginBottom: '8px', lineHeight: 1.1 }}>
+        <h1 style={{ fontSize: '36px', fontWeight: 900, color: '#F8FAFC', letterSpacing: '-0.03em', marginBottom: '8px', lineHeight: 1.1 }}>
           Cross-CPSE{' '}
           <span className="shimmer-text">Material Harmonizer</span>
         </h1>
-        <p style={{ fontSize: '15px', color: 'var(--text-secondary)', maxWidth: '680px', lineHeight: 1.6 }}>
+        <p style={{ 
+          fontSize: '15px', 
+          color: '#E2E8F0', 
+          fontWeight: 500, 
+          maxWidth: '680px', 
+          lineHeight: 1.6,
+          textShadow: '0 2px 10px rgba(0,0,0,0.85)'
+        }}>
           Paste any messy SAP/ERP material description. The AI pipeline cleans abbreviations,
           extracts physical attributes, and matches across IOCL, ONGC, BPCL and GAIL material masters.
         </p>
@@ -499,9 +506,9 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               placeholder="e.g. SS PIPE ASTM A106 GR B 150 MM, GATE VALVE WCB 2 INCH 600#..."
               className="input-field"
-              style={{ paddingLeft: '46px' }}
+              style={{ paddingLeft: '46px', color: '#F8FAFC' }}
             />
-            <Search size={18} color="var(--text-muted)" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
+            <Search size={18} color="#94A3B8" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
           </div>
 
           <button
@@ -521,7 +528,7 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
             <Star size={12} color="#F7B731" />
-            <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.05em' }}>
+            <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: '#CBD5E1', letterSpacing: '0.05em' }}>
               One-Click Demo Scenarios
             </span>
           </div>
@@ -531,9 +538,9 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
                 key={idx}
                 onClick={() => selectScenario(sc.text, sc.cpse)}
                 style={{
-                  background: 'rgba(255,255,255,0.04)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  color: 'var(--text-secondary)',
+                  background: 'rgba(255,255,255,0.07)',
+                  border: '1px solid rgba(255,255,255,0.18)',
+                  color: '#F1F5F9',
                   padding: '7px 14px',
                   borderRadius: '20px',
                   fontSize: '12px',
@@ -543,6 +550,7 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
                   alignItems: 'center',
                   gap: '6px',
                   transition: 'all 0.2s ease',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.4)'
                 }}
               >
                 <span>{sc.label}</span>

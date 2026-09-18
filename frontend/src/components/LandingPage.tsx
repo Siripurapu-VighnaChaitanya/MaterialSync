@@ -182,7 +182,7 @@ export const LandingPage: React.FC<{ onNavigate: (tab: string) => void }> = ({ o
     <div style={{ width: '100%', minHeight: '100vh', color: '#F8FAFC', overflowX: 'hidden' }}>
       
       {/* 1. HERO SECTION */}
-      <section style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '85vh', padding: '0 5%', position: 'relative' }}>
+      <section style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh', padding: '20px 5% 15px 5%', position: 'relative' }}>
         <div style={{ flex: 1, zIndex: 10, maxWidth: '600px' }}>
           
           {/* Yellow + Green Mix Gradient Title with Intense Luminous Glow */}
@@ -297,10 +297,11 @@ export const LandingPage: React.FC<{ onNavigate: (tab: string) => void }> = ({ o
           background: 'linear-gradient(90deg, rgba(6, 18, 30, 0.95), rgba(10, 24, 20, 0.95))', 
           borderTop: '1px solid rgba(250, 204, 21, 0.25)', 
           borderBottom: '1px solid rgba(34, 197, 94, 0.25)', 
-          padding: '16px 0', 
-          marginTop: '20px',
+          padding: '14px 0', 
+          marginTop: '0px',
           boxShadow: '0 0 30px rgba(250, 204, 21, 0.08), inset 0 0 25px rgba(34, 197, 94, 0.05)',
           position: 'relative',
+          zIndex: 10,
           overflow: 'hidden'
         }}
       >
