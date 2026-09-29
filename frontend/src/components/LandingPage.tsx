@@ -125,24 +125,59 @@ const TerminalWindow: React.FC = () => {
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.6 }}
       style={{
+        position: 'relative',
         padding: '22px 24px',
         borderRadius: '16px',
-        background: 'rgba(3, 7, 18, 0.97)',
-        backdropFilter: 'blur(20px)',
-        border: '1.5px solid rgba(255, 255, 255, 0.12)',
-        boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 0, 0, 0.3)',
+        background: 'linear-gradient(145deg, rgba(8, 15, 30, 0.98) 0%, rgba(3, 7, 18, 0.98) 100%)',
+        backdropFilter: 'blur(24px)',
+        border: '1.5px solid rgba(56, 189, 248, 0.35)',
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 35px rgba(56, 189, 248, 0.18), 0 0 70px rgba(16, 185, 129, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.15)',
         fontFamily: 'monospace',
         minHeight: '260px',
         display: 'flex',
         flexDirection: 'column',
-        gap: '9px'
+        gap: '9px',
+        overflow: 'hidden'
       }}
     >
+      {/* Top subtle ambient glow streak */}
+      <div 
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: '10%',
+          right: '10%',
+          height: '2px',
+          background: 'linear-gradient(90deg, transparent, #38BDF8, #10B981, transparent)',
+          filter: 'blur(1px)'
+        }} 
+      />
+
       <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', paddingBottom: '12px', marginBottom: '10px', alignItems: 'center' }}>
-        <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#EF4444', boxShadow: '0 0 6px rgba(239, 68, 68, 0.6)' }} />
-        <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#F59E0B', boxShadow: '0 0 6px rgba(245, 158, 11, 0.6)' }} />
-        <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#10B981', boxShadow: '0 0 6px rgba(16, 185, 129, 0.6)' }} />
-        <span style={{ fontSize: '11px', color: '#94A3B8', fontWeight: 800, marginLeft: 'auto', letterSpacing: '0.08em' }}>execution terminal</span>
+        <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#EF4444', boxShadow: '0 0 8px rgba(239, 68, 68, 0.9), 0 0 16px rgba(239, 68, 68, 0.5)' }} />
+        <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#F59E0B', boxShadow: '0 0 8px rgba(245, 158, 11, 0.9), 0 0 16px rgba(245, 158, 11, 0.5)' }} />
+        <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#10B981', boxShadow: '0 0 8px rgba(16, 185, 129, 0.9), 0 0 16px rgba(16, 185, 129, 0.5)' }} />
+        
+        {/* Glowing Title badge */}
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{
+            display: 'inline-block',
+            width: '6px',
+            height: '6px',
+            borderRadius: '50%',
+            background: '#10B981',
+            boxShadow: '0 0 8px #10B981, 0 0 14px #10B981'
+          }} />
+          <span style={{ 
+            fontSize: '11px', 
+            color: '#38BDF8', 
+            fontWeight: 800, 
+            letterSpacing: '0.09em',
+            textShadow: '0 0 10px rgba(56, 189, 248, 0.8), 0 0 20px rgba(56, 189, 248, 0.4)'
+          }}>
+            execution-terminal
+          </span>
+        </div>
       </div>
       {displayedLines.map((line, idx) => {
         const isSuccess = Boolean(line && line.includes("READY"));
