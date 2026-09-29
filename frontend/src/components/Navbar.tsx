@@ -55,6 +55,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <header
+      /* Original Full-Width Sticky Header */
       style={{
         background: 'rgba(255, 255, 255, 0.92)',
         borderBottom: '1px solid rgba(226, 232, 240, 0.9)',
