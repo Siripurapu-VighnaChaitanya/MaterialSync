@@ -466,12 +466,54 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
   };
 
   const loadingSteps = [
-    { text: "INITIALIZING DEEP LEARNING ENGINE...", icon: <Cpu size={24} /> },
-    { text: "EXTRACTING NLP TOKENS & NER TAGS...", icon: <Layers size={24} /> },
-    { text: "GENERATING 384D VECTOR EMBEDDINGS...", icon: <Network size={24} /> },
-    { text: "QUERYING GLOBAL FAISS INDEX...", icon: <Database size={24} /> },
-    { text: "CALCULATING COSINE SIMILARITY...", icon: <Sparkles size={24} /> },
-    { text: "ENFORCING METALLURGY SAFETY GATES...", icon: <ShieldCheck size={24} /> }
+    {
+      text: "INITIALIZING DEEP LEARNING ENGINE...",
+      icon: <Cpu size={22} />,
+      color: '#8B5CF6', // Electric Violet
+      gradient: 'linear-gradient(135deg, #A78BFA, #7C3AED)',
+      glow: 'rgba(139, 92, 246, 0.45)',
+      sublabel: 'Core AI'
+    },
+    {
+      text: "EXTRACTING NLP TOKENS & NER TAGS...",
+      icon: <Layers size={22} />,
+      color: '#06B6D4', // Vivid Cyan
+      gradient: 'linear-gradient(135deg, #38BDF8, #0284C7)',
+      glow: 'rgba(6, 182, 212, 0.45)',
+      sublabel: 'NLP Parsing'
+    },
+    {
+      text: "GENERATING 384D VECTOR EMBEDDINGS...",
+      icon: <Network size={22} />,
+      color: '#10B981', // Emerald Mint
+      gradient: 'linear-gradient(135deg, #34D399, #059669)',
+      glow: 'rgba(16, 185, 129, 0.45)',
+      sublabel: '384D Vectors'
+    },
+    {
+      text: "QUERYING GLOBAL FAISS INDEX...",
+      icon: <Database size={22} />,
+      color: '#F59E0B', // Sun Gold / Amber
+      gradient: 'linear-gradient(135deg, #FBBF24, #D97706)',
+      glow: 'rgba(245, 158, 11, 0.45)',
+      sublabel: 'Vector Search'
+    },
+    {
+      text: "CALCULATING COSINE SIMILARITY...",
+      icon: <Sparkles size={22} />,
+      color: '#EC4899', // Cosmic Hot Pink
+      gradient: 'linear-gradient(135deg, #F472B6, #DB2777)',
+      glow: 'rgba(236, 72, 153, 0.45)',
+      sublabel: 'Similarity'
+    },
+    {
+      text: "ENFORCING METALLURGY SAFETY GATES...",
+      icon: <ShieldCheck size={22} />,
+      color: '#14B8A6', // Safety Teal Green
+      gradient: 'linear-gradient(135deg, #2DD4BF, #0F766E)',
+      glow: 'rgba(20, 184, 166, 0.45)',
+      sublabel: 'Safety Gate'
+    }
   ];
 
   const handleSearch = async (overrideText?: string, overrideCpse?: string) => {
@@ -480,7 +522,7 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
     if (!searchText.trim() || searchText.trim().length < 3) return;
     
     setLoading(true);
-    setScanStep(1);
+    setScanStep(0);
     setError(null);
     setResult(null);
     setShowLLMSummary(false);
@@ -488,14 +530,14 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
     try {
       const t0 = performance.now();
       
-      // Start step-by-step animation
+      // Start step-by-step animation across all 6 distinct steps
       let currentStep = 0;
       const interval = setInterval(() => {
         currentStep++;
         if (currentStep < loadingSteps.length) {
           setScanStep(currentStep);
         }
-      }, 1200);
+      }, 1000);
       
       // Fetch data in background
       const data = await api.checkMaterial(searchText, searchCpse);
@@ -695,69 +737,184 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
             transition={{ duration: 0.6 }}
             style={{ marginBottom: '32px', scrollMarginTop: '100px' }}
           >
-            <div className="glass-panel" style={{ padding: '60px 40px', background: '#FFFFFF', border: '1.5px solid rgba(203, 213, 225, 0.9)', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.05)' }}>
-              <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-                <h3 style={{ fontSize: '24px', fontWeight: 900, color: '#000000', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
-                  {loadingSteps[scanStep]?.text || "Processing Data..."}
-                </h3>
-              </div>
-
-              <div className="responsive-timeline-container" style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0 50px' }}>
-                {/* Background Line */}
-                <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '6px', background: '#E2E8F0', transform: 'translateY(-50%)', borderRadius: '3px', zIndex: 0 }} />
-                
-                {/* Progress Line */}
-                <motion.div 
-                  initial={{ width: '0%' }}
-                  animate={{ width: `${(scanStep / (loadingSteps.length - 1)) * 100}%` }}
-                  transition={{ duration: 1.2, ease: 'easeInOut' }}
-                  style={{ position: 'absolute', top: '50%', left: 0, height: '6px', background: 'linear-gradient(90deg, #D97706, #059669)', transform: 'translateY(-50%)', borderRadius: '3px', zIndex: 1, boxShadow: '0 0 15px rgba(5, 150, 105, 0.4)' }} 
-                />
-
-                {/* Nodes */}
-                {loadingSteps.map((step, idx) => {
-                  const isActive = scanStep >= idx;
-                  const isCurrent = scanStep === idx;
-                  const colors = ['#D97706', '#EAB308', '#059669', '#10B981', '#15803D'];
-                  const nodeColor = colors[idx];
-                  
-                  return (
-                    <div key={idx} style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      <motion.div
-                        initial={{ scale: 0.8, backgroundColor: '#F1F5F9', borderColor: 'rgba(203, 213, 225, 0.9)' }}
-                        animate={{ 
-                          scale: isCurrent ? 1.35 : isActive ? 1.15 : 0.8,
-                          backgroundColor: isActive ? '#FFFFFF' : '#F1F5F9',
-                          borderColor: isActive ? nodeColor : '#CBD5E1',
-                          boxShadow: isCurrent ? `0 0 25px ${nodeColor}60` : isActive ? `0 0 10px ${nodeColor}30` : 'none'
-                        }}
-                        transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-                        className="responsive-timeline-node"
+            {(() => {
+              const currentStepObj = loadingSteps[scanStep] || loadingSteps[0];
+              return (
+                <div
+                  className="glass-panel"
+                  style={{
+                    padding: '50px 36px',
+                    background: '#FFFFFF',
+                    border: '1.5px solid rgba(203, 213, 225, 0.9)',
+                    borderRadius: '20px',
+                    boxShadow: `0 20px 45px -15px ${currentStepObj.glow}, 0 8px 24px rgba(15, 23, 42, 0.05)`,
+                    transition: 'box-shadow 0.6s ease'
+                  }}
+                >
+                  {/* Step Badge & Animated Gradient Title */}
+                  <div style={{ textAlign: 'center', marginBottom: '50px' }}>
+                    <motion.div
+                      key={`badge-${scanStep}`}
+                      initial={{ opacity: 0, scale: 0.85 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.3 }}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '6px 18px',
+                        borderRadius: '20px',
+                        background: `${currentStepObj.color}15`,
+                        border: `1.5px solid ${currentStepObj.color}45`,
+                        marginBottom: '12px'
+                      }}
+                    >
+                      <motion.span
+                        animate={{ scale: [1, 1.4, 1] }}
+                        transition={{ duration: 1.2, repeat: Infinity }}
                         style={{
-                          width: '46px', height: '46px', borderRadius: '50%',
-                          border: '3px solid',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          color: isActive ? nodeColor : '#64748B'
+                          width: '8px',
+                          height: '8px',
+                          borderRadius: '50%',
+                          background: currentStepObj.color,
+                          boxShadow: `0 0 10px ${currentStepObj.color}`
                         }}
-                      >
-                        {step.icon}
-                      </motion.div>
-                      {/* Node Label */}
-                      <motion.div 
-                        initial={{ opacity: 0, y: 15 }}
-                        animate={{ opacity: isActive ? 1 : 0.3, y: isActive ? 0 : 5, color: isCurrent ? '#000000' : isActive ? nodeColor : '#64748B' }}
-                        className="responsive-timeline-text"
-                        style={{ position: 'absolute', top: '65px', whiteSpace: 'nowrap', fontSize: '13px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.08em' }}
-                      >
-                        Step {idx + 1}
-                      </motion.div>
-                    </div>
-                  );
-                })}
-              </div>
-              
-              <div style={{ height: '60px' }} /> {/* Spacer for labels */}
-            </div>
+                      />
+                      <span style={{ fontSize: '11px', fontWeight: 900, textTransform: 'uppercase', color: currentStepObj.color, letterSpacing: '0.12em' }}>
+                        Step {scanStep + 1} of {loadingSteps.length} • {currentStepObj.sublabel}
+                      </span>
+                    </motion.div>
+
+                    <motion.h3
+                      key={`title-${scanStep}`}
+                      initial={{ opacity: 0, y: -8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.35 }}
+                      style={{
+                        fontSize: '24px',
+                        fontWeight: 900,
+                        letterSpacing: '0.12em',
+                        textTransform: 'uppercase',
+                        background: currentStepObj.gradient,
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        filter: `drop-shadow(0 2px 12px ${currentStepObj.glow})`,
+                        margin: 0
+                      }}
+                    >
+                      {currentStepObj.text}
+                    </motion.h3>
+                  </div>
+
+                  {/* Responsive Timeline Bar & Nodes */}
+                  <div className="responsive-timeline-container" style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0 40px' }}>
+                    {/* Background Track Line */}
+                    <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '6px', background: '#E2E8F0', transform: 'translateY(-50%)', borderRadius: '3px', zIndex: 0 }} />
+                    
+                    {/* Vibrant Multi-Color Progress Line */}
+                    <motion.div 
+                      initial={{ width: '0%' }}
+                      animate={{ width: `${(scanStep / (loadingSteps.length - 1)) * 100}%` }}
+                      transition={{ duration: 0.9, ease: 'easeInOut' }}
+                      style={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: 0,
+                        height: '6px',
+                        background: 'linear-gradient(90deg, #8B5CF6 0%, #06B6D4 20%, #10B981 40%, #F59E0B 60%, #EC4899 80%, #14B8A6 100%)',
+                        transform: 'translateY(-50%)',
+                        borderRadius: '3px',
+                        zIndex: 1,
+                        boxShadow: `0 0 16px ${currentStepObj.color}80, 0 0 30px ${currentStepObj.color}40`
+                      }} 
+                    />
+
+                    {/* Nodes */}
+                    {loadingSteps.map((step, idx) => {
+                      const isActive = scanStep >= idx;
+                      const isCurrent = scanStep === idx;
+                      
+                      return (
+                        <div key={idx} style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                          <motion.div
+                            initial={{ scale: 0.8 }}
+                            animate={{ 
+                              scale: isCurrent ? 1.34 : isActive ? 1.1 : 0.85,
+                              boxShadow: isCurrent 
+                                ? `0 0 0 4px ${step.color}35, 0 0 28px ${step.glow}, 0 8px 20px rgba(0,0,0,0.12)` 
+                                : isActive 
+                                ? `0 0 14px ${step.glow}` 
+                                : 'none'
+                            }}
+                            transition={{ type: 'spring', stiffness: 240, damping: 16 }}
+                            className="responsive-timeline-node"
+                            style={{
+                              width: '48px',
+                              height: '48px',
+                              borderRadius: '50%',
+                              border: isCurrent ? '3px solid #FFFFFF' : isActive ? `3px solid ${step.color}` : '2.5px solid #CBD5E1',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              background: isCurrent ? step.gradient : isActive ? '#FFFFFF' : '#F1F5F9',
+                              color: isCurrent ? '#FFFFFF' : isActive ? step.color : '#94A3B8',
+                              transition: 'background 0.3s ease, border-color 0.3s ease, color 0.3s ease'
+                            }}
+                          >
+                            <motion.div
+                              animate={isCurrent ? { rotate: [0, 6, -6, 0] } : { rotate: 0 }}
+                              transition={isCurrent ? { duration: 2, repeat: Infinity, ease: 'easeInOut' } : {}}
+                            >
+                              {step.icon}
+                            </motion.div>
+                          </motion.div>
+
+                          {/* Node Label Below */}
+                          <motion.div 
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ 
+                              opacity: isActive ? 1 : 0.35,
+                              y: isActive ? 0 : 5,
+                              color: isCurrent ? step.color : isActive ? step.color : '#64748B'
+                            }}
+                            className="responsive-timeline-text"
+                            style={{
+                              position: 'absolute',
+                              top: '68px',
+                              whiteSpace: 'nowrap',
+                              fontSize: isCurrent ? '13px' : '12px',
+                              fontWeight: 900,
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.08em',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'center',
+                              gap: '3px'
+                            }}
+                          >
+                            <span>Step {idx + 1}</span>
+                            {isCurrent && (
+                              <motion.span
+                                layoutId="stepIndicator"
+                                style={{
+                                  width: '5px',
+                                  height: '5px',
+                                  borderRadius: '50%',
+                                  background: step.color,
+                                  boxShadow: `0 0 8px ${step.color}`
+                                }}
+                              />
+                            )}
+                          </motion.div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  
+                  <div style={{ height: '56px' }} /> {/* Spacer for labels */}
+                </div>
+              );
+            })()}
           </motion.div>
         )}
 
