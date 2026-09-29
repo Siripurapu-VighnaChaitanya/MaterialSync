@@ -135,12 +135,12 @@ export const Navbar: React.FC<NavbarProps> = ({
         style={{
           maxWidth: '1440px',
           margin: '0 auto',
-          padding: '0 28px',
+          padding: '0 16px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           height: '66px',
-          gap: '16px',
+          gap: '8px',
         }}
       >
         {/* ── Brand with 3D Hologram Logo ── */}
@@ -150,10 +150,10 @@ export const Navbar: React.FC<NavbarProps> = ({
           style={{ 
             display: 'flex', 
             alignItems: 'center', 
-            gap: '12px', 
+            gap: '10px', 
             cursor: 'pointer', 
             flexShrink: 0,
-            padding: '4px 6px',
+            padding: '3px 4px',
             borderRadius: '20px',
             transition: 'transform 0.2s ease',
           }}
@@ -161,7 +161,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         >
           <Logo3D />
           <span style={{ 
-            fontSize: '20px', 
+            fontSize: '19px', 
             fontWeight: 900, 
             letterSpacing: '-0.03em',
             display: 'inline-flex',
@@ -184,8 +184,8 @@ export const Navbar: React.FC<NavbarProps> = ({
           className="responsive-nav-tabs" 
           style={{ 
             display: 'flex', 
-            gap: '4px', 
-            flex: 1, 
+            gap: '2px', 
+            flex: '0 1 auto', 
             justifyContent: 'center',
             position: 'relative',
           }}
@@ -208,14 +208,14 @@ export const Navbar: React.FC<NavbarProps> = ({
                   background: isHovered && !isActive ? theme.hoverBg : 'transparent',
                   color: isActive ? theme.color : (isHovered ? '#0F172A' : '#334155'),
                   border: 'none',
-                  borderRadius: '20px',
-                  padding: '7px 14px',
-                  fontSize: '13px',
+                  borderRadius: '18px',
+                  padding: '6px 10px',
+                  fontSize: '12.5px',
                   fontWeight: isActive ? 900 : 700,
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '7px',
+                  gap: '6px',
                   zIndex: 1,
                   transition: 'color 0.2s ease, background 0.2s ease, transform 0.15s ease',
                   transform: isHovered && !isActive ? 'translateY(-1px)' : 'translateY(0)',
@@ -233,7 +233,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       inset: 0,
                       background: theme.badgeBg,
                       border: `1.5px solid ${theme.border}`,
-                      borderRadius: '20px',
+                      borderRadius: '18px',
                       boxShadow: `0 4px 14px ${theme.glow}`,
                       zIndex: -1,
                     }}
@@ -268,7 +268,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </nav>
 
         {/* ── Right Controls (Role Switcher & Live Status) ── */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
 
           {/* Role Switcher */}
           <div style={{ position: 'relative' }}>
@@ -278,11 +278,11 @@ export const Navbar: React.FC<NavbarProps> = ({
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px',
+                gap: '6px',
                 background: '#FFFFFF',
                 border: '1.5px solid rgba(203, 213, 225, 0.9)',
-                borderRadius: '20px',
-                padding: '7px 14px',
+                borderRadius: '18px',
+                padding: '6px 11px',
                 cursor: 'pointer',
                 fontSize: '12px',
                 fontWeight: 800,
@@ -371,10 +371,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
+              gap: '7px',
               background: '#FFFFFF',
-              padding: '7px 14px',
-              borderRadius: '20px',
+              padding: '6px 11px',
+              borderRadius: '18px',
               border: '1.5px solid rgba(203, 213, 225, 0.9)',
               fontSize: '12px',
               boxShadow: '0 2px 6px rgba(15, 23, 42, 0.04)',
