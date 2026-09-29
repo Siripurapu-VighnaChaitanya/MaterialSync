@@ -129,7 +129,7 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({ masterUser, onRequireA
       await api.submitDecision(selectedItem.match_id, apiDecision, reviewerNotes);
 
       const decisionText = decision === 'APPROVED' ? 'APPROVED & MERGED' : decision === 'REJECTED' ? 'REJECTED (DISTINCT)' : 'FLAGGED FOR LAB';
-      const signerName = masterUser?.displayName || 'Priya Sharma (Catalog Master)';
+      const signerName = masterUser?.displayName || 'Chaitanya (Catalog Master)';
       setFeedback(`Match ${selectedItem.match_id} recorded as ${decisionText}. Signed by ${signerName} & recorded to SHA-256 ledger.`);
 
       // Add to session history

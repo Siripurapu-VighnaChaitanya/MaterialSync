@@ -333,11 +333,11 @@ export const CatalogMasterAuthModal: React.FC<AuthModalProps> = ({
                       fontSize: '13px',
                       color: '#059669'
                     }}>
-                      PS
+                      C
                     </div>
                     <div>
                       <div style={{ fontSize: '13px', fontWeight: 900, color: '#0F172A' }}>
-                        Priya Sharma (Chief Data Steward)
+                        Chaitanya (Chief Data Steward)
                       </div>
                       <div style={{ fontSize: '11px', color: '#64748B' }}>
                         catalog.master@ongc.in • HQ Master Cell

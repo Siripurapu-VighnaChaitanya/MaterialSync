@@ -40,7 +40,7 @@ export interface MasterUserData {
 export const DEMO_CATALOG_MASTER: MasterUserData = {
   uid: 'cpse-master-001',
   email: 'catalog.master@ongc.in',
-  displayName: 'Priya Sharma',
+  displayName: 'Chaitanya',
   role: 'Catalog Master',
   organization: 'ONGC Central Master Data Cell (HQ)',
   designation: 'Chief Data Steward & Taxonomy Lead',
