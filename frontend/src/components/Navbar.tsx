@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Activity, ShieldCheck, Database, Search,
-  GitMerge, FileText, Upload, Cpu, ChevronDown, Home
+  GitMerge, Upload, Cpu, ChevronDown, Home
 } from 'lucide-react';
 import { Logo3D } from './3d/Logo3D';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface NavbarProps {
   activeTab: string;
@@ -21,10 +22,62 @@ const ROLES = [
   { id: 'auditor', label: 'Auditor' },
 ];
 
-const ROLE_COLORS: Record<string, string> = {
-  officer: '#22C55E',
-  approver: '#FACC15',
-  auditor: '#A3E635',
+const TAB_THEMES: Record<string, {
+  color: string;
+  badgeBg: string;
+  border: string;
+  glow: string;
+  hoverBg: string;
+}> = {
+  home: {
+    color: '#059669', // Emerald
+    badgeBg: 'rgba(5, 150, 105, 0.12)',
+    border: 'rgba(5, 150, 105, 0.38)',
+    glow: 'rgba(16, 185, 129, 0.22)',
+    hoverBg: 'rgba(5, 150, 105, 0.06)',
+  },
+  checker: {
+    color: '#0891B2', // Cyan
+    badgeBg: 'rgba(8, 145, 178, 0.12)',
+    border: 'rgba(8, 145, 178, 0.38)',
+    glow: 'rgba(6, 182, 212, 0.22)',
+    hoverBg: 'rgba(8, 145, 178, 0.06)',
+  },
+  bulk: {
+    color: '#7C3AED', // Violet
+    badgeBg: 'rgba(124, 58, 237, 0.12)',
+    border: 'rgba(124, 58, 237, 0.38)',
+    glow: 'rgba(139, 92, 246, 0.22)',
+    hoverBg: 'rgba(124, 58, 237, 0.06)',
+  },
+  clusters: {
+    color: '#D97706', // Amber
+    badgeBg: 'rgba(217, 119, 6, 0.12)',
+    border: 'rgba(217, 119, 6, 0.38)',
+    glow: 'rgba(245, 158, 11, 0.22)',
+    hoverBg: 'rgba(217, 119, 6, 0.06)',
+  },
+  review: {
+    color: '#E11D48', // Rose
+    badgeBg: 'rgba(225, 29, 72, 0.12)',
+    border: 'rgba(225, 29, 72, 0.38)',
+    glow: 'rgba(244, 63, 94, 0.22)',
+    hoverBg: 'rgba(225, 29, 72, 0.06)',
+  },
+  analytics: {
+    color: '#4F46E5', // Indigo
+    badgeBg: 'rgba(79, 70, 229, 0.12)',
+    border: 'rgba(79, 70, 229, 0.38)',
+    glow: 'rgba(99, 102, 241, 0.22)',
+    hoverBg: 'rgba(79, 70, 229, 0.06)',
+  },
+  unspsc: {
+    color: '#0D9488', // Teal
+    badgeBg: 'rgba(13, 148, 136, 0.12)',
+    border: 'rgba(13, 148, 136, 0.38)',
+    glow: 'rgba(20, 184, 166, 0.22)',
+    hoverBg: 'rgba(13, 148, 136, 0.06)',
+  },
 };
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -32,7 +85,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   setActiveTab,
   isBackendOnline,
   indexedMaterials,
-  onOpenDemoGuide,
   activeRole,
   setActiveRole,
 }) => {
@@ -50,14 +102,14 @@ export const Navbar: React.FC<NavbarProps> = ({
     (t) => !t.roleOnly || t.roleOnly === activeRole
   );
 
-  const [roleOpen, setRoleOpen] = React.useState(false);
+  const [roleOpen, setRoleOpen] = useState(false);
+  const [hoveredTab, setHoveredTab] = useState<string | null>(null);
   const activeRoleObj = ROLES.find((r) => r.id === activeRole) || ROLES[0];
 
   return (
     <header
-      /* Original Full-Width Sticky Header */
       style={{
-        background: 'rgba(255, 255, 255, 0.92)',
+        background: 'rgba(255, 255, 255, 0.94)',
         borderBottom: '1px solid rgba(226, 232, 240, 0.9)',
         position: 'sticky',
         top: 0,
@@ -67,6 +119,17 @@ export const Navbar: React.FC<NavbarProps> = ({
         boxShadow: '0 4px 20px rgba(15, 23, 42, 0.03)',
       }}
     >
+      {/* ── Top Radiant Accent Line ── */}
+      <div 
+        style={{
+          height: '2.5px',
+          width: '100%',
+          background: 'linear-gradient(90deg, #059669 0%, #06B6D4 20%, #7C3AED 40%, #E11D48 60%, #D97706 80%, #059669 100%)',
+          backgroundSize: '200% 100%',
+          animation: 'shimmer 8s linear infinite',
+        }} 
+      />
+
       <div
         className="responsive-navbar-container"
         style={{
@@ -76,15 +139,24 @@ export const Navbar: React.FC<NavbarProps> = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          height: '68px',
+          height: '66px',
           gap: '16px',
         }}
       >
-        {/* ── Brand ── */}
+        {/* ── Brand with 3D Hologram Logo ── */}
         <div
           id="navbar-brand-logo"
           title="MaterialSync - Home"
-          style={{ display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer', flexShrink: 0 }}
+          style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '12px', 
+            cursor: 'pointer', 
+            flexShrink: 0,
+            padding: '4px 6px',
+            borderRadius: '20px',
+            transition: 'transform 0.2s ease',
+          }}
           onClick={() => setActiveTab('home')}
         >
           <Logo3D />
@@ -107,20 +179,35 @@ export const Navbar: React.FC<NavbarProps> = ({
           </span>
         </div>
 
-        {/* ── Nav Tabs ── */}
-        <nav className="responsive-nav-tabs" style={{ display: 'flex', gap: '4px', flex: 1, justifyContent: 'center' }}>
+        {/* ── Nav Tabs with Smooth Sliding Spring Pill & Colorful Accents ── */}
+        <nav 
+          className="responsive-nav-tabs" 
+          style={{ 
+            display: 'flex', 
+            gap: '4px', 
+            flex: 1, 
+            justifyContent: 'center',
+            position: 'relative',
+          }}
+        >
           {visibleTabs.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
+            const isHovered = hoveredTab === item.id;
+            const theme = TAB_THEMES[item.id] || TAB_THEMES.home;
+
             return (
               <button
                 key={item.id}
                 id={`nav-tab-${item.id}`}
                 onClick={() => setActiveTab(item.id)}
+                onMouseEnter={() => setHoveredTab(item.id)}
+                onMouseLeave={() => setHoveredTab(null)}
                 style={{
-                  background: isActive ? 'rgba(5, 150, 105, 0.12)' : 'transparent',
-                  color: isActive ? '#059669' : '#000000',
-                  border: isActive ? '1.5px solid rgba(5, 150, 105, 0.4)' : '1.5px solid transparent',
+                  position: 'relative',
+                  background: isHovered && !isActive ? theme.hoverBg : 'transparent',
+                  color: isActive ? theme.color : (isHovered ? '#0F172A' : '#334155'),
+                  border: 'none',
                   borderRadius: '20px',
                   padding: '7px 14px',
                   fontSize: '13px',
@@ -129,17 +216,58 @@ export const Navbar: React.FC<NavbarProps> = ({
                   display: 'flex',
                   alignItems: 'center',
                   gap: '7px',
-                  transition: 'all 0.18s ease',
+                  zIndex: 1,
+                  transition: 'color 0.2s ease, background 0.2s ease, transform 0.15s ease',
+                  transform: isHovered && !isActive ? 'translateY(-1px)' : 'translateY(0)',
+                  outline: 'none',
+                  whiteSpace: 'nowrap',
                 }}
               >
-                <Icon size={14} />
+                {/* Smooth Sliding Pill on Active Tab */}
+                {isActive && (
+                  <motion.div
+                    layoutId="activeTabPill"
+                    transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: theme.badgeBg,
+                      border: `1.5px solid ${theme.border}`,
+                      borderRadius: '20px',
+                      boxShadow: `0 4px 14px ${theme.glow}`,
+                      zIndex: -1,
+                    }}
+                  />
+                )}
+
+                <Icon 
+                  size={14} 
+                  color={isActive ? theme.color : (isHovered ? theme.color : '#64748B')}
+                  style={{
+                    transition: 'color 0.2s ease, transform 0.2s ease',
+                    transform: isHovered ? 'scale(1.15)' : 'scale(1)',
+                  }}
+                />
                 <span>{item.label}</span>
+
+                {/* Active Glowing Micro Indicator Dot */}
+                {isActive && (
+                  <span 
+                    style={{
+                      width: '5px',
+                      height: '5px',
+                      borderRadius: '50%',
+                      backgroundColor: theme.color,
+                      boxShadow: `0 0 6px ${theme.color}`,
+                    }}
+                  />
+                )}
               </button>
             );
           })}
         </nav>
 
-        {/* ── Right Controls ── */}
+        {/* ── Right Controls (Role Switcher & Live Status) ── */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
 
           {/* Role Switcher */}
@@ -150,7 +278,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '6px',
+                gap: '8px',
                 background: '#FFFFFF',
                 border: '1.5px solid rgba(203, 213, 225, 0.9)',
                 borderRadius: '20px',
@@ -158,73 +286,92 @@ export const Navbar: React.FC<NavbarProps> = ({
                 cursor: 'pointer',
                 fontSize: '12px',
                 fontWeight: 800,
-                color: '#000000',
+                color: '#0F172A',
                 boxShadow: '0 2px 6px rgba(15, 23, 42, 0.04)',
                 transition: 'all 0.2s ease',
               }}
             >
-              <Cpu size={13} color="#059669" />
+              <div style={{
+                width: '18px',
+                height: '18px',
+                borderRadius: '50%',
+                background: 'rgba(5, 150, 105, 0.12)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+                <Cpu size={11} color="#059669" />
+              </div>
               <span>{activeRoleObj.label}</span>
               <ChevronDown size={12} style={{ transition: 'transform 0.2s', transform: roleOpen ? 'rotate(180deg)' : 'rotate(0)' }} />
             </button>
-            {roleOpen && (
-              <div
-                style={{
-                  position: 'absolute',
-                  top: '110%',
-                  right: 0,
-                  background: '#FFFFFF',
-                  border: '1.5px solid rgba(203, 213, 225, 0.9)',
-                  borderRadius: '12px',
-                  overflow: 'hidden',
-                  minWidth: '180px',
-                  boxShadow: '0 20px 50px rgba(15, 23, 42, 0.12)',
-                  zIndex: 200,
-                }}
-              >
-                {ROLES.map((r) => (
-                  <button
-                    key={r.id}
-                    id={`role-option-${r.id}`}
-                    onClick={() => { setActiveRole(r.id); setRoleOpen(false); }}
-                    style={{
-                      width: '100%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '10px',
-                      padding: '11px 16px',
-                      background: activeRole === r.id ? 'rgba(5, 150, 105, 0.1)' : 'transparent',
-                      color: activeRole === r.id ? '#059669' : '#000000',
-                      border: 'none',
-                      fontSize: '13px',
-                      fontWeight: 800,
-                      cursor: 'pointer',
-                      textAlign: 'left',
-                      transition: 'background 0.15s',
-                    }}
-                  >
-                    <span
+            <AnimatePresence>
+              {roleOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 6, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 6, scale: 0.96 }}
+                  transition={{ duration: 0.15 }}
+                  style={{
+                    position: 'absolute',
+                    top: '115%',
+                    right: 0,
+                    background: '#FFFFFF',
+                    border: '1.5px solid rgba(203, 213, 225, 0.9)',
+                    borderRadius: '14px',
+                    overflow: 'hidden',
+                    minWidth: '190px',
+                    boxShadow: '0 20px 50px rgba(15, 23, 42, 0.12)',
+                    zIndex: 200,
+                    padding: '5px',
+                  }}
+                >
+                  {ROLES.map((r) => (
+                    <button
+                      key={r.id}
+                      id={`role-option-${r.id}`}
+                      onClick={() => { setActiveRole(r.id); setRoleOpen(false); }}
                       style={{
-                        width: '8px',
-                        height: '8px',
-                        borderRadius: '50%',
-                        backgroundColor: '#059669',
-                        flexShrink: 0,
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        padding: '10px 14px',
+                        background: activeRole === r.id ? 'rgba(5, 150, 105, 0.1)' : 'transparent',
+                        color: activeRole === r.id ? '#059669' : '#0F172A',
+                        borderRadius: '10px',
+                        border: 'none',
+                        fontSize: '13px',
+                        fontWeight: 800,
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        transition: 'background 0.15s',
                       }}
-                    />
-                    {r.label}
-                  </button>
-                ))}
-              </div>
-            )}
+                    >
+                      <span
+                        style={{
+                          width: '8px',
+                          height: '8px',
+                          borderRadius: '50%',
+                          backgroundColor: '#059669',
+                          boxShadow: activeRole === r.id ? '0 0 8px #059669' : 'none',
+                          flexShrink: 0,
+                        }}
+                      />
+                      {r.label}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
-          {/* Backend Status */}
+          {/* Backend Status Live Beacon */}
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '7px',
+              gap: '8px',
               background: '#FFFFFF',
               padding: '7px 14px',
               borderRadius: '20px',
@@ -235,19 +382,19 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             <span
               style={{
-                width: '7px',
-                height: '7px',
+                width: '8px',
+                height: '8px',
                 borderRadius: '50%',
                 backgroundColor: isBackendOnline ? '#10B981' : '#EF4444',
-                boxShadow: isBackendOnline ? '0 0 8px #10B981' : '0 0 8px #EF4444',
-                animation: isBackendOnline ? 'glow-pulse 2.5s infinite' : 'none',
+                boxShadow: isBackendOnline ? '0 0 10px #10B981, 0 0 18px rgba(16, 185, 129, 0.4)' : '0 0 8px #EF4444',
+                animation: isBackendOnline ? 'pulse-soft 2s ease-in-out infinite' : 'none',
               }}
             />
             <span style={{ color: isBackendOnline ? '#059669' : '#EF4444', fontWeight: 900 }}>
               {isBackendOnline ? 'Live' : 'Offline'}
             </span>
             <span style={{ color: 'rgba(203, 213, 225, 0.8)' }}>|</span>
-            <span style={{ color: '#000000', fontWeight: 800 }}>
+            <span style={{ color: '#0F172A', fontWeight: 800 }}>
               {indexedMaterials.toLocaleString()} SKUs
             </span>
           </div>
