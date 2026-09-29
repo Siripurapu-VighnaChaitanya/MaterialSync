@@ -20,6 +20,38 @@ import {
 } from 'lucide-react';
 import { api } from '../services/api';
 import { KPIStats } from '../types';
+import { motion } from 'framer-motion';
+
+/* ─── Animated Number Counter Component ─── */
+const AnimatedCounter: React.FC<{ value: number; decimals?: number; duration?: number; prefix?: string }> = ({
+  value,
+  decimals = 1,
+  duration = 1200,
+  prefix = '₹'
+}) => {
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    let startTime: number | null = null;
+    let animId: number;
+
+    const animate = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      setDisplayValue(Number((value * ease).toFixed(decimals)));
+
+      if (progress < 1) {
+        animId = requestAnimationFrame(animate);
+      }
+    };
+
+    animId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animId);
+  }, [value, decimals, duration]);
+
+  return <span>{prefix}{displayValue.toLocaleString('en-IN', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}</span>;
+};
 
 export const AnalyticsView: React.FC = () => {
   const [stats, setStats] = useState<KPIStats | null>(null);
@@ -188,7 +220,12 @@ export const AnalyticsView: React.FC = () => {
             Dead working capital liberated across 4 CPSEs
           </span>
           <div style={{ marginTop: '12px', height: '4px', background: '#E2E8F0', borderRadius: '2px', overflow: 'hidden' }}>
-            <div style={{ width: '78%', height: '100%', background: '#059669' }} />
+            <motion.div
+              initial={{ width: '0%' }}
+              animate={{ width: '78%' }}
+              transition={{ duration: 1.0, ease: 'easeOut', delay: 0.1 }}
+              style={{ height: '100%', background: '#059669' }}
+            />
           </div>
         </div>
 
@@ -208,7 +245,12 @@ export const AnalyticsView: React.FC = () => {
             Inter-enterprise catalogue duplication rate
           </span>
           <div style={{ marginTop: '12px', height: '4px', background: '#E2E8F0', borderRadius: '2px', overflow: 'hidden' }}>
-            <div style={{ width: '69%', height: '100%', background: '#D97706' }} />
+            <motion.div
+              initial={{ width: '0%' }}
+              animate={{ width: '69%' }}
+              transition={{ duration: 1.0, ease: 'easeOut', delay: 0.2 }}
+              style={{ height: '100%', background: '#D97706' }}
+            />
           </div>
         </div>
 
@@ -228,7 +270,12 @@ export const AnalyticsView: React.FC = () => {
             Harmonized across 141 canonical clusters
           </span>
           <div style={{ marginTop: '12px', height: '4px', background: '#E2E8F0', borderRadius: '2px', overflow: 'hidden' }}>
-            <div style={{ width: '92%', height: '100%', background: '#0284C7' }} />
+            <motion.div
+              initial={{ width: '0%' }}
+              animate={{ width: '92%' }}
+              transition={{ duration: 1.0, ease: 'easeOut', delay: 0.3 }}
+              style={{ height: '100%', background: '#0284C7' }}
+            />
           </div>
         </div>
 
@@ -248,7 +295,12 @@ export const AnalyticsView: React.FC = () => {
             Procurement interchangeability readiness
           </span>
           <div style={{ marginTop: '12px', height: '4px', background: '#E2E8F0', borderRadius: '2px', overflow: 'hidden' }}>
-            <div style={{ width: '93%', height: '100%', background: '#059669' }} />
+            <motion.div
+              initial={{ width: '0%' }}
+              animate={{ width: '93%' }}
+              transition={{ duration: 1.0, ease: 'easeOut', delay: 0.4 }}
+              style={{ height: '100%', background: '#059669' }}
+            />
           </div>
         </div>
       </div>
@@ -287,6 +339,23 @@ export const AnalyticsView: React.FC = () => {
               {/* Responsive SVG Bar Chart */}
               <div style={{ width: '100%', height: '260px', position: 'relative' }}>
                 <svg viewBox="0 0 520 220" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
+                  <defs>
+                    <linearGradient id="savingsBarGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#10B981" />
+                      <stop offset="100%" stopColor="#059669" />
+                    </linearGradient>
+                    <linearGradient id="redundancyBarGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#F59E0B" />
+                      <stop offset="100%" stopColor="#D97706" />
+                    </linearGradient>
+                    <filter id="barGlowGreen" x="-20%" y="-20%" width="140%" height="140%">
+                      <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#059669" floodOpacity="0.45" />
+                    </filter>
+                    <filter id="barGlowAmber" x="-20%" y="-20%" width="140%" height="140%">
+                      <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#D97706" floodOpacity="0.45" />
+                    </filter>
+                  </defs>
+
                   {/* Horizontal Grid Lines */}
                   {[0, 50, 100, 150].map((y, idx) => (
                     <g key={idx}>
@@ -299,9 +368,9 @@ export const AnalyticsView: React.FC = () => {
                   <line x1="45" y1="200" x2="510" y2="200" stroke="#CBD5E1" strokeWidth="1.5" />
                   <text x="38" y="204" textAnchor="end" fontSize="10" fill="#000000" fontWeight="800">₹0</text>
 
-                  {/* Bars for each CPSE */}
+                  {/* Bars for each CPSE with Staggered Rise Animation */}
                   {cpseMatrix.map((item, idx) => {
-                    const groupX = 75 + idx * 115;
+                    const groupX = 68 + idx * 116;
                     const isHovered = hoveredCpse === item.code;
                     // Scale: 20 Cr max = 180px height
                     const bar1Height = (item.savings / 20) * 180;
@@ -311,6 +380,11 @@ export const AnalyticsView: React.FC = () => {
                     const bar2Height = (item.redundancyVal / 100) * 180;
                     const bar2Y = 200 - bar2Height;
 
+                    // Prevent label collision when heights are nearly identical
+                    const isClose = Math.abs(bar1Y - bar2Y) < 14;
+                    const label1Y = isClose ? bar1Y - 14 : bar1Y - 6;
+                    const label2Y = bar2Y - 6;
+
                     return (
                       <g
                         key={item.code}
@@ -318,62 +392,73 @@ export const AnalyticsView: React.FC = () => {
                         onMouseLeave={() => setHoveredCpse(null)}
                         style={{ cursor: 'pointer' }}
                       >
-                        {/* Savings Bar (Green) */}
-                        <rect
+                        {/* Savings Bar (Green Gradient with Smooth Rise) */}
+                        <motion.rect
                           x={groupX}
-                          y={bar1Y}
-                          width="24"
-                          height={bar1Height}
+                          initial={{ height: 0, y: 200 }}
+                          animate={{ height: bar1Height, y: bar1Y }}
+                          transition={{ duration: 0.95, delay: idx * 0.12, ease: [0.16, 1, 0.3, 1] }}
+                          width="23"
                           rx="4"
-                          fill={isHovered ? '#047857' : '#059669'}
-                          style={{ transition: 'all 0.2s ease' }}
+                          fill={isHovered ? '#047857' : 'url(#savingsBarGrad)'}
+                          filter={isHovered ? 'url(#barGlowGreen)' : 'none'}
+                          style={{ transition: 'fill 0.2s ease' }}
                         />
                         {/* Value label over savings bar */}
-                        <text
-                          x={groupX + 12}
-                          y={bar1Y - 6}
+                        <motion.text
+                          x={groupX + 11.5}
+                          initial={{ opacity: 0, y: 200 }}
+                          animate={{ opacity: 1, y: label1Y }}
+                          transition={{ duration: 0.5, delay: 0.35 + idx * 0.12 }}
                           textAnchor="middle"
-                          fontSize="10"
+                          fontSize="9.5"
                           fontWeight="900"
                           fill="#047857"
                         >
                           ₹{item.savings}Cr
-                        </text>
+                        </motion.text>
 
-                        {/* Redundancy Bar (Amber) */}
-                        <rect
-                          x={groupX + 28}
-                          y={bar2Y}
-                          width="24"
-                          height={bar2Height}
+                        {/* Redundancy Bar (Amber Gradient with Smooth Rise) */}
+                        <motion.rect
+                          x={groupX + 27}
+                          initial={{ height: 0, y: 200 }}
+                          animate={{ height: bar2Height, y: bar2Y }}
+                          transition={{ duration: 0.95, delay: idx * 0.12 + 0.08, ease: [0.16, 1, 0.3, 1] }}
+                          width="23"
                           rx="4"
-                          fill={isHovered ? '#B45309' : '#D97706'}
-                          opacity={0.9}
-                          style={{ transition: 'all 0.2s ease' }}
+                          fill={isHovered ? '#B45309' : 'url(#redundancyBarGrad)'}
+                          filter={isHovered ? 'url(#barGlowAmber)' : 'none'}
+                          opacity={0.95}
+                          style={{ transition: 'fill 0.2s ease' }}
                         />
                         {/* Value label over redundancy bar */}
-                        <text
-                          x={groupX + 40}
-                          y={bar2Y - 6}
+                        <motion.text
+                          x={groupX + 38.5}
+                          initial={{ opacity: 0, y: 200 }}
+                          animate={{ opacity: 1, y: label2Y }}
+                          transition={{ duration: 0.5, delay: 0.4 + idx * 0.12 }}
                           textAnchor="middle"
-                          fontSize="10"
+                          fontSize="9.5"
                           fontWeight="900"
                           fill="#B45309"
                         >
                           {item.redundancy}
-                        </text>
+                        </motion.text>
 
                         {/* X-axis Label */}
-                        <text
-                          x={groupX + 26}
+                        <motion.text
+                          x={groupX + 25}
                           y="218"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: 0.2 + idx * 0.1 }}
                           textAnchor="middle"
                           fontSize="12"
                           fontWeight="900"
                           fill={isHovered ? '#059669' : '#000000'}
                         >
                           {item.code}
-                        </text>
+                        </motion.text>
                       </g>
                     );
                   })}
@@ -412,68 +497,126 @@ export const AnalyticsView: React.FC = () => {
                   Where the annual fiscal returns materialize across enterprise balance sheets.
                 </p>
 
-                {/* Donut Chart Visual */}
+                {/* Donut Chart Visual with Clockwise Segment Animations */}
                 <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '28px' }}>
                   <div style={{ position: 'relative', width: '180px', height: '180px', flexShrink: 0 }}>
-                    <svg viewBox="0 0 200 200" style={{ transform: 'rotate(-90deg)', width: '100%', height: '100%' }}>
-                      {/* Segment 1: Avoided PO Spend (Amber) */}
+                    <svg viewBox="0 0 200 200" style={{ transform: 'rotate(-90deg)', width: '100%', height: '100%', overflow: 'visible' }}>
+                      <defs>
+                        <linearGradient id="poSliceGrad" x1="0" y1="0" x2="1" y2="1">
+                          <stop offset="0%" stopColor="#F59E0B" />
+                          <stop offset="100%" stopColor="#D97706" />
+                        </linearGradient>
+                        <linearGradient id="carryingSliceGrad" x1="0" y1="0" x2="1" y2="1">
+                          <stop offset="0%" stopColor="#34D399" />
+                          <stop offset="100%" stopColor="#059669" />
+                        </linearGradient>
+                        <linearGradient id="sharingSliceGrad" x1="0" y1="0" x2="1" y2="1">
+                          <stop offset="0%" stopColor="#38BDF8" />
+                          <stop offset="100%" stopColor="#0284C7" />
+                        </linearGradient>
+                      </defs>
+
+                      {/* Subtle track background circle */}
                       <circle
                         cx="100"
                         cy="100"
                         r="70"
                         fill="transparent"
-                        stroke="#D97706"
-                        strokeWidth={hoveredSlice === 'po' ? '28' : '22'}
-                        strokeDasharray={`${avoidedPct * 439.8} 439.8`}
+                        stroke="#F1F5F9"
+                        strokeWidth="20"
+                      />
+
+                      {/* Segment 1: Avoided PO Spend (Amber with animated draw-in) */}
+                      <motion.circle
+                        cx="100"
+                        cy="100"
+                        r="70"
+                        fill="transparent"
+                        stroke="url(#poSliceGrad)"
+                        strokeWidth={hoveredSlice === 'po' ? 28 : 22}
+                        initial={{ strokeDasharray: `0 439.8` }}
+                        animate={{ strokeDasharray: `${avoidedPct * 439.8} 439.8` }}
+                        transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
                         strokeDashoffset="0"
+                        strokeLinecap="round"
                         onMouseEnter={() => setHoveredSlice('po')}
                         onMouseLeave={() => setHoveredSlice(null)}
-                        style={{ transition: 'all 0.2s ease', cursor: 'pointer' }}
+                        style={{
+                          transition: 'stroke-width 0.25s ease, filter 0.25s ease',
+                          cursor: 'pointer',
+                          filter: hoveredSlice === 'po' ? 'drop-shadow(0 0 10px rgba(217,119,6,0.65))' : 'none'
+                        }}
                       />
-                      {/* Segment 2: Carrying Cost (Emerald) */}
-                      <circle
+                      {/* Segment 2: Carrying Cost (Emerald with sequential draw-in) */}
+                      <motion.circle
                         cx="100"
                         cy="100"
                         r="70"
                         fill="transparent"
-                        stroke="#059669"
-                        strokeWidth={hoveredSlice === 'carrying' ? '28' : '22'}
-                        strokeDasharray={`${carryingPct * 439.8} 439.8`}
+                        stroke="url(#carryingSliceGrad)"
+                        strokeWidth={hoveredSlice === 'carrying' ? 28 : 22}
+                        initial={{ strokeDasharray: `0 439.8` }}
+                        animate={{ strokeDasharray: `${carryingPct * 439.8} 439.8` }}
+                        transition={{ duration: 1.1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
                         strokeDashoffset={`-${avoidedPct * 439.8}`}
+                        strokeLinecap="round"
                         onMouseEnter={() => setHoveredSlice('carrying')}
                         onMouseLeave={() => setHoveredSlice(null)}
-                        style={{ transition: 'all 0.2s ease', cursor: 'pointer' }}
+                        style={{
+                          transition: 'stroke-width 0.25s ease, filter 0.25s ease',
+                          cursor: 'pointer',
+                          filter: hoveredSlice === 'carrying' ? 'drop-shadow(0 0 10px rgba(5,150,105,0.65))' : 'none'
+                        }}
                       />
-                      {/* Segment 3: Inter-CPSE Sharing (Teal) */}
-                      <circle
+                      {/* Segment 3: Inter-CPSE Sharing (Blue with sequential draw-in) */}
+                      <motion.circle
                         cx="100"
                         cy="100"
                         r="70"
                         fill="transparent"
-                        stroke="#0284C7"
-                        strokeWidth={hoveredSlice === 'sharing' ? '28' : '22'}
-                        strokeDasharray={`${sharingPct * 439.8} 439.8`}
+                        stroke="url(#sharingSliceGrad)"
+                        strokeWidth={hoveredSlice === 'sharing' ? 28 : 22}
+                        initial={{ strokeDasharray: `0 439.8` }}
+                        animate={{ strokeDasharray: `${sharingPct * 439.8} 439.8` }}
+                        transition={{ duration: 1.1, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
                         strokeDashoffset={`-${(avoidedPct + carryingPct) * 439.8}`}
+                        strokeLinecap="round"
                         onMouseEnter={() => setHoveredSlice('sharing')}
                         onMouseLeave={() => setHoveredSlice(null)}
-                        style={{ transition: 'all 0.2s ease', cursor: 'pointer' }}
+                        style={{
+                          transition: 'stroke-width 0.25s ease, filter 0.25s ease',
+                          cursor: 'pointer',
+                          filter: hoveredSlice === 'sharing' ? 'drop-shadow(0 0 10px rgba(2,132,199,0.65))' : 'none'
+                        }}
                       />
                     </svg>
 
-                    {/* Center Text inside Donut */}
+                    {/* Center Text inside Donut with Animated Counter */}
                     <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center', pointerEvents: 'none' }}>
-                      <div style={{ fontSize: '20px', fontWeight: 900, color: '#000000', lineHeight: 1 }}>
-                        ₹{totalAnnualSavings.toLocaleString('en-IN')}
-                      </div>
-                      <div style={{ fontSize: '11px', fontWeight: 900, color: '#047857', marginTop: '3px' }}>
+                      <motion.div
+                        initial={{ scale: 0.6, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
+                        style={{ fontSize: '20px', fontWeight: 900, color: '#000000', lineHeight: 1 }}
+                      >
+                        <AnimatedCounter value={totalAnnualSavings} />
+                      </motion.div>
+                      <motion.div
+                        initial={{ opacity: 0, y: 4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.5 }}
+                        style={{ fontSize: '11px', fontWeight: 900, color: '#047857', marginTop: '3px' }}
+                      >
                         Cr / year
-                      </div>
+                      </motion.div>
                     </div>
                   </div>
 
                   {/* Legend Column */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', flex: 1, minWidth: '200px' }}>
-                    <div
+                    <motion.div
+                      whileHover={{ scale: 1.02, x: 4 }}
+                      transition={{ type: 'spring', stiffness: 350, damping: 25 }}
                       onMouseEnter={() => setHoveredSlice('po')}
                       onMouseLeave={() => setHoveredSlice(null)}
                       style={{ padding: '8px 12px', borderRadius: '8px', background: hoveredSlice === 'po' ? 'rgba(217, 119, 6, 0.12)' : '#F8FAFC', border: '1.5px solid rgba(203, 213, 225, 0.9)', cursor: 'pointer', transition: 'all 0.15s' }}
@@ -488,9 +631,11 @@ export const AnalyticsView: React.FC = () => {
                       <div style={{ fontSize: '11px', color: '#000000', fontWeight: 700, marginLeft: '16px', marginTop: '2px' }}>
                         {Math.round(avoidedPct * 100)}% of total balance sheet savings
                       </div>
-                    </div>
+                    </motion.div>
 
-                    <div
+                    <motion.div
+                      whileHover={{ scale: 1.02, x: 4 }}
+                      transition={{ type: 'spring', stiffness: 350, damping: 25 }}
                       onMouseEnter={() => setHoveredSlice('carrying')}
                       onMouseLeave={() => setHoveredSlice(null)}
                       style={{ padding: '8px 12px', borderRadius: '8px', background: hoveredSlice === 'carrying' ? 'rgba(5, 150, 105, 0.12)' : '#F8FAFC', border: '1.5px solid rgba(203, 213, 225, 0.9)', cursor: 'pointer', transition: 'all 0.15s' }}
@@ -505,9 +650,11 @@ export const AnalyticsView: React.FC = () => {
                       <div style={{ fontSize: '11px', color: '#000000', fontWeight: 700, marginLeft: '16px', marginTop: '2px' }}>
                         {Math.round(carryingPct * 100)}% reduced warehouse holding expense
                       </div>
-                    </div>
+                    </motion.div>
 
-                    <div
+                    <motion.div
+                      whileHover={{ scale: 1.02, x: 4 }}
+                      transition={{ type: 'spring', stiffness: 350, damping: 25 }}
                       onMouseEnter={() => setHoveredSlice('sharing')}
                       onMouseLeave={() => setHoveredSlice(null)}
                       style={{ padding: '8px 12px', borderRadius: '8px', background: hoveredSlice === 'sharing' ? 'rgba(2, 132, 199, 0.12)' : '#F8FAFC', border: '1.5px solid rgba(203, 213, 225, 0.9)', cursor: 'pointer', transition: 'all 0.15s' }}
@@ -522,7 +669,7 @@ export const AnalyticsView: React.FC = () => {
                       <div style={{ fontSize: '11px', color: '#000000', fontWeight: 700, marginLeft: '16px', marginTop: '2px' }}>
                         {Math.round(sharingPct * 100)}% inter-enterprise transfer offsets
                       </div>
-                    </div>
+                    </motion.div>
                   </div>
                 </div>
               </div>
@@ -585,10 +732,11 @@ export const AnalyticsView: React.FC = () => {
                 <line x1="80" y1="166" x2="600" y2="162" stroke="#DC2626" strokeWidth="2" strokeDasharray="4,4" />
                 <text x="605" y="164" fontSize="9" fontWeight="900" fill="#DC2626">₹3.5Cr Total CapEx</text>
 
-                {/* Area Fill Under Curve */}
-                {/* Year coords: X: 80, 210, 340, 470, 600 */}
-                {/* Scaled Y coords based on max 800 Cr: (1 - savings/800) * 160 + 10 */}
-                <path
+                {/* Area Fill Under Curve with Fade-in */}
+                <motion.path
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 1.2, delay: 0.4 }}
                   d={`M 80 170 
                       L 80 ${Math.max(15, 170 - (fiveYearData[0].savings / 800) * 160)} 
                       L 210 ${Math.max(15, 170 - (fiveYearData[1].savings / 800) * 160)} 
@@ -599,8 +747,11 @@ export const AnalyticsView: React.FC = () => {
                   fill="url(#curveGradient)"
                 />
 
-                {/* Glowing Trend Line */}
-                <path
+                {/* Glowing Trend Line with Path Drawing Animation */}
+                <motion.path
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
                   d={`M 80 ${Math.max(15, 170 - (fiveYearData[0].savings / 800) * 160)} 
                       L 210 ${Math.max(15, 170 - (fiveYearData[1].savings / 800) * 160)} 
                       L 340 ${Math.max(15, 170 - (fiveYearData[2].savings / 800) * 160)} 
@@ -613,12 +764,18 @@ export const AnalyticsView: React.FC = () => {
                   strokeLinejoin="round"
                 />
 
-                {/* Data Points with Badges */}
+                {/* Data Points with Pop-in Animation */}
                 {fiveYearData.map((d, i) => {
                   const px = 80 + i * 130;
                   const py = Math.max(15, 170 - (d.savings / 800) * 160);
                   return (
-                    <g key={d.year}>
+                    <motion.g
+                      key={d.year}
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ duration: 0.5, delay: 0.5 + i * 0.12, type: 'spring', stiffness: 300, damping: 20 }}
+                      style={{ originX: `${px}px`, originY: `${py}px` }}
+                    >
                       {/* Outer pulse */}
                       <circle cx={px} cy={py} r="7" fill="#FFFFFF" stroke="#059669" strokeWidth="3" />
                       {/* Value callout */}
@@ -630,7 +787,7 @@ export const AnalyticsView: React.FC = () => {
                       <text x={px} y="185" textAnchor="middle" fontSize="11" fontWeight="900" fill="#000000">
                         {d.year}
                       </text>
-                    </g>
+                    </motion.g>
                   );
                 })}
               </svg>
