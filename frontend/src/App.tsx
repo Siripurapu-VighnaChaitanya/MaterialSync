@@ -8,11 +8,13 @@ import { ReviewQueue } from './components/ReviewQueue';
 import { AnalyticsView } from './components/AnalyticsView';
 import { UNSPSCView } from './components/UNSPSCView';
 import { DemoGuideModal } from './components/DemoGuideModal';
+import { CatalogMasterAuthModal } from './components/CatalogMasterAuthModal';
 import { CanvasBackground } from './components/3d/CanvasBackground';
 import { LandingPage } from './components/LandingPage';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { api } from './services/api';
 import { AnimatePresence, motion } from 'framer-motion';
+import { MasterUserData, getActiveMasterSession, firebaseSignOut } from './services/firebase';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState('home');
@@ -20,6 +22,37 @@ export const App: React.FC = () => {
   const [isBackendOnline, setIsBackendOnline] = useState(false);
   const [indexedMaterials, setIndexedMaterials] = useState(456);
   const [isDemoGuideOpen, setIsDemoGuideOpen] = useState(false);
+
+  // Catalog Master Authentication State
+  const [masterUser, setMasterUser] = useState<MasterUserData | null>(() => getActiveMasterSession());
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authContextText, setAuthContextText] = useState<string | null>(null);
+  const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
+
+  const handleRequireMasterAuth = (onSuccessAction?: () => void, contextText?: string) => {
+    if (onSuccessAction) {
+      setPendingAction(() => onSuccessAction);
+    } else {
+      setPendingAction(null);
+    }
+    setAuthContextText(contextText || "Catalog Master Authorization Required");
+    setIsAuthModalOpen(true);
+  };
+
+  const handleAuthSuccess = (user: MasterUserData) => {
+    setMasterUser(user);
+    setActiveRole('approver');
+    if (pendingAction) {
+      pendingAction();
+      setPendingAction(null);
+    }
+  };
+
+  const handleSignOutMaster = async () => {
+    await firebaseSignOut();
+    setMasterUser(null);
+    setActiveRole('officer');
+  };
 
   const checkHealth = useCallback(async () => {
     try {
@@ -73,6 +106,9 @@ export const App: React.FC = () => {
           onOpenDemoGuide={() => setIsDemoGuideOpen(true)}
           activeRole={activeRole}
           setActiveRole={setActiveRole}
+          masterUser={masterUser}
+          onRequireMasterAuth={handleRequireMasterAuth}
+          onSignOutMaster={handleSignOutMaster}
         />
 
         {/* Main Content Sections */}
@@ -97,7 +133,12 @@ export const App: React.FC = () => {
                 
                 {activeTab === 'bulk' && <BulkUploadView />}
                 {activeTab === 'clusters' && <ClusterExplorer />}
-                {activeTab === 'review' && <ReviewQueue />}
+                {activeTab === 'review' && (
+                  <ReviewQueue
+                    masterUser={masterUser}
+                    onRequireAuth={handleRequireMasterAuth}
+                  />
+                )}
                 {activeTab === 'analytics' && <AnalyticsView />}
                 {activeTab === 'unspsc' && <UNSPSCView />}
               </motion.div>
@@ -112,6 +153,14 @@ export const App: React.FC = () => {
             onSelectStep={handleSelectDemoStep}
           />
         )}
+
+        {/* Catalog Master Security Auth Modal */}
+        <CatalogMasterAuthModal
+          isOpen={isAuthModalOpen}
+          onClose={() => { setIsAuthModalOpen(false); setPendingAction(null); }}
+          onSuccess={handleAuthSuccess}
+          actionContext={authContextText}
+        />
 
         {/* Footer */}
         {activeTab !== 'clusters' && (

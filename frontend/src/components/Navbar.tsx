@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { Logo3D } from './3d/Logo3D';
 import { motion, AnimatePresence } from 'framer-motion';
+import { MasterUserData } from '../services/firebase';
 
 interface NavbarProps {
   activeTab: string;
@@ -14,6 +15,9 @@ interface NavbarProps {
   onOpenDemoGuide: () => void;
   activeRole: string;
   setActiveRole: (role: string) => void;
+  masterUser?: MasterUserData | null;
+  onRequireMasterAuth?: (onSuccessAction?: () => void, contextText?: string) => void;
+  onSignOutMaster?: () => void;
 }
 
 const ROLES = [
@@ -85,8 +89,12 @@ export const Navbar: React.FC<NavbarProps> = ({
   setActiveTab,
   isBackendOnline,
   indexedMaterials,
+  onOpenDemoGuide,
   activeRole,
   setActiveRole,
+  masterUser,
+  onRequireMasterAuth,
+  onSignOutMaster,
 }) => {
   const navItems = [
     { id: 'home', label: 'Home', icon: Home },
@@ -98,9 +106,12 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'unspsc', label: 'UNSPSC Taxonomy', icon: Database },
   ];
 
-  const visibleTabs = navItems.filter(
-    (t) => !t.roleOnly || t.roleOnly === activeRole
-  );
+  const visibleTabs = navItems.filter((t) => {
+    if (t.id === 'review') {
+      return activeRole === 'officer' || activeRole === 'approver';
+    }
+    return !t.roleOnly || t.roleOnly === activeRole;
+  });
 
   const [roleOpen, setRoleOpen] = useState(false);
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
@@ -330,7 +341,17 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <button
                       key={r.id}
                       id={`role-option-${r.id}`}
-                      onClick={() => { setActiveRole(r.id); setRoleOpen(false); }}
+                      onClick={() => {
+                        if (r.id === 'approver') {
+                          if (!masterUser && onRequireMasterAuth) {
+                            onRequireMasterAuth(() => setActiveRole('approver'), "Switching to Catalog Master Role");
+                            setRoleOpen(false);
+                            return;
+                          }
+                        }
+                        setActiveRole(r.id);
+                        setRoleOpen(false);
+                      }}
                       style={{
                         width: '100%',
                         display: 'flex',
@@ -361,6 +382,44 @@ export const Navbar: React.FC<NavbarProps> = ({
                       {r.label}
                     </button>
                   ))}
+
+                  {/* Active Master Session Card & Sign Out */}
+                  {masterUser && (
+                    <div style={{
+                      marginTop: '6px',
+                      padding: '8px 10px',
+                      background: '#F0FDF4',
+                      border: '1px solid #BBF7D0',
+                      borderRadius: '10px',
+                    }}>
+                      <div style={{ fontSize: '11px', fontWeight: 900, color: '#166534', display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '2px' }}>
+                        <ShieldCheck size={12} color="#16a34a" />
+                        <span>{masterUser.displayName}</span>
+                      </div>
+                      <div style={{ fontSize: '10px', color: '#64748b', marginBottom: '6px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {masterUser.email}
+                      </div>
+                      <button
+                        onClick={() => {
+                          onSignOutMaster && onSignOutMaster();
+                          setRoleOpen(false);
+                        }}
+                        style={{
+                          width: '100%',
+                          background: '#FEE2E2',
+                          color: '#DC2626',
+                          border: '1px solid #FECACA',
+                          borderRadius: '6px',
+                          padding: '5px',
+                          fontSize: '11px',
+                          fontWeight: 800,
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Sign Out Master
+                      </button>
+                    </div>
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>

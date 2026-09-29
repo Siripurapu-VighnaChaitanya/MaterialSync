@@ -16,10 +16,17 @@ import {
   ArrowRight,
   HelpCircle,
   Zap,
-  Info
+  Info,
+  Lock
 } from 'lucide-react';
 import { api } from '../services/api';
 import { ReviewQueueItem } from '../types';
+import { MasterUserData } from '../services/firebase';
+
+interface ReviewQueueProps {
+  masterUser?: MasterUserData | null;
+  onRequireAuth?: (action: () => void, contextText: string) => void;
+}
 
 interface ResolvedDecision {
   match_id: string;
@@ -67,7 +74,7 @@ const extractItemAttributes = (desc: string): ExtractedAttrs => {
   return { component, grade, size, ratingOrSchedule, processType };
 };
 
-export const ReviewQueue: React.FC = () => {
+export const ReviewQueue: React.FC<ReviewQueueProps> = ({ masterUser, onRequireAuth }) => {
   const [items, setItems] = useState<ReviewQueueItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState<ReviewQueueItem | null>(null);
@@ -103,6 +110,17 @@ export const ReviewQueue: React.FC = () => {
     }
   };
 
+  const onAttemptDecision = (decision: 'APPROVED' | 'REJECTED' | 'LAB_HOLD') => {
+    if (!masterUser && onRequireAuth) {
+      onRequireAuth(
+        () => handleDecision(decision),
+        decision === 'APPROVED' ? 'Approve & Merge Material Codes' : 'Sign Catalog Master Decision'
+      );
+      return;
+    }
+    handleDecision(decision);
+  };
+
   const handleDecision = async (decision: 'APPROVED' | 'REJECTED' | 'LAB_HOLD') => {
     if (!selectedItem) return;
     try {
@@ -111,7 +129,8 @@ export const ReviewQueue: React.FC = () => {
       await api.submitDecision(selectedItem.match_id, apiDecision, reviewerNotes);
 
       const decisionText = decision === 'APPROVED' ? 'APPROVED & MERGED' : decision === 'REJECTED' ? 'REJECTED (DISTINCT)' : 'FLAGGED FOR LAB';
-      setFeedback(`Match ${selectedItem.match_id} recorded as ${decisionText}. SHA-256 ledger updated.`);
+      const signerName = masterUser?.displayName || 'Priya Sharma (Catalog Master)';
+      setFeedback(`Match ${selectedItem.match_id} recorded as ${decisionText}. Signed by ${signerName} & recorded to SHA-256 ledger.`);
 
       // Add to session history
       const resolved: ResolvedDecision = {
@@ -121,7 +140,7 @@ export const ReviewQueue: React.FC = () => {
         cpse_a: selectedItem.cpse_a,
         cpse_b: selectedItem.cpse_b,
         decision,
-        notes: reviewerNotes || 'Verified by procurement officer',
+        notes: reviewerNotes || `Verified & Cryptographically Signed by ${signerName}`,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
       setResolvedHistory((prev) => [resolved, ...prev]);
@@ -456,7 +475,7 @@ export const ReviewQueue: React.FC = () => {
             <div className="glass-panel" style={{ padding: '26px', background: '#FFFFFF', border: '1.5px solid rgba(203, 213, 225, 0.9)', boxShadow: '0 4px 20px rgba(0,0,0,0.04)' }}>
               
               {/* Comparison Header with Interlock Badge */}
-              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <span style={{ fontSize: '11px', color: '#000000', textTransform: 'uppercase', fontWeight: 900, letterSpacing: '0.05em' }}>
@@ -478,6 +497,65 @@ export const ReviewQueue: React.FC = () => {
                   <span style={{ fontSize: '10px', color: '#000000', display: 'block', fontWeight: 900 }}>VECTOR + ATTRIBUTE CONFIDENCE</span>
                 </div>
               </div>
+
+              {/* Master Authentication Security Banner */}
+              {masterUser ? (
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  background: 'rgba(5, 150, 105, 0.08)',
+                  border: '1.2px solid rgba(5, 150, 105, 0.3)',
+                  borderRadius: '10px',
+                  padding: '8px 14px',
+                  marginBottom: '18px'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <ShieldCheck size={16} color="#059669" />
+                    <span style={{ fontSize: '12px', fontWeight: 800, color: '#065F46' }}>
+                      Verified Catalog Master: <strong>{masterUser.displayName}</strong> ({masterUser.email}) • DSC Class-3 Active
+                    </span>
+                  </div>
+                  <span style={{ fontSize: '10px', fontWeight: 900, background: '#DCFCE7', color: '#047857', padding: '2px 8px', borderRadius: '12px' }}>
+                    Authorized to Merge
+                  </span>
+                </div>
+              ) : (
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  background: 'rgba(217, 119, 6, 0.08)',
+                  border: '1.2px solid rgba(217, 119, 6, 0.3)',
+                  borderRadius: '10px',
+                  padding: '8px 14px',
+                  marginBottom: '18px'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Lock size={15} color="#D97706" />
+                    <span style={{ fontSize: '12px', fontWeight: 800, color: '#92400E' }}>
+                      Catalog Master Authorization Required: Merging codes requires verified Master credentials.
+                    </span>
+                  </div>
+                  {onRequireAuth && (
+                    <button
+                      onClick={() => onRequireAuth(() => {}, "Access Review Queue Merge Cell")}
+                      style={{
+                        background: '#D97706',
+                        color: '#FFFFFF',
+                        border: 'none',
+                        borderRadius: '6px',
+                        padding: '4px 10px',
+                        fontSize: '11px',
+                        fontWeight: 800,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Sign In as Master
+                    </button>
+                  )}
+                </div>
+              )}
 
               {/* Side-by-Side Requisition Comparison Cards */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px', marginBottom: '20px' }}>
@@ -665,7 +743,7 @@ export const ReviewQueue: React.FC = () => {
               {/* Decision Buttons */}
               <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr', gap: '12px' }}>
                 <button
-                  onClick={() => handleDecision('APPROVED')}
+                  onClick={() => onAttemptDecision('APPROVED')}
                   style={{
                     background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
                     border: 'none',
@@ -688,7 +766,7 @@ export const ReviewQueue: React.FC = () => {
                 </button>
 
                 <button
-                  onClick={() => handleDecision('REJECTED')}
+                  onClick={() => onAttemptDecision('REJECTED')}
                   style={{
                     background: 'linear-gradient(135deg, #DC2626 0%, #B91C1C 100%)',
                     border: 'none',
@@ -711,7 +789,7 @@ export const ReviewQueue: React.FC = () => {
                 </button>
 
                 <button
-                  onClick={() => handleDecision('LAB_HOLD')}
+                  onClick={() => onAttemptDecision('LAB_HOLD')}
                   style={{
                     background: '#FFFFFF',
                     border: '1.5px solid #D97706',
