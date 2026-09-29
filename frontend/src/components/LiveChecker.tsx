@@ -341,32 +341,114 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
   const inputRef = useRef<HTMLInputElement>(null);
   const stepperRef = useRef<HTMLDivElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
+  const scrollAnimRef = useRef<number | null>(null);
+
+  // Silky smooth easing scroll function using requestAnimationFrame and cubic bezier curve
+  const smoothScrollToElement = (
+    element: HTMLElement | null,
+    offsetFromCenter = 0,
+    duration = 850
+  ) => {
+    if (!element) return;
+    
+    if (scrollAnimRef.current) {
+      cancelAnimationFrame(scrollAnimRef.current);
+      scrollAnimRef.current = null;
+    }
+
+    const rect = element.getBoundingClientRect();
+    const currentY = window.pageYOffset || document.documentElement.scrollTop;
+    const targetY = Math.max(0, currentY + rect.top - (window.innerHeight - rect.height) / 2 + offsetFromCenter);
+    const distance = targetY - currentY;
+    if (Math.abs(distance) < 8) return;
+
+    let startTime: number | null = null;
+    const easeInOutCubic = (t: number) => {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    };
+
+    const animate = (currentTime: number) => {
+      if (!startTime) startTime = currentTime;
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = easeInOutCubic(progress);
+
+      window.scrollTo(0, currentY + distance * ease);
+
+      if (progress < 1) {
+        scrollAnimRef.current = requestAnimationFrame(animate);
+      } else {
+        scrollAnimRef.current = null;
+      }
+    };
+
+    scrollAnimRef.current = requestAnimationFrame(animate);
+  };
+
+  const smoothScrollToTopOffset = (
+    element: HTMLElement | null,
+    topOffset = 85,
+    duration = 800
+  ) => {
+    if (!element) return;
+    
+    if (scrollAnimRef.current) {
+      cancelAnimationFrame(scrollAnimRef.current);
+      scrollAnimRef.current = null;
+    }
+
+    const rect = element.getBoundingClientRect();
+    const currentY = window.pageYOffset || document.documentElement.scrollTop;
+    const targetY = Math.max(0, currentY + rect.top - topOffset);
+    const distance = targetY - currentY;
+    if (Math.abs(distance) < 8) return;
+
+    let startTime: number | null = null;
+    const easeInOutCubic = (t: number) => {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    };
+
+    const animate = (currentTime: number) => {
+      if (!startTime) startTime = currentTime;
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = easeInOutCubic(progress);
+
+      window.scrollTo(0, currentY + distance * ease);
+
+      if (progress < 1) {
+        scrollAnimRef.current = requestAnimationFrame(animate);
+      } else {
+        scrollAnimRef.current = null;
+      }
+    };
+
+    scrollAnimRef.current = requestAnimationFrame(animate);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (scrollAnimRef.current) {
+        cancelAnimationFrame(scrollAnimRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (loading) {
-      const scrollStepper = () => {
-        stepperRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      };
-      const t1 = setTimeout(scrollStepper, 60);
-      const t2 = setTimeout(scrollStepper, 200);
-      return () => {
-        clearTimeout(t1);
-        clearTimeout(t2);
-      };
+      const timer = setTimeout(() => {
+        smoothScrollToElement(stepperRef.current, 0, 850);
+      }, 80);
+      return () => clearTimeout(timer);
     }
   }, [loading]);
 
   useEffect(() => {
     if (!loading && result) {
-      const scrollResults = () => {
-        resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      };
-      const t1 = setTimeout(scrollResults, 60);
-      const t2 = setTimeout(scrollResults, 200);
-      return () => {
-        clearTimeout(t1);
-        clearTimeout(t2);
-      };
+      const timer = setTimeout(() => {
+        smoothScrollToTopOffset(resultsRef.current, 85, 800);
+      }, 80);
+      return () => clearTimeout(timer);
     }
   }, [loading, result]);
 
@@ -444,9 +526,6 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
     setQuery(text);
     setSourceCpse(cpse);
     handleSearch(text, cpse);
-    setTimeout(() => {
-      stepperRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 60);
   };
 
   const topVerdict = result?.top_verdict || '';
