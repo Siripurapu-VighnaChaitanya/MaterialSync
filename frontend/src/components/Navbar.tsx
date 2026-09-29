@@ -90,12 +90,19 @@ export const Navbar: React.FC<NavbarProps> = ({
           <span style={{ 
             fontSize: '20px', 
             fontWeight: 900, 
-            letterSpacing: '-0.03em', 
-            background: 'linear-gradient(90deg, #D97706, #059669)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent'
+            letterSpacing: '-0.03em',
+            display: 'inline-flex',
+            alignItems: 'center'
           }}>
-            MaterialSync
+            <span style={{ color: '#0F172A' }}>Material</span>
+            <span style={{ 
+              background: 'linear-gradient(135deg, #059669 0%, #10B981 50%, #06B6D4 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              filter: 'drop-shadow(0 1px 4px rgba(5, 150, 105, 0.25))'
+            }}>
+              Sync
+            </span>
           </span>
         </div>
 

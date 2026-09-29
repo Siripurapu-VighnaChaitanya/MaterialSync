@@ -16,12 +16,12 @@ const SpinningShape = () => {
   return (
     <Icosahedron ref={meshRef} args={[1, 1]} scale={2}>
       <MeshDistortMaterial
-        color="#22C55E"
-        emissive="#FACC15"
-        emissiveIntensity={0.65}
+        color="#059669"
+        emissive="#06B6D4"
+        emissiveIntensity={0.8}
         wireframe={true}
-        distort={0.3}
-        speed={2}
+        distort={0.25}
+        speed={2.2}
       />
     </Icosahedron>
   );
@@ -29,10 +29,11 @@ const SpinningShape = () => {
 
 export const Logo3D = () => {
   return (
-    <div style={{ width: '44px', height: '44px', cursor: 'pointer' }}>
+    <div style={{ width: '44px', height: '44px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <Canvas camera={{ position: [0, 0, 5], fov: 50 }} style={{ pointerEvents: 'none' }}>
-        <ambientLight intensity={0.5} />
-        <directionalLight position={[2, 2, 2]} intensity={1} />
+        <ambientLight intensity={0.6} />
+        <pointLight position={[3, 3, 4]} intensity={1.8} color="#06B6D4" />
+        <pointLight position={[-3, -3, -2]} intensity={1.2} color="#10B981" />
         <SpinningShape />
       </Canvas>
     </div>
