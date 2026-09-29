@@ -339,6 +339,36 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
   const [responseTimeMs, setResponseTimeMs] = useState<number | null>(null);
   const [showLLMSummary, setShowLLMSummary] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const stepperRef = useRef<HTMLDivElement>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (loading) {
+      const scrollStepper = () => {
+        stepperRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      };
+      const t1 = setTimeout(scrollStepper, 60);
+      const t2 = setTimeout(scrollStepper, 200);
+      return () => {
+        clearTimeout(t1);
+        clearTimeout(t2);
+      };
+    }
+  }, [loading]);
+
+  useEffect(() => {
+    if (!loading && result) {
+      const scrollResults = () => {
+        resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      };
+      const t1 = setTimeout(scrollResults, 60);
+      const t2 = setTimeout(scrollResults, 200);
+      return () => {
+        clearTimeout(t1);
+        clearTimeout(t2);
+      };
+    }
+  }, [loading, result]);
 
   const demoScenarios = [
     { label: 'Example 1: Standard Pipe', text: 'SS PIPE ASTM A106 GR B 150 MM', cpse: 'IOCL', type: 'normal' },
@@ -414,6 +444,9 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
     setQuery(text);
     setSourceCpse(cpse);
     handleSearch(text, cpse);
+    setTimeout(() => {
+      stepperRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 60);
   };
 
   const topVerdict = result?.top_verdict || '';
@@ -575,12 +608,13 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
       <AnimatePresence mode="wait">
         {loading && (
           <motion.div
+            ref={stepperRef}
             key="loading-stepper"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20, filter: 'blur(10px)', transition: { duration: 0.5, ease: 'easeIn' } }}
             transition={{ duration: 0.6 }}
-            style={{ marginBottom: '32px' }}
+            style={{ marginBottom: '32px', scrollMarginTop: '100px' }}
           >
             <div className="glass-panel" style={{ padding: '60px 40px', background: '#FFFFFF', border: '1.5px solid rgba(203, 213, 225, 0.9)', boxShadow: '0 10px 30px rgba(15, 23, 42, 0.05)' }}>
               <div style={{ textAlign: 'center', marginBottom: '60px' }}>
@@ -651,10 +685,12 @@ export const LiveChecker: React.FC<LiveCheckerProps> = ({ onCodeReused, activeRo
       {/* ── RESULTS ── */}
         {result && !loading && (
           <motion.div
+            ref={resultsRef}
             key="results-block"
             initial={{ opacity: 0, x: -40 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, staggerChildren: 0.1, ease: 'easeOut' }}
+            style={{ scrollMarginTop: '85px' }}
           >
             <div className="responsive-grid" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '20px', marginBottom: '20px' }}>
               
