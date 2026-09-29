@@ -142,7 +142,7 @@ const TerminalWindow: React.FC = () => {
         <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#EF4444', boxShadow: '0 0 6px rgba(239, 68, 68, 0.6)' }} />
         <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#F59E0B', boxShadow: '0 0 6px rgba(245, 158, 11, 0.6)' }} />
         <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#10B981', boxShadow: '0 0 6px rgba(16, 185, 129, 0.6)' }} />
-        <span style={{ fontSize: '11px', color: '#94A3B8', fontWeight: 800, marginLeft: 'auto', letterSpacing: '0.08em' }}>neural-engine.sh</span>
+        <span style={{ fontSize: '11px', color: '#94A3B8', fontWeight: 800, marginLeft: 'auto', letterSpacing: '0.08em' }}>execution terminal</span>
       </div>
       {displayedLines.map((line, idx) => {
         const isSuccess = Boolean(line && line.includes("READY"));
