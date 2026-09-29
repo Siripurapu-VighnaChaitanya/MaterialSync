@@ -7,6 +7,8 @@ import {
   onAuthStateChanged,
   signInAnonymously,
   updateProfile,
+  GoogleAuthProvider,
+  signInWithPopup,
   User
 } from 'firebase/auth';
 
@@ -23,6 +25,7 @@ export const firebaseConfig = {
 // Initialize Firebase safely
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 export const auth = getAuth(app);
+const googleProvider = new GoogleAuthProvider();
 
 export interface MasterUserData {
   uid: string;
@@ -47,6 +50,12 @@ export const DEMO_CATALOG_MASTER: MasterUserData = {
 // Sign in with Firebase Email & Password
 export const firebaseSignIn = async (email: string, pass: string): Promise<User> => {
   const credential = await signInWithEmailAndPassword(auth, email, pass);
+  return credential.user;
+};
+
+// Sign in with Google Pop-up
+export const firebaseGoogleSignIn = async (): Promise<User> => {
+  const credential = await signInWithPopup(auth, googleProvider);
   return credential.user;
 };
 
